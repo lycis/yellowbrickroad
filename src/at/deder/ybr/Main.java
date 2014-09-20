@@ -1,5 +1,8 @@
 package at.deder.ybr;
 
+import ml.options.Options;
+import ml.options.Options.Multiplicity;
+
 /**
  * This class is the main entry point for the application. It parses all
  * command line parameters and triggers according actions.
@@ -10,8 +13,35 @@ package at.deder.ybr;
 public class Main {
 
 	public static void main(String[] args) {
+		Options cliOptions = new Options(args, 1);
 		
-
+		// define possible command line options
+		cliOptions.getSet().addOption("version", Multiplicity.ZERO_OR_ONE);
+		
+		// evaluate options
+		if(!cliOptions.check()) {
+			System.out.println("error: "+cliOptions.getCheckErrors());
+			printUsageHint();
+			System.exit(1);
+		}
+		
+		if(cliOptions.getSet().isSet("version")) {
+			printVersionInfo();
+			return;
+		}
 	}
 
+	public static void printUsageHint() {
+		System.out.println("ybr [options] <command>");
+		System.out.println("");
+		System.out.println("options:");
+		System.out.println("-version\tprint version information");
+		System.out.println("");
+		System.out.println("commands:");
+		System.out.println("");
+	}
+	
+	public static void printVersionInfo() {
+		System.out.println(Version.getCompleteVersion());
+	}
 }
