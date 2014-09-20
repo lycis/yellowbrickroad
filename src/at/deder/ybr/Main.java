@@ -17,6 +17,7 @@ public class Main {
 		
 		// define possible command line options
 		cliOptions.getSet().addOption("version", Multiplicity.ZERO_OR_ONE);
+		cliOptions.getSet().addOption("help",    Multiplicity.ZERO_OR_ONE);
 		
 		// evaluate options
 		if(!cliOptions.check()) {
@@ -29,12 +30,18 @@ public class Main {
 			printVersionInfo();
 			return;
 		}
+		
+		if(cliOptions.getSet().isSet("help")) {
+			printUsageHint();
+			return;
+		}
 	}
 
 	public static void printUsageHint() {
 		System.out.println("ybr [options] <command>");
 		System.out.println("");
 		System.out.println("options:");
+		System.out.println("-help\tprint this information");
 		System.out.println("-version\tprint version information");
 		System.out.println("");
 		System.out.println("commands:");
