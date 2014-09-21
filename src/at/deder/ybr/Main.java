@@ -72,6 +72,8 @@ public class Main {
 		
 		// set options on command
 		// none yet
+		
+		executor.execute();
 	}
 
 	public static void printUsageHint() {
@@ -83,6 +85,9 @@ public class Main {
 		System.out.println("");
 		System.out.println("commands:");
 		System.out.println("");
+		System.out.println("server-commands:");
+		System.out.println("prepare-server\t\tprepare the basic folder structure for a server");
+		System.out.println("update-server\t\tscan server tree for updates and generate manifest");
 	}
 	
 	public static void printVersionInfo() {
@@ -93,6 +98,7 @@ public class Main {
 	 * initialise the command map to map cli actions to internal command executors
 	 */
 	private static void initCommandMap() {
-		
+		commandMap.put("prepare-server", new at.deder.ybr.commands.PrepareServer());
+		commandMap.put("prepare-server", new at.deder.ybr.commands.UpdateServer());
 	}
 }
