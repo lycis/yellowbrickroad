@@ -1,5 +1,7 @@
 package at.deder.ybr;
 
+import java.util.ArrayList;
+
 import ml.options.Options;
 import ml.options.Options.Multiplicity;
 
@@ -20,12 +22,14 @@ public class Main {
 		cliOptions.getSet().addOption("help",    Multiplicity.ZERO_OR_ONE);
 		
 		// evaluate options
-		if(!cliOptions.check(false, false)) {
+		if(!cliOptions.check(true, false)) {
 			System.out.println("error: "+cliOptions.getCheckErrors());
 			printUsageHint();
 			System.exit(1);
 		}
 		
+		
+		// process command line options that
 		if(cliOptions.getSet().isSet("version")) {
 			printVersionInfo();
 			return;
@@ -34,6 +38,16 @@ public class Main {
 		if(cliOptions.getSet().isSet("help")) {
 			printUsageHint();
 			return;
+		}
+		
+		// process according command
+		ArrayList<String> commandList = cliOptions.getSet().getData();
+		
+		if(commandList.isEmpty()) {
+			// if there is no command at this point (no-command options are already
+			// filtered) than the user did not provide enough input
+			printUsageHint();
+			System.exit(1);
 		}
 	}
 
