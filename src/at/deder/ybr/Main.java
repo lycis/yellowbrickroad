@@ -12,15 +12,15 @@ import ml.options.Options.Multiplicity;
  */
 public class Main {
 
-	public static void main(String[] args) {
-		Options cliOptions = new Options(args, 1);
+	public static void main(String[] args) {		
+		Options cliOptions = new Options(args, 0, 99);
 		
 		// define possible command line options
 		cliOptions.getSet().addOption("version", Multiplicity.ZERO_OR_ONE);
 		cliOptions.getSet().addOption("help",    Multiplicity.ZERO_OR_ONE);
 		
 		// evaluate options
-		if(!cliOptions.check()) {
+		if(!cliOptions.check(false, false)) {
 			System.out.println("error: "+cliOptions.getCheckErrors());
 			printUsageHint();
 			System.exit(1);
@@ -41,7 +41,7 @@ public class Main {
 		System.out.println("ybr [options] <command>");
 		System.out.println("");
 		System.out.println("options:");
-		System.out.println("-help\tprint this information");
+		System.out.println("-help\t\tprint this information");
 		System.out.println("-version\tprint version information");
 		System.out.println("");
 		System.out.println("commands:");
