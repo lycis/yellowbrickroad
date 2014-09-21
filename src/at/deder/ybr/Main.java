@@ -82,12 +82,13 @@ public class Main {
 		System.out.println("options:");
 		System.out.println("-help\t\tprint this information");
 		System.out.println("-version\tprint version information");
+		System.out.println("-verbose\tdisplays extendend process information");
 		System.out.println("");
 		System.out.println("commands:");
 		System.out.println("");
 		System.out.println("server-commands:");
-		System.out.println("prepare-server\t\tprepare the basic folder structure for a server");
-		System.out.println("update-server\t\tscan server tree for updates and generate manifest");
+		System.out.println("prepare-server\tprepare the basic folder structure for a server");
+		System.out.println("update-server\tscan server tree for updates and generate manifest");
 	}
 	
 	public static void printVersionInfo() {
