@@ -1,9 +1,12 @@
 package at.deder.ybr;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import ml.options.Options;
 import ml.options.Options.Multiplicity;
+import at.deder.ybr.commands.ICliCommand;
 
 /**
  * This class is the main entry point for the application. It parses all
@@ -13,6 +16,12 @@ import ml.options.Options.Multiplicity;
  *
  */
 public class Main {
+	
+	private static Map<String, ICliCommand> commandMap = new HashMap<String, ICliCommand>();
+	
+	static {
+		initCommandMap();		
+	}
 
 	public static void main(String[] args) {		
 		Options cliOptions = new Options(args, 0, 99);
@@ -29,7 +38,7 @@ public class Main {
 		}
 		
 		
-		// process command line options that
+		// process command line options that do not require a command
 		if(cliOptions.getSet().isSet("version")) {
 			printVersionInfo();
 			return;
@@ -49,6 +58,20 @@ public class Main {
 			printUsageHint();
 			System.exit(1);
 		}
+		
+		// find according command
+		String command = commandList.remove(0); // first data item is the action
+		ICliCommand executor = commandMap.get(command);
+		if(executor == null) {
+			// action does not exist
+			System.out.println("unknown command '"+command+"'");
+			System.exit(1);
+		}
+		
+		executor.setData(commandList); // pass remaining cli data
+		
+		// set options on command
+		// none yet
 	}
 
 	public static void printUsageHint() {
@@ -64,5 +87,12 @@ public class Main {
 	
 	public static void printVersionInfo() {
 		System.out.println(Version.getCompleteVersion());
+	}
+	
+	/**
+	 * initialise the command map to map cli actions to internal command executors
+	 */
+	private static void initCommandMap() {
+		
 	}
 }
