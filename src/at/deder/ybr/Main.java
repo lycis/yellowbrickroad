@@ -99,6 +99,6 @@ public class Main {
 	 */
 	private static void initCommandMap() {
 		commandMap.put("prepare-server", new at.deder.ybr.commands.PrepareServer());
-		commandMap.put("prepare-server", new at.deder.ybr.commands.UpdateServer());
+		commandMap.put("update-server", new at.deder.ybr.commands.UpdateServer());
 	}
 }
