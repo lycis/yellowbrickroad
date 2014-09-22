@@ -3,7 +3,6 @@ package at.deder.ybr.test.mocks;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.UUID;
 
 import org.apache.commons.io.FileUtils;
