@@ -26,4 +26,10 @@ public class FileSystemAccessor implements IFileSystemAccessor {
 		return new File(path);
 	}
 
+	@Override
+	public File createFile(File parent, String name, boolean isFolder) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

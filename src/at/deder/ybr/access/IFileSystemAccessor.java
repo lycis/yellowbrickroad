@@ -19,10 +19,18 @@ public interface IFileSystemAccessor {
 	public boolean exists(String path);
 	
 	/**
-	 * 
+	 * Provides the requested file or <code>null</code>.
 	 * @param path
 	 * @return the requested file or <code>null</code> if the file does not exist
 	 */
 	public File getFile(String path);
+	
+	/**
+	 * Create a file in the connected file system.
+	 * @param path path of the file
+	 * @param isFilder </code>true</code> if the created node is a directory
+	 * @return
+	 */
+	public File createFile(File parent, String name, boolean isFolder);
 	
 }
