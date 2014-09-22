@@ -1,6 +1,7 @@
 package at.deder.ybr.access;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * This interface allows access to the host file system. It can be implemented to redirect file access from the
@@ -31,6 +32,11 @@ public interface IFileSystemAccessor {
 	 * @param isFilder </code>true</code> if the created node is a directory
 	 * @return
 	 */
-	public File createFile(File parent, String name, boolean isFolder);
-	
+	public File createFile(File parent, String name, boolean isFolder) throws IOException;
+
+	/**
+	 * 
+	 * @return the current workdir as file
+	 */
+	public File getWorkingDirectory();
 }

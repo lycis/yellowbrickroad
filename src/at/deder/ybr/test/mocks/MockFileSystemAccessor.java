@@ -60,7 +60,7 @@ public class MockFileSystemAccessor implements IFileSystemAccessor {
 		for(File child: currentNode.listFiles()) {
 			if(child.getName().equals(nextNode)) {
 				if(remainingNodes.size() > 0) {
-					recursiveGetFile(child, remainingNodes);
+					return recursiveGetFile(child, remainingNodes);
 				}else {
 					return child;
 				}
@@ -110,6 +110,11 @@ public class MockFileSystemAccessor implements IFileSystemAccessor {
 				remainingNodes.add(s);
 		}
 		return remainingNodes;
+	}
+
+	@Override
+	public File getWorkingDirectory() {
+		return rootFolder; // simulate that the current root is unser workdir
 	}
 
 }

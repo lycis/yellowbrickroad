@@ -28,7 +28,7 @@ public class FileSystemAccessor implements IFileSystemAccessor {
 	}
 
 	@Override
-	public File createFile(File parent, String name, boolean isFolder) {
+	public File createFile(File parent, String name, boolean isFolder) throws IOException {
 		File reqFile = new File(parent.getAbsolutePath() + File.separator + name);
 		try {
 			if(isFolder) {
@@ -37,10 +37,15 @@ public class FileSystemAccessor implements IFileSystemAccessor {
 				reqFile.createNewFile();
 			}
 		} catch (IOException e) {
-			return null;
+			throw e;
 		}
 		
 		return reqFile;
+	}
+
+	@Override
+	public File getWorkingDirectory() {
+		return new File(".");
 	}
 
 }
