@@ -20,8 +20,9 @@ public class PrepareServer implements ICliCommand {
 
 	@Override
 	public void execute() {
-		// TODO Auto-generated method stub
-		System.out.println("prepare-server");
+		// TODO create folder structure
+		
+		// TODO create manifest
 	}
 
 }
