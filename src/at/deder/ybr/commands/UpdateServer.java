@@ -2,6 +2,8 @@ package at.deder.ybr.commands;
 
 import java.util.List;
 
+import at.deder.ybr.access.IFileSystemAccessor;
+
 // TODO implement
 
 public class UpdateServer implements ICliCommand {
@@ -22,6 +24,12 @@ public class UpdateServer implements ICliCommand {
 	public void execute() {
 		// TODO Auto-generated method stub
 		System.out.println("update-server");
+	}
+
+	@Override
+	public void setFileSystemAccessor(IFileSystemAccessor f) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
