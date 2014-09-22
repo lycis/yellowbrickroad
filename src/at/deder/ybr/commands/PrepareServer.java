@@ -38,6 +38,9 @@ public class PrepareServer implements ICliCommand {
 		// TODO create folder structure
 		
 		// TODO create manifest
+		
+		// TODO create index.html
+		
 		System.out.println("done.");
 	}
 

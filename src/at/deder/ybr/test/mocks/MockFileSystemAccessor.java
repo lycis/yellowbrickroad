@@ -41,10 +41,18 @@ public class MockFileSystemAccessor implements IFileSystemAccessor {
 
 	@Override
 	public boolean exists(String path) {
+		if(!path.startsWith("/")) {
+			path = "/" + path;
+		}
+		
+		if(path.endsWith("/")) {
+			path = path.substring(0, path.length()-1);
+		}
+		
 		ArrayList<String> remainingNodes = splitFilePath(path);
 		File current = rootFolder;
 		
-		return recursiveGetFile(current, remainingNodes).exists();
+		return (recursiveGetFile(current, remainingNodes) != null);
 	}
 	
 	private File recursiveGetFile(File currentNode, ArrayList<String> remainingNodes) {
