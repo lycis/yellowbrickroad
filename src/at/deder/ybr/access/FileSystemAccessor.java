@@ -14,14 +14,16 @@ public class FileSystemAccessor implements IFileSystemAccessor {
 
 	@Override
 	public boolean exists(String path) {
-		// TODO Auto-generated method stub
-		return false;
+		File f = new File(path);
+		return f.exists();
 	}
 
 	@Override
 	public File getFile(String path) {
-		// TODO Auto-generated method stub
-		return null;
+		if(!exists(path))
+			return null;
+		
+		return new File(path);
 	}
 
 }
