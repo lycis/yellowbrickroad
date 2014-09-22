@@ -1,6 +1,7 @@
 package at.deder.ybr.access;
 
 import java.io.File;
+import java.io.IOException;
 
 /**
  * Default implementation of <code>IFileSystemAccessor</code>.
@@ -28,8 +29,18 @@ public class FileSystemAccessor implements IFileSystemAccessor {
 
 	@Override
 	public File createFile(File parent, String name, boolean isFolder) {
-		// TODO Auto-generated method stub
-		return null;
+		File reqFile = new File(parent.getAbsolutePath() + File.separator + name);
+		try {
+			if(isFolder) {
+				reqFile.mkdir();
+			} else {
+				reqFile.createNewFile();
+			}
+		} catch (IOException e) {
+			return null;
+		}
+		
+		return reqFile;
 	}
 
 }
