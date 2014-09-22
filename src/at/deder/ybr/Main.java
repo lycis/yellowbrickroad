@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import ml.options.OptionSet;
 import ml.options.Options;
 import ml.options.Options.Multiplicity;
 import at.deder.ybr.commands.ICliCommand;
@@ -29,6 +30,7 @@ public class Main {
 		// define possible command line options
 		cliOptions.getSet().addOption("version", Multiplicity.ZERO_OR_ONE);
 		cliOptions.getSet().addOption("help",    Multiplicity.ZERO_OR_ONE);
+		cliOptions.getSet().addOption("verbose", Multiplicity.ZERO_OR_ONE);
 		
 		// evaluate options
 		if(!cliOptions.check(true, false)) {
@@ -71,7 +73,9 @@ public class Main {
 		executor.setData(commandList); // pass remaining cli data
 		
 		// set options on command
-		// none yet
+		OptionSet optionSet = cliOptions.getSet();
+		executor.setOption(Constants.OPTION_VERBOSE, 
+				           Constants.booleanToValue(optionSet.isSet(Constants.OPTION_VERBOSE)));
 		
 		executor.execute();
 	}
