@@ -2,3 +2,6 @@
 .settings
 /*.project
 /*.classpath
+/nbproject/private/
+/build/
+/dist/
