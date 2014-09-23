@@ -1,56 +1,116 @@
 <project name="ybr" default="dist" basedir=".">
-	<description>
+    <description>
         simple example build file
     </description>
 	
-	<!-- set global properties for this build -->
-	<property name="src" location="src"/>
-	<property name="build" location="build"/>
-	<property name="dist"  location="dist"/>
-	<property name="lib" location="lib"/>
-	<property name="main.class" value="at.deder.ybr.Main"/>
-	
-	<path id="referenced-jars">
-		<fileset dir="${lib}">
-			<include name="*.jar"/>
-		</fileset>
-	</path>
+    <!-- set global properties for this build -->
+    <property name="src" location="src"/>
+    <property name="build" location="build"/>
+    <property name="dist"  location="dist"/>
+    <property name="lib" location="lib"/>
+    <property name="main.class" value="at.deder.ybr.Main"/>
+    
+    <property name="test" location="test"/>
+    <property name="test.report" location="${test}/report"/>
+    <property name="test.build" location="${test}/build"/>
+    <property name="test.src" location="${src}/at/deder/ybr/test"/>
 
-	<!-- targets -->
-	<target name="init" description="initialise folders for build">
-		<tstamp/>
-		<mkdir dir="${build}"/>
-		<mkdir dir="${dist}"/>
-	</target>
+    <!-- targets -->
+    <target name="init" description="initialise folders for build">
+        <tstamp/>
+        <mkdir dir="${build}"/>
+        <mkdir dir="${dist}"/>
+    </target>
 	
-	<target name="compile" depends="init" description="compile source code">
-		<javac srcdir="${src}" destdir="${build}" includeantruntime="true">
-			<classpath refid="referenced-jars" />
-		</javac>
-	</target>
+    <target name="compile" depends="init" description="compile source code">
+        <javac srcdir="${src}" destdir="${build}" includeantruntime="false"
+               excludes="at/deder/ybr/test/**">
+            <classpath id="referenced-jars">
+                <fileset dir="${lib}" id="fs-classpath-notest">
+                    <include name="*.jar"/>
+                    <exclude name="hamcrest-core*.jar"/>
+                    <exclude name="junit*.jar"/>
+                </fileset>
+            </classpath>
+        </javac>
+    </target>
+    
+    <target name="compile-debug" depends="init" description="compile source code for debugging">
+        <javac srcdir="${src}" destdir="${build}" includeantruntime="false"
+               excludes="at/deder/ybr/test/**" debug="true">
+            <classpath id="referenced-jars">
+                <fileset dir="${lib}" id="fs-classpath-notest">
+                    <include name="*.jar"/>
+                    <exclude name="hamcrest-core*.jar"/>
+                    <exclude name="junit*.jar"/>
+                </fileset>
+            </classpath>
+        </javac>
+    </target>
 	
-	 <target name="dist" depends="compile" description="generate the distribution" >
-	 	<pathconvert property="mf.classpath" pathsep=" ">
-	 	    <path refid="referenced-jars" />
-	 	    <flattenmapper />
-	 	</pathconvert>
+    <target name="dist" depends="compile" description="generate the distribution" >
+        <pathconvert property="mf.classpath" pathsep=" ">
+            <path refid="referenced-jars" />
+            <flattenmapper />
+        </pathconvert>
 	 	
-	    <!--<mkdir dir="${dist}/lib"/>-->
-	    <jar jarfile="${dist}/ybr-${DSTAMP}.jar" basedir="${build}">
-	    	<manifest>
-	    	        <attribute name="Main-Class" value="${main.class}"/>
-	    	        <attribute name="Class-Path" value="${mf.classpath}"/>
-	    	</manifest>
-	 	</jar>
-	 	<copy todir="${dist}">
-	 		<fileset dir="${lib}">
-	 			<include name="*.jar"/>
-	 		</fileset>
-	 	</copy>
-	  </target>
+        <!--<mkdir dir="${dist}/lib"/>-->
+        <jar jarfile="${dist}/ybr-${DSTAMP}.jar" basedir="${build}">
+            <manifest>
+                <attribute name="Main-Class" value="${main.class}"/>
+                <attribute name="Class-Path" value="${mf.classpath}"/>
+            </manifest>
+        </jar>
+        <copy todir="${dist}">
+            <fileset dir="${lib}">
+                <include name="*.jar"/>
+            </fileset>
+        </copy>
+    </target>
 	
-	<target name="clean" description="clean all files from last build">
-		<delete dir="${build}"/>
-		<delete dir="${dist}"/>
-	</target>	
+    <target name="clean" description="clean all files from last build">
+        <delete dir="${build}"/>
+        <delete dir="${dist}"/>
+        <delete dir="${test.build}"/>
+        <delete dir="${test.report}"/>
+        <delete dir="${test}"/>
+    </target>	
+    
+    <!-- test targets -->
+    <target name="compile-test" depends="compile" description="compile test sources">
+        <mkdir dir="${test.build}"/>
+        <javac srcdir="${test.src}" destdir="${test.build}" 
+               includeantruntime="false" debug="true">
+            <classpath>
+                <fileset dir="${lib}" id="fs-classpath-notest">
+                    <include name="*.jar"/>
+                    <include name="hamcrest-core*.jar"/>
+                    <include name="junit*.jar"/>
+                </fileset>      
+                <pathelement location="${build}"/>
+            </classpath>
+        </javac>
+    </target>
+    
+    <target name="test" depends="compile-test" description="execute tests">
+        <mkdir dir="${test.report}"/>
+        <junit printsummary="yes" haltonfailure="no">
+            <classpath>
+                <fileset dir="${lib}" id="fs-classpath-notest">
+                    <include name="*.jar"/>
+                    <include name="hamcrest-core*.jar"/>
+                    <include name="junit*.jar"/>
+                </fileset>      
+                <pathelement location="${build}"/>
+                <pathelement location="${test.build}"/>
+            </classpath>
+            <formatter type="xml"/>
+            <formatter type="plain"/>
+            <batchtest fork="no" todir="${test.report}">
+                <fileset dir="${src}">
+                    <include name="**/*Test*.java"/>
+                </fileset>
+            </batchtest>
+        </junit>
+    </target>
 </project>
