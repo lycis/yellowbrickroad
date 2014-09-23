@@ -58,6 +58,9 @@ public class MockFileSystemAccessor implements IFileSystemAccessor {
 
     private File recursiveGetFile(File currentNode, ArrayList<String> remainingNodes) {
         String nextNode = remainingNodes.remove(0);
+        
+        if(currentNode == null)
+            return null;
 
         for (File child : currentNode.listFiles()) {
             if (child.getName().equals(nextNode)) {
