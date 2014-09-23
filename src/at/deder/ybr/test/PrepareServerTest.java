@@ -47,6 +47,13 @@ public class PrepareServerTest {
 	}
 	
 	// TODO test for structure of manifest
+	/**
+	 * Check if content of the empty manifest is correct.
+	 */
+	@Test
+	public void testManifestContent() {
+		
+	}
 	
 	@After
 	public void cleanUp() {
