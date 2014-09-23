@@ -4,19 +4,22 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import at.deder.ybr.Constants;
 import at.deder.ybr.access.IFileSystemAccessor;
 
 // TODO implement
 
 public class PrepareServer implements ICliCommand {
+	private boolean verbose = false;
 	
 	private String targetFolder = ".";
 	private IFileSystemAccessor fileSystem = null;
 
 	@Override
 	public void setOption(String name, String value) {
-		// TODO Auto-generated method stub
-
+		if(Constants.OPTION_VERBOSE.equals(name) && Constants.VALUE_TRUE.equals(value)) {
+			verbose = true;
+		}
 	}
 
 	@Override
@@ -32,7 +35,7 @@ public class PrepareServer implements ICliCommand {
 
 	@Override
 	public void execute() {		
-		System.out.println("Preparing server...");
+		System.out.println("Preparing server structure...");
 		
 		// check if target folder exists
 		File target = null;
@@ -48,6 +51,9 @@ public class PrepareServer implements ICliCommand {
 		}
 		
 		// create folder structure
+		if(verbose) {
+			System.out.print("Creating folder structure ... ");
+		}
 		File repository = createEmptyDirectory(target, "repository");
 		if(repository == null)
 			return;
@@ -57,8 +63,16 @@ public class PrepareServer implements ICliCommand {
 		
 		if(createEmptyDirectory(repository, "org") == null)
 			return;
+			
+		if(verbose) {
+			System.out.println("done");
+		}
 		
 		// create manifest
+		if(verbose) {
+			System.out.print("Writing manifest ... ");
+		}
+		
 		File manifest = null;
 		try{
 			manifest = fileSystem.createFile(target, "manifest.yml", false);
@@ -68,6 +82,12 @@ public class PrepareServer implements ICliCommand {
 		}
 		
 		// TODO write manifest
+		
+		if(verbose) {
+			System.out.println("done");
+		}
+		
+		// create index.html
 		File index = null;
 		try{
 			index = fileSystem.createFile(target, "index.html", false);
@@ -75,9 +95,6 @@ public class PrepareServer implements ICliCommand {
 			System.err.println("error: could not create index.html ("+e.getMessage()+")");
 			return;
 		}
-		
-		// create index.html
-		
 		
 		
 		// TODO write index.html content
