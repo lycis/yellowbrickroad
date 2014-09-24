@@ -114,7 +114,7 @@ public class PrepareServerTest {
         }
         
         Assert.assertEquals("default index.html contains wrong text", 
-                "Welcome to the Emerald City!", content.trim());
+                PrepareServer.INDEX_DEFAULT_TEXT, content);
     }
 
     @After

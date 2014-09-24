@@ -7,9 +7,8 @@ import java.util.List;
 import at.deder.ybr.Constants;
 import at.deder.ybr.access.IFileSystemAccessor;
 import at.deder.ybr.beans.ServerManifest;
+import java.io.BufferedWriter;
 import java.io.FileWriter;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 // TODO implement
 public class PrepareServer implements ICliCommand {
@@ -18,6 +17,9 @@ public class PrepareServer implements ICliCommand {
 
     private String targetFolder = ".";
     private IFileSystemAccessor fileSystem = null;
+    
+    // constants
+    public static String INDEX_DEFAULT_TEXT = "Welcome to the Emerald City!\n";
 
     @Override
     public void setOption(String name, String value) {
@@ -39,6 +41,7 @@ public class PrepareServer implements ICliCommand {
 
     @Override
     public void execute() {
+        boolean error = false;
         System.out.println("Preparing server structure...");
 
         // check if target folder exists
@@ -85,8 +88,11 @@ public class PrepareServer implements ICliCommand {
             manifest = fileSystem.createFile(target, "manifest.yml", false);
         } catch (IOException e) {
             System.err.println("error: could not create manifest file (" + e.getMessage() + ")");
-            return;
+            error = true;
         }
+        
+        if(error)
+            return; // stop on error
 
         ServerManifest sm = new ServerManifest();
         sm.initDefaults();
@@ -95,22 +101,46 @@ public class PrepareServer implements ICliCommand {
             sm.writeYaml(new FileWriter(manifest));
         } catch (IOException ex) {
            System.err.println("error: "+ex.getMessage());
+           error = true;
         }
+        
+        if(error)
+            return; // stop on error
         
         if (verbose) {
             System.out.println("done");
         }
 
         // create index.html
+        if (verbose) {
+            System.out.print("Writing index.html ... ");
+        }
+        
         File index = null;
         try {
             index = fileSystem.createFile(target, "index.html", false);
         } catch (IOException e) {
             System.err.println("error: could not create index.html (" + e.getMessage() + ")");
-            return;
         }
 
-		// TODO write index.html content
+        BufferedWriter writer = null;
+        try{
+            writer = new BufferedWriter(new FileWriter(index));
+            writer.write(INDEX_DEFAULT_TEXT);
+        } catch (IOException ex) {
+            System.err.println("error: "+ex.getMessage());
+            error = true;
+        } finally {
+            try{writer.close();}catch(IOException ex){};
+        }
+        
+        if(error)
+            return; // stop on error
+        
+        if (verbose) {
+            System.out.println("done");
+        }
+        
         System.out.println("done.");
     }
 
