@@ -117,6 +117,9 @@ public class PrepareServerTest {
                 PrepareServer.INDEX_DEFAULT_TEXT, content);
     }
 
+    // TODO use different target directory
+    // TODO test error scenarios (e.g. target directory does not exist)
+
     @After
     public void cleanUp() {
         if (mockFSA != null) {

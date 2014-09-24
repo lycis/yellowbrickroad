@@ -9,6 +9,8 @@ import java.io.Serializable;
 import java.io.Writer;
 import java.util.Objects;
 
+// TODO implement repository structure
+
 /**
  * This bean represents the YBR server manifest file.
  *
@@ -83,7 +85,7 @@ public class ServerManifest implements Serializable {
         YamlReader reader = new YamlReader(r);
         reader.getConfig().setClassTag("server-manifest", ServerManifest.class);
         
-        ServerManifest manifest = null;
+        ServerManifest manifest;
         try{
            manifest = reader.read(ServerManifest.class);
         } catch (YamlException ex) {

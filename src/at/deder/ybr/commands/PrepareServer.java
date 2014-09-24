@@ -10,7 +10,6 @@ import at.deder.ybr.beans.ServerManifest;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 
-// TODO implement
 public class PrepareServer implements ICliCommand {
 
     private boolean verbose = false;
