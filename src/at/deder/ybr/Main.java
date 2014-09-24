@@ -1,5 +1,6 @@
 package at.deder.ybr;
 
+import at.deder.ybr.access.FileSystemAccessor;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -75,7 +76,10 @@ public class Main {
         OptionSet optionSet = cliOptions.getSet();
         executor.setOption(Constants.OPTION_VERBOSE,
                 Constants.booleanToValue(optionSet.isSet(Constants.OPTION_VERBOSE)));
-
+        
+        // sec accessors
+        executor.setFileSystemAccessor(new FileSystemAccessor());
+        
         executor.execute();
     }
 
