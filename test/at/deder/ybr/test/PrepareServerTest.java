@@ -10,9 +10,11 @@ import org.junit.Test;
 
 import at.deder.ybr.commands.PrepareServer;
 import at.deder.ybr.test.mocks.MockFileSystemAccessor;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 import org.junit.AfterClass;
 
 public class PrepareServerTest {
@@ -52,48 +54,82 @@ public class PrepareServerTest {
         Assert.assertTrue("index.html not created", mockFSA.exists("/index.html"));
     }
 
-    // TODO test for structure of manifest
     /**
      * Check if content of the empty manifest is correct.
      */
     @Test
     public void testManifestContent() {
-            // execute command
-            ArrayList<String> cliData = new ArrayList<String>();
-            cmd.setData(cliData);
-            cmd.execute();
-    
-            // create default object for comparison
-            ServerManifest defaultSm = new ServerManifest();
-            defaultSm.initDefaults();
-            
-            // read created manifest
-            File manifest = mockFSA.getFile("/manifest.yml");
-            Assert.assertFalse("manifest was not written", manifest == null);
-            
-            ServerManifest sm = null;
-            try{
-                sm = ServerManifest.readYaml(new FileReader(manifest));
-            } catch (FileNotFoundException ex) {
-                Assert.fail("manifest file not found");
+        // execute command
+        ArrayList<String> cliData = new ArrayList<String>();
+        cmd.setData(cliData);
+        cmd.execute();
+
+        // create default object for comparison
+        ServerManifest defaultSm = new ServerManifest();
+        defaultSm.initDefaults();
+
+        // read created manifest
+        File manifest = mockFSA.getFile("/manifest.yml");
+        Assert.assertFalse("manifest was not written", manifest == null);
+
+        ServerManifest sm = null;
+        try {
+            sm = ServerManifest.readYaml(new FileReader(manifest));
+        } catch (FileNotFoundException ex) {
+            Assert.fail("manifest file not found");
+        }
+
+        Assert.assertEquals("written default manifest is not correct",
+                defaultSm, sm);
+    }
+
+    @Test
+    public void testIndexHtml() {
+        // execute command
+        ArrayList<String> cliData = new ArrayList<String>();
+        cmd.setData(cliData);
+        cmd.execute();
+
+        // read index.html
+        File index = mockFSA.getFile("index.html");
+        Assert.assertFalse("index.html not written", index == null);
+
+        BufferedReader reader = null;
+        try {
+            reader = new BufferedReader(new FileReader(index));
+        } catch (FileNotFoundException ex) {
+            Assert.fail("manifest file not found");
+        }
+
+        String content = "";
+        try {
+            String line = "";
+            while ((line = reader.readLine()) != null) {
+                content += line + "\n";
             }
-            
-            Assert.assertEquals("written default manifest is not correct", 
-                    defaultSm, sm);
+        } catch (IOException ex) {
+            Assert.fail("reading content of index.html failed");
+        }finally{
+            try{reader.close();}catch(IOException ex){};
+        }
+        
+        Assert.assertEquals("default index.html contains wrong text", 
+                "Welcome to the Emerald City!", content.trim());
     }
 
     @After
     public void cleanUp() {
-        if(mockFSA != null) {
+        if (mockFSA != null) {
             mockFSA.destroy();
             mockFSA = null;
         }
     }
-    
+
     @AfterClass
     public static void endCleanUp() {
-        if(mockFSA != null)
+        if (mockFSA != null) {
             mockFSA.destroy();
+        }
     }
 
 }
