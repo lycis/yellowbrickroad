@@ -1,6 +1,11 @@
 /bin
-/test
+/test/report
+/test/build
 /dist
 /build
 /nbproject
 /nbproject/project.xml
+/manifest.mf
+/nbbuild.xml
+/lib/nblibraries.properties
+/lib/CopyLibs
