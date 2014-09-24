@@ -2,14 +2,18 @@ package at.deder.ybr.commands;
 
 import java.util.List;
 
+import at.deder.ybr.Constants;
+
 // TODO implement
 
 public class PrepareServer implements ICliCommand {
+	private boolean verbose = false;
 
 	@Override
 	public void setOption(String name, String value) {
-		// TODO Auto-generated method stub
-
+		if(Constants.OPTION_VERBOSE.equals(name) && Constants.VALUE_TRUE.equals(value)) {
+			verbose = true;
+		}
 	}
 
 	@Override
@@ -20,8 +24,29 @@ public class PrepareServer implements ICliCommand {
 
 	@Override
 	public void execute() {
-		// TODO Auto-generated method stub
-		System.out.println("prepare-server");
+		System.out.println("Preparing server structure...");
+		
+		if(verbose) {
+			System.out.print("Creating folder structure ... ");
+		}
+		
+		// TODO create server folder structure
+		
+		if(verbose) {
+			System.out.println("done");
+		}
+		
+		if(verbose) {
+			System.out.print("Writing manifest ... ");
+		}
+		
+		// TODO write empty yml-manifest
+		
+		if(verbose) {
+			System.out.println("done");
+		}
+		
+		System.out.println("done.");
 	}
 
 }

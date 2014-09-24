@@ -8,6 +8,7 @@ import java.util.List;
  *
  */
 public interface ICliCommand {
+	
 	/**
 	 * Specify the value for a specific runtime option of the command.
 	 * @param name key that identifies the option
