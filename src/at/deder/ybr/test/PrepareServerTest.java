@@ -1,5 +1,6 @@
 package at.deder.ybr.test;
 
+import at.deder.ybr.beans.ServerManifest;
 import java.util.ArrayList;
 
 import org.junit.After;
@@ -9,11 +10,15 @@ import org.junit.Test;
 
 import at.deder.ybr.commands.PrepareServer;
 import at.deder.ybr.test.mocks.MockFileSystemAccessor;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import org.junit.AfterClass;
 
 public class PrepareServerTest {
 
-    MockFileSystemAccessor mockFSA = null;
-    PrepareServer cmd = null;
+    private static MockFileSystemAccessor mockFSA = null;
+    private PrepareServer cmd = null;
 
     /**
      * prepare all necessary objects
@@ -53,12 +58,42 @@ public class PrepareServerTest {
      */
     @Test
     public void testManifestContent() {
-
+            // execute command
+            ArrayList<String> cliData = new ArrayList<String>();
+            cmd.setData(cliData);
+            cmd.execute();
+    
+            // create default object for comparison
+            ServerManifest defaultSm = new ServerManifest();
+            defaultSm.initDefaults();
+            
+            // read created manifest
+            File manifest = mockFSA.getFile("/manifest.yml");
+            Assert.assertFalse("manifest was not written", manifest == null);
+            
+            ServerManifest sm = null;
+            try{
+                sm = ServerManifest.readYaml(new FileReader(manifest));
+            } catch (FileNotFoundException ex) {
+                Assert.fail("manifest file not found");
+            }
+            
+            Assert.assertEquals("written default manifest is not correct", 
+                    defaultSm, sm);
     }
 
     @After
     public void cleanUp() {
-        mockFSA.destroy();
+        if(mockFSA != null) {
+            mockFSA.destroy();
+            mockFSA = null;
+        }
+    }
+    
+    @AfterClass
+    public static void endCleanUp() {
+        if(mockFSA != null)
+            mockFSA.destroy();
     }
 
 }
