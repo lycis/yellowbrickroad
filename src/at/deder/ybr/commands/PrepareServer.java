@@ -6,6 +6,10 @@ import java.util.List;
 
 import at.deder.ybr.Constants;
 import at.deder.ybr.access.IFileSystemAccessor;
+import at.deder.ybr.beans.ServerManifest;
+import java.io.FileWriter;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 // TODO implement
 public class PrepareServer implements ICliCommand {
@@ -84,7 +88,15 @@ public class PrepareServer implements ICliCommand {
             return;
         }
 
-		// TODO write manifest
+        ServerManifest sm = new ServerManifest();
+        sm.initDefaults();
+        
+        try {
+            sm.writeYaml(new FileWriter(manifest));
+        } catch (IOException ex) {
+           System.err.println("error: "+ex.getMessage());
+        }
+        
         if (verbose) {
             System.out.println("done");
         }
