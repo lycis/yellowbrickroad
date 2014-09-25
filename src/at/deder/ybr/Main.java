@@ -19,7 +19,7 @@ import at.deder.ybr.commands.ICliCommand;
  */
 public class Main {
 
-    private static Map<String, ICliCommand> commandMap = new HashMap<String, ICliCommand>();
+    private static final Map<String, ICliCommand> commandMap = new HashMap<>();
 
     static {
         initCommandMap();
