@@ -141,6 +141,8 @@ public class PrepareServer implements ICliCommand {
         }
         
         System.out.println("done.");
+        System.out.println("");
+        System.out.println("Please run 'update-server' to rebuild the server manifest.");
     }
 
     private File createEmptyDirectory(File parent, String name) {
