@@ -1,5 +1,6 @@
 package at.deder.ybr.beans;
 
+import at.deder.ybr.structures.Tree;
 import com.esotericsoftware.yamlbeans.YamlException;
 import com.esotericsoftware.yamlbeans.YamlReader;
 import com.esotericsoftware.yamlbeans.YamlWriter;
@@ -21,6 +22,10 @@ public class ServerManifest implements Serializable {
     private String type = "";
     private String name = "";
     private String admin = "";
+    
+    private Tree<RepositoryEntry> repository = null;
+    
+    private static final String YAML_TAG = "server-manifest";
 
     public String getType() {
         return type;
@@ -32,6 +37,10 @@ public class ServerManifest implements Serializable {
 
     public String getAdmin() {
         return admin;
+    }
+
+    public Tree<RepositoryEntry> getRepository() {
+        return repository;
     }
 
     public void setType(String type) {
@@ -52,6 +61,12 @@ public class ServerManifest implements Serializable {
         this.admin = admin;
     }
 
+    public void setRepository(Tree<RepositoryEntry> repository) {
+        this.repository = repository;
+    }
+    
+    
+
     /**
      * Write a YAML file to the given writer. Used for serialisation of the
      * manifest.
@@ -61,8 +76,7 @@ public class ServerManifest implements Serializable {
     public boolean writeYaml(Writer w) {
         YamlWriter writer = new YamlWriter(w);
         writer.getConfig().writeConfig.setAlwaysWriteClassname(false);
-        writer.getConfig().writeConfig.setWriteDefaultValues(true);
-        writer.getConfig().setClassTag("server-manifest", ServerManifest.class);
+        writer.getConfig().setClassTag(YAML_TAG, ServerManifest.class);
 
         try {
             writer.write(this);
@@ -83,7 +97,7 @@ public class ServerManifest implements Serializable {
      */
     public static ServerManifest readYaml(Reader r) {
         YamlReader reader = new YamlReader(r);
-        reader.getConfig().setClassTag("server-manifest", ServerManifest.class);
+        reader.getConfig().setClassTag(YAML_TAG, ServerManifest.class);
         
         ServerManifest manifest;
         try{

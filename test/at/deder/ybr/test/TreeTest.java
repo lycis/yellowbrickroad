@@ -50,4 +50,6 @@ public class TreeTest {
         Assert.assertTrue("root is not parent of child", root.hasChild(child));
         Assert.assertTrue("child is incorrect data", "child".equals(child.getData()));
     }
+    
+    // TODO more tests!
 }
