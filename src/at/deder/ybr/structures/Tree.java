@@ -55,10 +55,11 @@ public class Tree<E> {
      * child of this node.
      * @param data 
      */
-    public void addChild(E data) {
+    public Tree<E> addChild(E data) {
         Tree<E> child = new Tree<>(data);
         child.setParent(this);
         addChild(child);
+        return child;
     }
     
     /**
@@ -94,9 +95,15 @@ public class Tree<E> {
      * @param parent 
      */
     public void setParent(Tree<E> parent) {
-        this.parent.removeChild(this);
+        if(this.parent != null) {
+            this.parent.removeChild(this);
+        }
+        
         this.parent = parent;
-        parent.addChild(this);
+        
+        if(parent != null) {
+            parent.addChild(this);
+        }
     }
     
     /**
@@ -164,9 +171,11 @@ public class Tree<E> {
     @Override
     public int hashCode() {
         int hash = 5;
-        hash = 41 * hash + Objects.hashCode(this.parent);
+        if(parent != null) {
+            hash = 41 * hash + Objects.hashCode(this.parent.getData());
+        }
         hash = 41 * hash + Objects.hashCode(this.children);
-        hash = 41 * hash + Objects.hashCode(this.data);
+        hash = 41 * hash + Objects.hashCode(getData());
         return hash;
     }
 
