@@ -44,4 +44,19 @@ public interface IFileSystemAccessor {
      * @return the current workdir as file
      */
     public File getWorkingDirectory();
+    
+    /**
+     * Returns a file from the given directory.
+     * 
+     * @param dir directory that should contain the file
+     * @param name name of the file you want to get (POSIX path anotation)
+     * @return <code>null</code> if the file does not exist
+     */
+    public File getFileInDir(File dir, String name);
+    
+    /**
+     * Returns the root of the file system.
+     * @return 
+     */
+    public File getRoot();
 }

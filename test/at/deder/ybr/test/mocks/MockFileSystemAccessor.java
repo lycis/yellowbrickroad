@@ -123,4 +123,25 @@ public class MockFileSystemAccessor implements IFileSystemAccessor {
         return rootFolder; // simulate that the current root is unser workdir
     }
 
+    @Override
+    public File getFileInDir(File dir, String name) {
+        if(!dir.isDirectory()) {
+            return null;
+        }
+        
+        File[] list = dir.listFiles();
+        for(File f: list) {
+            if(f.getName().equals(name)) {
+                return f;
+            }
+        }
+        
+        return null;
+    }
+
+    @Override
+    public File getRoot() {
+        return rootFolder;
+    }
+
 }

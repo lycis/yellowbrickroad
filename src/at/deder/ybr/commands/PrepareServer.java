@@ -130,7 +130,9 @@ public class PrepareServer implements ICliCommand {
             error = true;
         } finally {
             try {
-                writer.close();
+                if (writer != null) {
+                    writer.close();
+                }
             } catch (IOException ex) {
             };
         }
@@ -148,7 +150,7 @@ public class PrepareServer implements ICliCommand {
     }
 
     private File createEmptyDirectory(File parent, String name) {
-        File dir = null;
+        File dir;
         try {
             dir = fileSystem.createFile(parent, name, true);
         } catch (IOException e) {

@@ -1,6 +1,5 @@
 package at.deder.ybr.beans;
 
-import at.deder.ybr.structures.Tree;
 import com.esotericsoftware.yamlbeans.YamlException;
 import com.esotericsoftware.yamlbeans.YamlReader;
 import com.esotericsoftware.yamlbeans.YamlWriter;
@@ -8,10 +7,10 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.Serializable;
 import java.io.Writer;
+import java.util.Map;
 import java.util.Objects;
 
 // TODO implement repository structure
-
 /**
  * This bean represents the YBR server manifest file.
  *
@@ -22,9 +21,10 @@ public class ServerManifest implements Serializable {
     private String type = "";
     private String name = "";
     private String admin = "";
-    
+
     private RepositoryEntry repository = null;
-    
+    private Map foldedRepository = null;
+
     private static final String YAML_TAG = "server-manifest";
 
     public String getType() {
@@ -43,33 +43,43 @@ public class ServerManifest implements Serializable {
         return repository;
     }
 
+    public Map getRepoStruct() {
+        return foldedRepository;
+    }
+
     public void setType(String type) {
-        if(type == null)
+        if (type == null) {
             type = "";
+        }
         this.type = type;
     }
 
     public void setName(String name) {
-        if(name == null)
+        if (name == null) {
             name = "";
+        }
         this.name = name;
     }
 
     public void setAdmin(String admin) {
-        if(admin == null)
+        if (admin == null) {
             admin = "";
+        }
         this.admin = admin;
     }
 
     public void setRepository(RepositoryEntry repository) {
         this.repository = repository;
     }
-    
-    
+
+    public void setRepoStruct(Map m) {
+        return;
+    }
 
     /**
      * Write a YAML file to the given writer. Used for serialisation of the
      * manifest.
+     *
      * @param w target writer
      * @return <code>true</code> if no error occurred
      */
@@ -77,6 +87,14 @@ public class ServerManifest implements Serializable {
         YamlWriter writer = new YamlWriter(w);
         writer.getConfig().writeConfig.setAlwaysWriteClassname(false);
         writer.getConfig().setClassTag(YAML_TAG, ServerManifest.class);
+        writer.getConfig().writeConfig.setWriteDefaultValues(false);
+
+        RepositoryEntry repo = null;
+        if (repository != null) {
+            repo = repository;
+            repository = null;
+            foldedRepository = repo.fold();
+        }
 
         try {
             writer.write(this);
@@ -84,57 +102,62 @@ public class ServerManifest implements Serializable {
         } catch (YamlException ex) {
             return false;
         }
-        
+
+        if (repo != null) {
+            repository = repo;
+            foldedRepository = null;
+        }
+
         return true;
     }
-    
+
     /**
      * Deserialises a server manifest from a given reader that reads a YAML
      * file.
-     * 
+     *
      * @param r reader that points to the YAML file
      * @return instance with properties set according to the file
      */
     public static ServerManifest readYaml(Reader r) {
         YamlReader reader = new YamlReader(r);
         reader.getConfig().setClassTag(YAML_TAG, ServerManifest.class);
-        
+
         ServerManifest manifest;
-        try{
-           manifest = reader.read(ServerManifest.class);
+        try {
+            manifest = reader.read(ServerManifest.class);
         } catch (YamlException ex) {
             return null;
         }
-        
-        try{
+
+        try {
             reader.close();
         } catch (IOException ex) {
             // TODO error handling
         }
-        
+
         return manifest;
     }
-    
+
     /**
      * sets all values to their expected defaults
      */
     public void initDefaults() {
         type = "simple";
         name = "yellow-brick-road";
-        admin  = "admin@example.com";
+        admin = "admin@example.com";
     }
-    
+
     @Override
     public boolean equals(Object o) {
-        if(o instanceof ServerManifest) {
+        if (o instanceof ServerManifest) {
             ServerManifest other = (ServerManifest) o;
-            if(this.admin.equals(other.admin) &&
-               this.name.equals(other.name) &&
-               this.type.equals(other.type)) {
+            if (this.admin.equals(other.admin)
+                    && this.name.equals(other.name)
+                    && this.type.equals(other.type)) {
                 return true;
             }
         }
-        
+
         return false;
     }
 

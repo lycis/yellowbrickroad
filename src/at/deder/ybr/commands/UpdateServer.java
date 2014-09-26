@@ -5,8 +5,12 @@ import java.util.List;
 
 import at.deder.ybr.access.IFileSystemAccessor;
 import at.deder.ybr.beans.RepositoryEntry;
-import at.deder.ybr.structures.Tree;
+import at.deder.ybr.beans.ServerManifest;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 
 // TODO implement
 public class UpdateServer implements ICliCommand {
@@ -36,9 +40,9 @@ public class UpdateServer implements ICliCommand {
     @Override
     public void execute() {
         System.out.println("Updating server manifest...");
-        
+
         // check if target folder exists
-        File target = null;
+        File target;
         if (".".equals(targetFolder)) {
             target = fileSystem.getWorkingDirectory();
         } else {
@@ -50,8 +54,32 @@ public class UpdateServer implements ICliCommand {
             return;
         }
         
-        // TODO recursively walk through the file system and add to the repo tree        
-       RepositoryEntry rootNode = parseRepositoryEntry(null, target);
+        // check if server structure is available in the target folder
+        if(!isServerStructurePrepared(target)) {
+            System.out.println("error: target folder does not contain a yellow brick road server");
+            System.out.println("Run 'prepare-server' to initialise a server structure.");
+            return;
+        }
+
+        // recursively walk through the file system and add to the repo tree
+        RepositoryEntry rootNode = parseRepositoryEntry(null, fileSystem.getFileInDir(target, "repository"));        
+        
+        // read existing manifest
+        ServerManifest manifest  = null;
+        try {
+            manifest = ServerManifest.readYaml(new FileReader(fileSystem.getFileInDir(target, "manifest.yml")));
+        } catch (FileNotFoundException ex) {
+            System.err.println("error: could not read existing manifest ("+ex.getMessage()+")");
+            return;
+        }
+        
+        manifest.setRepository(rootNode);
+        try {
+            manifest.writeYaml(new FileWriter(fileSystem.getFileInDir(target, "manifest.yml")));
+        } catch (IOException ex) {
+            System.err.println("error: " + ex.getMessage());
+            return;
+        }
         
         System.out.println("done.");
     }
@@ -60,37 +88,61 @@ public class UpdateServer implements ICliCommand {
     public void setFileSystemAccessor(IFileSystemAccessor f) {
         fileSystem = f;
     }
-    
+
     /**
      * Recursively walks through the file tree and creates a node in the
      * repository tree for each directory.
-     * 
+     *
      * @param parent parent tree node (set to <code>null</code> for root)
      * @param target directory to walk through
-     * @return 
+     * @return
      */
     private RepositoryEntry parseRepositoryEntry(RepositoryEntry parent, File target) {
-        if(!target.exists())
+        if (!target.exists()) {
             return null;
-        
-        if(!target.isDirectory())
+        }
+
+        if (!target.isDirectory()) {
             return null;
-        
+        }
+
         RepositoryEntry entry = new RepositoryEntry();
         entry.setName(target.getName());
-       
-        if(parent != null) {
+
+        if (parent != null) {
             parent.addChild(entry);
         }
-        
+
         File[] files = target.listFiles();
-        for(File f: files) {
-            if(f.isDirectory()) {
+        for (File f : files) {
+            if (f.isDirectory()) {
                 entry.addChild(parseRepositoryEntry(entry, f));
             }
         }
-        
+
         return entry;
     }
 
+    /**
+     * Checks if the target folder contains a valid server file structure
+     * @param target
+     * @return 
+     */
+    private boolean isServerStructurePrepared(File target) {
+        File[] fileList = target.listFiles();
+        boolean repositoryDir = false;
+        boolean manifest      = false;
+        
+        for(File f: fileList) {
+            if(f.isDirectory() && "repository".equals(f.getName())) {
+                repositoryDir = true;
+            }
+            
+            if(!f.isDirectory() && "manifest.yml".equals(f.getName())) {
+                manifest = true;
+            }
+        }
+        
+        return (repositoryDir && manifest);
+    }
 }
