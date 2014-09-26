@@ -30,16 +30,24 @@ public class RepositoryEntry extends Tree {
         this.description = description;
     }
 
+    /**
+     * Fold this entry and all subentries into a Map.
+     * @return 
+     */
     public Map fold() {
         Map m = new HashMap();
 
+        // write node information
+        Map<String, String> nodeInformation = new HashMap<>();
         if (name != null && !name.isEmpty()) {
-            m.put("name", name);
+            nodeInformation.put("name", name);
         }
 
         if (description != null && !description.isEmpty()) {
-            m.put("description", description);
+            nodeInformation.put("description", description);
         }
+        
+        m.put("nodeInformation", nodeInformation);
 
         getChildren().stream().map((Tree t) -> (RepositoryEntry) t)
                 .forEach((child) -> {
@@ -47,5 +55,33 @@ public class RepositoryEntry extends Tree {
                 });
 
         return m;
+    }
+    
+    /**
+     * Create a tree of entries baed on a Map.
+     * @param m
+     * @return 
+     */
+    public static RepositoryEntry unfold(Map m){
+        RepositoryEntry entry = new RepositoryEntry();
+        
+        m.forEach((k, v) -> {
+            if(!k.equals("nodeInformation")) {
+                entry.addChild(entry);
+            }
+        });
+        
+        // process nodeInformation
+        Map<String, String> nodeInformation = (Map<String,String>) m.get("nodeInformation");
+        
+        if(nodeInformation.containsKey("name")) {
+            entry.setName(nodeInformation.get("name"));
+        }
+        
+        if(nodeInformation.containsKey("description")) {
+            entry.setName(nodeInformation.get("description"));
+        }
+        
+        return entry;
     }
 }

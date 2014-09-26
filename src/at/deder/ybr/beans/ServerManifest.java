@@ -134,6 +134,13 @@ public class ServerManifest implements Serializable {
         } catch (IOException ex) {
             // TODO error handling
         }
+        
+        // TODO unfold - check if it works -> seems not working because foldedRepository is always null
+        if(manifest.foldedRepository != null) {
+            RepositoryEntry root = RepositoryEntry.unfold(manifest.foldedRepository);
+            manifest.foldedRepository = null;
+            manifest.setRepository(root);
+        }
 
         return manifest;
     }
