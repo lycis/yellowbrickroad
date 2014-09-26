@@ -1,10 +1,12 @@
 package at.deder.ybr.beans;
 
+import at.deder.ybr.structures.Tree;
+
 /**
  * This bean represents one entry in the repository.
  * @author lycis
  */
-public class RepositoryEntry {
+public class RepositoryEntry extends Tree {
     private String name        = "";
     private String description = "";
 

@@ -23,7 +23,7 @@ public class ServerManifest implements Serializable {
     private String name = "";
     private String admin = "";
     
-    private Tree<RepositoryEntry> repository = null;
+    private RepositoryEntry repository = null;
     
     private static final String YAML_TAG = "server-manifest";
 
@@ -39,7 +39,7 @@ public class ServerManifest implements Serializable {
         return admin;
     }
 
-    public Tree<RepositoryEntry> getRepository() {
+    public RepositoryEntry getRepository() {
         return repository;
     }
 
@@ -61,7 +61,7 @@ public class ServerManifest implements Serializable {
         this.admin = admin;
     }
 
-    public void setRepository(Tree<RepositoryEntry> repository) {
+    public void setRepository(RepositoryEntry repository) {
         this.repository = repository;
     }
     

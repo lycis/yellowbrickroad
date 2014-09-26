@@ -57,12 +57,10 @@ public class UpdateServerTest {
         rootEntry.setName("repository");
         RepositoryEntry comEntry = new RepositoryEntry();
         comEntry.setName("com");
+        rootEntry.addChild(comEntry);
         RepositoryEntry orgEntry = new RepositoryEntry();
         comEntry.setName("org");
-        
-        Tree<RepositoryEntry> treeRoot = new Tree<>(rootEntry);
-        treeRoot.addChild(comEntry);
-        treeRoot.addChild(orgEntry);
+        rootEntry.addChild(orgEntry);
         
         // check if manifest is correct
         File manifest = mockFSA.getFile("/manifest.yml");
@@ -74,7 +72,7 @@ public class UpdateServerTest {
         }
         
         Assert.assertEquals("default repository is incorrectly created", 
-                treeRoot, sm.getRepository());
+                rootEntry, sm.getRepository());
     }
     
     @After
