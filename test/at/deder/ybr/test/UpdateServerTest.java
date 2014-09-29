@@ -59,12 +59,12 @@ public class UpdateServerTest {
         comEntry.setName("com");
         rootEntry.addChild(comEntry);
         RepositoryEntry orgEntry = new RepositoryEntry();
-        comEntry.setName("org");
+        orgEntry.setName("org");
         rootEntry.addChild(orgEntry);
         
         // check if manifest is correct
         File manifest = mockFSA.getFile("/manifest.yml");
-         ServerManifest sm = null;
+        ServerManifest sm = null;
         try {
             sm = ServerManifest.readYaml(new FileReader(manifest));
         } catch (FileNotFoundException ex) {

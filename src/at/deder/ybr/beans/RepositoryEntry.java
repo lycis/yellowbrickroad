@@ -3,6 +3,7 @@ package at.deder.ybr.beans;
 import at.deder.ybr.structures.Tree;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * This bean represents one entry in the repository.
@@ -66,8 +67,8 @@ public class RepositoryEntry extends Tree {
         RepositoryEntry entry = new RepositoryEntry();
         
         m.forEach((k, v) -> {
-            if(!k.equals("nodeInformation")) {
-                entry.addChild(entry);
+            if(!k.equals("nodeInformation") && v instanceof Map) {
+                entry.addChild(RepositoryEntry.unfold((Map) v));
             }
         });
         
@@ -84,4 +85,36 @@ public class RepositoryEntry extends Tree {
         
         return entry;
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 41 * hash + Objects.hashCode(this.children);
+        hash = 7 * hash + Objects.hashCode(this.name);
+        hash = 7 * hash + Objects.hashCode(this.description);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final RepositoryEntry other = (RepositoryEntry) obj;
+        if (!Objects.equals(this.name, other.name)) {
+            return false;
+        }
+        if (!Objects.equals(this.description, other.description)) {
+            return false;
+        }
+        if (!Objects.equals(this.children, other.children)) {
+            return false;
+        }
+        return true;
+    }
+    
+    
 }

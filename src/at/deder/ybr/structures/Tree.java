@@ -41,8 +41,21 @@ public abstract class Tree {
      * @param child
      */
     public void addChild(Tree child) {
+        addChild(child, true);
+    }
+    
+    /**
+     * execute adding of a child to the current node
+     * @param child new child
+     * @param callback if <code>false</code> do not call back to setParent 
+     *                   to prevent circular processing
+     */
+    private void addChild(Tree child, boolean callback) {
         if (child != null) {
             children.add(child);
+            if(callback) {
+                child.setParent(this, false);
+            }
         }
     }
 
@@ -52,12 +65,18 @@ public abstract class Tree {
      * @param child
      */
     public void removeChild(Tree child) {
+        removeChild(child, true);
+    }
+    
+    private void removeChild(Tree child, boolean callback) {
         if (child == null) {
             return;
         }
         
         children.remove(child);
-        child.setParent(null);
+        if(callback) {
+            child.setParent(null, false);
+        }
     }
 
     /**
@@ -83,19 +102,29 @@ public abstract class Tree {
     }
 
     /**
-     * Change parrent of current tree.
+     * Change parent of current tree.
      *
      * @param parent
      */
     public void setParent(Tree parent) {
-        if (this.parent != null) {
+        setParent(parent, true);
+    }
+
+    /**
+     * executes parent change
+     * @param parent new parent
+     * @param callback if <code>false</code> do not call back to addChildren 
+     *                   to prevent circular processing
+     */
+    private void setParent(Tree parent, boolean callback) {
+        if (this.parent != null && callback) {
             this.parent.removeChild(this);
         }
 
         this.parent = parent;
 
-        if (parent != null) {
-            parent.addChild(this);
+        if (parent != null && callback) {
+            parent.addChild(this, false);
         }
     }
 
@@ -134,7 +163,7 @@ public abstract class Tree {
             return false;
         }
 
-        return parent.equals(parent);
+        return parent.equals(this.parent);
     }
 
     /**
@@ -163,9 +192,9 @@ public abstract class Tree {
             return false;
         }
         final Tree other = (Tree) obj;
-        if (!Objects.equals(this.parent, other.parent)) {
+       /* if (!Objects.equals(this.parent, other.parent)) {
             return false;
-        }
+        }*/
         if (!Objects.equals(this.children, other.children)) {
             return false;
         }

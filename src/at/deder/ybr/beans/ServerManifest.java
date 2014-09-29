@@ -73,7 +73,8 @@ public class ServerManifest implements Serializable {
     }
 
     public void setRepoStruct(Map m) {
-        return;
+        this.repository = RepositoryEntry.unfold(m);
+        this.foldedRepository = null;
     }
 
     /**
@@ -132,7 +133,7 @@ public class ServerManifest implements Serializable {
         try {
             reader.close();
         } catch (IOException ex) {
-            // TODO error handling
+            System.err.println("io ex: "+ex.getMessage());
         }
         
         // TODO unfold - check if it works -> seems not working because foldedRepository is always null
