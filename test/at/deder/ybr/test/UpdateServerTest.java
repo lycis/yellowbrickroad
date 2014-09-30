@@ -48,7 +48,6 @@ public class UpdateServerTest {
 
     @Test
     public void testDefaultManifest() {
-        // TODO implement
         // create folder structure to test
         executeCommand(new PrepareServer(), ".");
         
@@ -83,7 +82,6 @@ public class UpdateServerTest {
         // create folder structure to test
         executeCommand(new PrepareServer(), ".");
         
-        // TODO place descriptions in folders
         File comDir   = mockFSA.getFile("/repository/com");
         File comDescr = mockFSA.createFile(comDir, "description", false);
         try {

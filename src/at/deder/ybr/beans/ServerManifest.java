@@ -10,7 +10,6 @@ import java.io.Writer;
 import java.util.Map;
 import java.util.Objects;
 
-// TODO implement repository structure
 /**
  * This bean represents the YBR server manifest file.
  *
@@ -136,7 +135,6 @@ public class ServerManifest implements Serializable {
             System.err.println("io ex: "+ex.getMessage());
         }
         
-        // TODO unfold - check if it works -> seems not working because foldedRepository is always null
         if(manifest.foldedRepository != null) {
             RepositoryEntry root = RepositoryEntry.unfold(manifest.foldedRepository);
             manifest.foldedRepository = null;
