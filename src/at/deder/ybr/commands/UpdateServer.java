@@ -6,11 +6,14 @@ import java.util.List;
 import at.deder.ybr.access.IFileSystemAccessor;
 import at.deder.ybr.beans.RepositoryEntry;
 import at.deder.ybr.beans.ServerManifest;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 // TODO implement
 public class UpdateServer implements ICliCommand {
@@ -53,26 +56,26 @@ public class UpdateServer implements ICliCommand {
             System.out.println("error: target folder does not exist");
             return;
         }
-        
+
         // check if server structure is available in the target folder
-        if(!isServerStructurePrepared(target)) {
+        if (!isServerStructurePrepared(target)) {
             System.out.println("error: target folder does not contain a yellow brick road server");
             System.out.println("Run 'prepare-server' to initialise a server structure.");
             return;
         }
 
         // recursively walk through the file system and add to the repo tree
-        RepositoryEntry rootNode = parseRepositoryEntry(null, fileSystem.getFileInDir(target, "repository"));        
-        
+        RepositoryEntry rootNode = parseRepositoryEntry(null, fileSystem.getFileInDir(target, "repository"));
+
         // read existing manifest
-        ServerManifest manifest  = null;
+        ServerManifest manifest = null;
         try {
             manifest = ServerManifest.readYaml(new FileReader(fileSystem.getFileInDir(target, "manifest.yml")));
         } catch (FileNotFoundException ex) {
-            System.err.println("error: could not read existing manifest ("+ex.getMessage()+")");
+            System.err.println("error: could not read existing manifest (" + ex.getMessage() + ")");
             return;
         }
-        
+
         manifest.setRepository(rootNode);
         try {
             manifest.writeYaml(new FileWriter(fileSystem.getFileInDir(target, "manifest.yml")));
@@ -80,7 +83,7 @@ public class UpdateServer implements ICliCommand {
             System.err.println("error: " + ex.getMessage());
             return;
         }
-        
+
         System.out.println("done.");
     }
 
@@ -109,6 +112,12 @@ public class UpdateServer implements ICliCommand {
         RepositoryEntry entry = new RepositoryEntry();
         entry.setName(target.getName());
 
+        // read node description
+        File descriptionFile = fileSystem.getFileInDir(target, "description");
+        if (descriptionFile != null) {
+            setNodeDescription(entry, descriptionFile);
+        }
+
         if (parent != null) {
             parent.addChild(entry);
         }
@@ -125,24 +134,55 @@ public class UpdateServer implements ICliCommand {
 
     /**
      * Checks if the target folder contains a valid server file structure
+     *
      * @param target
-     * @return 
+     * @return
      */
     private boolean isServerStructurePrepared(File target) {
         File[] fileList = target.listFiles();
         boolean repositoryDir = false;
-        boolean manifest      = false;
-        
-        for(File f: fileList) {
-            if(f.isDirectory() && "repository".equals(f.getName())) {
+        boolean manifest = false;
+
+        for (File f : fileList) {
+            if (f.isDirectory() && "repository".equals(f.getName())) {
                 repositoryDir = true;
             }
-            
-            if(!f.isDirectory() && "manifest.yml".equals(f.getName())) {
+
+            if (!f.isDirectory() && "manifest.yml".equals(f.getName())) {
                 manifest = true;
             }
         }
-        
+
         return (repositoryDir && manifest);
+    }
+
+    /**
+     * Fill the description of a repository node with the content of the given
+     * file.
+     *
+     * @param entry
+     * @param descriptionFile
+     */
+    private void setNodeDescription(RepositoryEntry entry, File descriptionFile) {
+        BufferedReader reader = null;
+        String description = "";
+        
+        try {
+            reader = new BufferedReader(new FileReader(descriptionFile));
+            String line;
+            while((line=reader.readLine()) != null) {
+                description += line;
+            }
+        } catch (FileNotFoundException ex) {
+            // TODO error handling
+            entry.setDescription("");
+            return;
+        } catch (IOException ex) {
+            // TODO error handling
+            entry.setDescription("");
+            return;
+        }
+    
+        entry.setDescription(description);
     }
 }
