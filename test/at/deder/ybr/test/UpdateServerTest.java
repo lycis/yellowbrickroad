@@ -10,15 +10,18 @@ import at.deder.ybr.beans.ServerManifest;
 import at.deder.ybr.commands.ICliCommand;
 import at.deder.ybr.commands.PrepareServer;
 import at.deder.ybr.commands.UpdateServer;
-import at.deder.ybr.structures.Tree;
 import at.deder.ybr.test.mocks.MockFileSystemAccessor;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
+import static org.junit.Assert.fail;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -72,6 +75,61 @@ public class UpdateServerTest {
         }
         
         Assert.assertEquals("default repository is incorrectly created", 
+                rootEntry, sm.getRepository());
+    }
+    
+     @Test
+    public void testDescriptionManifest() {
+        // create folder structure to test
+        executeCommand(new PrepareServer(), ".");
+        
+        // TODO place descriptions in folders
+        File comDir   = mockFSA.getFile("/repository/com");
+        File comDescr = mockFSA.createFile(comDir, "description", false);
+        try {
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(comDescr))) {
+                writer.write("commercial libraries");
+            }
+        } catch (IOException ex) {
+            fail("exception: "+ex.getMessage());
+        }
+        
+        File orgDir   = mockFSA.getFile("/repository/org");
+        File orgDescr = mockFSA.createFile(orgDir, "description", false);
+        try {
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter(orgDescr))) {
+                writer.write("libraries by FOSS organisations");
+            }
+        } catch (IOException ex) {
+            fail("exception: "+ex.getMessage());
+        }
+        
+        
+        // execute command
+        executeCommand(new UpdateServer(), ".");
+        
+        // build expected repository structure
+        RepositoryEntry rootEntry = new RepositoryEntry();
+        rootEntry.setName("repository");
+        RepositoryEntry comEntry = new RepositoryEntry();
+        comEntry.setName("com");
+        comEntry.setDescription("commercial libraries");
+        rootEntry.addChild(comEntry);
+        RepositoryEntry orgEntry = new RepositoryEntry();
+        orgEntry.setName("org");
+        orgEntry.setDescription("libraries by FOSS organisations");
+        rootEntry.addChild(orgEntry);
+        
+        // check if manifest is correct
+        File manifest = mockFSA.getFile("/manifest.yml");
+        ServerManifest sm = null;
+        try {
+            sm = ServerManifest.readYaml(new FileReader(manifest));
+        } catch (FileNotFoundException ex) {
+            Assert.fail("manifest file not found");
+        }
+        
+        Assert.assertEquals("descriptions in repository are not set correctly", 
                 rootEntry, sm.getRepository());
     }
     

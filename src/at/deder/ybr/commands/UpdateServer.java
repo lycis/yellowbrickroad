@@ -181,6 +181,14 @@ public class UpdateServer implements ICliCommand {
             // TODO error handling
             entry.setDescription("");
             return;
+        } finally {
+            if(reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException ex) {
+                    // do nothing
+                }
+            }
         }
     
         entry.setDescription(description);

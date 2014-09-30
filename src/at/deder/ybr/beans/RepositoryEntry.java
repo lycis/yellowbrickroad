@@ -80,7 +80,7 @@ public class RepositoryEntry extends Tree {
         }
         
         if(nodeInformation.containsKey("description")) {
-            entry.setName(nodeInformation.get("description"));
+            entry.setDescription(nodeInformation.get("description"));
         }
         
         return entry;
