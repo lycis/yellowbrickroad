@@ -30,6 +30,23 @@ public class RepositoryEntry extends Tree {
     public void setDescription(String description) {
         this.description = description;
     }
+    
+    /**
+     * Returns the path from the root note to this node.
+     * @return 
+     */
+    public String getAbsolutePath() {
+        return buildAbsolutePath("");
+        
+    }
+    
+    private String buildAbsolutePath(String path) {
+        if(parent != null) {
+            return ((RepositoryEntry) parent).buildAbsolutePath("/"+getName()+path);
+        } else {
+            return "/"+getName()+path;
+        }
+    }
 
     /**
      * Fold this entry and all subentries into a Map.

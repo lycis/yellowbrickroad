@@ -62,9 +62,11 @@ public class UpdateServer implements ICliCommand {
         }
 
         // recursively walk through the file system and add to the repo tree
+        printDetail("Scanning file system...");
         RepositoryEntry rootNode = parseRepositoryEntry(null, fileSystem.getFileInDir(target, "repository"));
 
         // read existing manifest
+        printDetail("Updating manifest...");
         ServerManifest manifest = null;
         try {
             manifest = ServerManifest.readYaml(new FileReader(fileSystem.getFileInDir(target, "manifest.yml")));
@@ -117,6 +119,7 @@ public class UpdateServer implements ICliCommand {
 
         if (parent != null) {
             parent.addChild(entry);
+            printDetail("Registered node '"+entry.getAbsolutePath()+"'");
         }
 
         File[] files = target.listFiles();
@@ -189,5 +192,15 @@ public class UpdateServer implements ICliCommand {
         }
     
         entry.setDescription(description);
+    }
+    
+    /**
+     * print a message when verbose mode is active
+     * @param message 
+     */
+    private void printDetail(String message) {
+        if(verbose) {
+            System.out.println(message);
+        }
     }
 }
