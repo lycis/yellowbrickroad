@@ -1,0 +1,29 @@
+package at.deder.ybr.access;
+
+/**
+ * This output accessor forwards output to the default console channels.
+ * @author lycis
+ */
+public class ConsoleOutputAccessor implements IOutputAccessor {
+
+    @Override
+    public void print(String s) {
+        System.out.print(s);
+    }
+
+    @Override
+    public void println(String s) {
+        System.out.println(s);
+    }
+
+    @Override
+    public void printErr(String s) {
+        System.err.print(s);
+    }
+
+    @Override
+    public void printErrLn(String s) {
+        System.err.println(s);
+    }
+    
+}
