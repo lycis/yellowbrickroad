@@ -42,7 +42,7 @@ public class UpdateServer implements ICliCommand {
 
     @Override
     public void execute() {
-        System.out.println("Updating server manifest...");
+        output.println("Updating server manifest...");
 
         // check if target folder exists
         File target;
@@ -53,14 +53,14 @@ public class UpdateServer implements ICliCommand {
         }
 
         if (!target.exists()) {
-            System.out.println("error: target folder does not exist");
+            output.println("error: target folder does not exist");
             return;
         }
 
         // check if server structure is available in the target folder
         if (!isServerStructurePrepared(target)) {
-            System.out.println("error: target folder does not contain a yellow brick road server");
-            System.out.println("Run 'prepare-server' to initialise a server structure.");
+            output.println("error: target folder does not contain a yellow brick road server");
+            output.println("Run 'prepare-server' to initialise a server structure.");
             return;
         }
 
@@ -74,7 +74,7 @@ public class UpdateServer implements ICliCommand {
         try {
             manifest = ServerManifest.readYaml(new FileReader(fileSystem.getFileInDir(target, "manifest.yml")));
         } catch (FileNotFoundException ex) {
-            System.err.println("error: could not read existing manifest (" + ex.getMessage() + ")");
+            output.printErrLn("error: could not read existing manifest (" + ex.getMessage() + ")");
             return;
         }
 
@@ -82,11 +82,11 @@ public class UpdateServer implements ICliCommand {
         try {
             manifest.writeYaml(new FileWriter(fileSystem.getFileInDir(target, "manifest.yml")));
         } catch (IOException ex) {
-            System.err.println("error: " + ex.getMessage());
+            output.printErrLn("error: " + ex.getMessage());
             return;
         }
 
-        System.out.println("done.");
+        output.println("done.");
     }
 
     @Override
@@ -203,7 +203,7 @@ public class UpdateServer implements ICliCommand {
      */
     private void printDetail(String message) {
         if(verbose) {
-            System.out.println(message);
+            output.println(message);
         }
     }
 

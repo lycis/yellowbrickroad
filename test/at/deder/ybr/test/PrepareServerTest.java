@@ -1,5 +1,6 @@
 package at.deder.ybr.test;
 
+import at.deder.ybr.access.ConsoleOutputAccessor;
 import at.deder.ybr.beans.ServerManifest;
 import java.util.ArrayList;
 
@@ -19,6 +20,7 @@ import org.junit.AfterClass;
 
 public class PrepareServerTest {
 
+    private static ConsoleOutputAccessor  mockOut = null;
     private static MockFileSystemAccessor mockFSA = null;
     private PrepareServer cmd = null;
 
@@ -29,6 +31,7 @@ public class PrepareServerTest {
     public void initTest() {
         // mock for file system access
         mockFSA = new MockFileSystemAccessor();
+        mockOut = new ConsoleOutputAccessor();
         cmd = new PrepareServer();
 
         cmd.setFileSystemAccessor(mockFSA);
