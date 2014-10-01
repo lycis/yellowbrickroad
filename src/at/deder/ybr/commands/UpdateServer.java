@@ -4,6 +4,7 @@ import at.deder.ybr.Constants;
 import java.util.List;
 
 import at.deder.ybr.access.IFileSystemAccessor;
+import at.deder.ybr.access.IOutputAccessor;
 import at.deder.ybr.beans.RepositoryEntry;
 import at.deder.ybr.beans.ServerManifest;
 import java.io.BufferedReader;
@@ -17,7 +18,9 @@ public class UpdateServer implements ICliCommand {
 
     private boolean verbose = false;
     private String targetFolder = "";
+    
     private IFileSystemAccessor fileSystem = null;
+    private IOutputAccessor     output     = null;
 
     @Override
     public void setOption(String name, String value) {
@@ -202,5 +205,10 @@ public class UpdateServer implements ICliCommand {
         if(verbose) {
             System.out.println(message);
         }
+    }
+
+    @Override
+    public void setOutputAccessor(IOutputAccessor o) {
+        output = o;
     }
 }

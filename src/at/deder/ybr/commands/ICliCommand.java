@@ -3,6 +3,7 @@ package at.deder.ybr.commands;
 import java.util.List;
 
 import at.deder.ybr.access.IFileSystemAccessor;
+import at.deder.ybr.access.IOutputAccessor;
 
 /**
  * This is the interface for all command line actions.
@@ -40,4 +41,12 @@ public interface ICliCommand {
      * @param f accessor implementation
      */
     public void setFileSystemAccessor(IFileSystemAccessor f);
+    
+    /**
+     * Configure the output accessor that has to be used. It should be used for
+     * displaying any kind of information to the user (e.g. error messages,
+     * hints, ...)
+     * @param o accessor implementation
+     */
+    public void setOutputAccessor(IOutputAccessor o);
 }
