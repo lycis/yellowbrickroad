@@ -106,7 +106,7 @@
             </classpath>
             <formatter type="xml"/>
             <formatter type="plain"/>
-            <batchtest fork="no" todir="${test.report}">
+            <batchtest fork="true" todir="${test.report}">
                 <fileset dir="${test}">
                     <include name="**/*Test*.java"/>
                 </fileset>
