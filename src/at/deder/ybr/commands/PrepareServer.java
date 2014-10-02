@@ -43,7 +43,7 @@ public class PrepareServer implements ICliCommand {
     @Override
     public void execute() {
         boolean error = false;
-        System.out.println("Preparing server structure...");
+        output.println("Preparing server structure...");
 
         // check if target folder exists
         File target = null;
@@ -54,13 +54,13 @@ public class PrepareServer implements ICliCommand {
         }
 
         if (!target.exists()) {
-            System.out.println("error: target folder does not exist");
+            output.println("error: target folder does not exist");
             return;
         }
 
         // create folder structure
         if (verbose) {
-            System.out.print("Creating folder structure ... ");
+            output.print("Creating folder structure ... ");
         }
         File repository = createEmptyDirectory(target, "repository");
         if (repository == null) {
@@ -76,19 +76,19 @@ public class PrepareServer implements ICliCommand {
         }
 
         if (verbose) {
-            System.out.println("done");
+            output.println("done");
         }
 
         // create manifest
         if (verbose) {
-            System.out.print("Writing manifest ... ");
+            output.print("Writing manifest ... ");
         }
 
         File manifest = null;
         try {
             manifest = fileSystem.createFile(target, "manifest.yml", false);
         } catch (IOException e) {
-            System.err.println("error: could not create manifest file (" + e.getMessage() + ")");
+            output.printErrLn("error: could not create manifest file (" + e.getMessage() + ")");
             error = true;
         }
 
@@ -101,7 +101,7 @@ public class PrepareServer implements ICliCommand {
         try {
             sm.writeYaml(new FileWriter(manifest));
         } catch (IOException ex) {
-            System.err.println("error: " + ex.getMessage());
+            output.printErrLn("error: " + ex.getMessage());
             error = true;
         }
 
@@ -109,19 +109,19 @@ public class PrepareServer implements ICliCommand {
             return; // stop on error
         }
         if (verbose) {
-            System.out.println("done");
+            output.println("done");
         }
 
         // create index.html
         if (verbose) {
-            System.out.print("Writing index.html ... ");
+            output.print("Writing index.html ... ");
         }
 
         File index = null;
         try {
             index = fileSystem.createFile(target, "index.html", false);
         } catch (IOException e) {
-            System.err.println("error: could not create index.html (" + e.getMessage() + ")");
+            output.printErrLn("error: could not create index.html (" + e.getMessage() + ")");
         }
 
         BufferedWriter writer = null;
@@ -129,7 +129,7 @@ public class PrepareServer implements ICliCommand {
             writer = new BufferedWriter(new FileWriter(index));
             writer.write(INDEX_DEFAULT_TEXT);
         } catch (IOException ex) {
-            System.err.println("error: " + ex.getMessage());
+            output.printErrLn("error: " + ex.getMessage());
             error = true;
         } finally {
             try {
@@ -144,12 +144,12 @@ public class PrepareServer implements ICliCommand {
             return; // stop on error
         }
         if (verbose) {
-            System.out.println("done");
+            output.println("done");
         }
 
-        System.out.println("done.");
-        System.out.println("");
-        System.out.println("Please run 'update-server' to rebuild the server manifest.");
+        output.println("done.");
+        output.println("");
+        output.println("Please run 'update-server' to rebuild the server manifest.");
     }
 
     private File createEmptyDirectory(File parent, String name) {
@@ -157,7 +157,7 @@ public class PrepareServer implements ICliCommand {
         try {
             dir = fileSystem.createFile(parent, name, true);
         } catch (IOException e) {
-            System.err.println("error: could not create directory '" + parent.getAbsolutePath() + File.separator + name + "' ("
+            output.printErrLn("error: could not create directory '" + parent.getAbsolutePath() + File.separator + name + "' ("
                     + e.getMessage() + ")");
             return null;
         }

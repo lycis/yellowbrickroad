@@ -1,5 +1,6 @@
 package at.deder.ybr;
 
+import at.deder.ybr.access.ConsoleOutputAccessor;
 import at.deder.ybr.access.FileSystemAccessor;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -79,6 +80,7 @@ public class Main {
         
         // sec accessors
         executor.setFileSystemAccessor(new FileSystemAccessor());
+        executor.setOutputAccessor(new ConsoleOutputAccessor());
         
         executor.execute();
     }
