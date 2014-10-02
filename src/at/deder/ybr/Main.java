@@ -2,6 +2,8 @@ package at.deder.ybr;
 
 import at.deder.ybr.access.ConsoleOutputAccessor;
 import at.deder.ybr.access.FileSystemAccessor;
+import at.deder.ybr.access.IOutputAccessor;
+import at.deder.ybr.access.SilentOutputAccessor;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,9 +32,10 @@ public class Main {
         Options cliOptions = new Options(args, 0, 99);
 
         // define possible command line options
-        cliOptions.getSet().addOption("version", Multiplicity.ZERO_OR_ONE);
-        cliOptions.getSet().addOption("help", Multiplicity.ZERO_OR_ONE);
-        cliOptions.getSet().addOption("verbose", Multiplicity.ZERO_OR_ONE);
+        cliOptions.getSet().addOption(Constants.OPTION_VERSION, Multiplicity.ZERO_OR_ONE);
+        cliOptions.getSet().addOption(Constants.OPTION_HELP,    Multiplicity.ZERO_OR_ONE);
+        cliOptions.getSet().addOption(Constants.OPTION_VERBOSE, Multiplicity.ZERO_OR_ONE);
+        cliOptions.getSet().addOption(Constants.OPTION_SILENT,  Multiplicity.ZERO_OR_ONE);
 
         // evaluate options
         if (!cliOptions.check(true, false)) {
@@ -75,12 +78,29 @@ public class Main {
 
         // set options on command
         OptionSet optionSet = cliOptions.getSet();
-        executor.setOption(Constants.OPTION_VERBOSE,
-                Constants.booleanToValue(optionSet.isSet(Constants.OPTION_VERBOSE)));
         
-        // sec accessors
+        // process and configure output mode
+        if(optionSet.isSet(Constants.OPTION_VERBOSE) &&
+                optionSet.isSet(Constants.OPTION_SILENT)) {
+            System.err.println("error: -verbose and -silent must not be combined");
+            System.exit(1);
+        }
+        
+        if(optionSet.isSet(Constants.OPTION_VERBOSE)) { // verbose output
+            executor.setOption(Constants.OPTION_VERBOSE, Constants.VALUE_TRUE);
+        } else {
+            executor.setOption(Constants.OPTION_VERBOSE, Constants.VALUE_FALSE);
+        }
+        
+        IOutputAccessor outputAccessor = new ConsoleOutputAccessor(); // default for output is console
+        if(optionSet.isSet(Constants.OPTION_SILENT)) { // use silent output accessor
+            outputAccessor = new SilentOutputAccessor();
+        }
+        
+        
+        // set accessors
         executor.setFileSystemAccessor(new FileSystemAccessor());
-        executor.setOutputAccessor(new ConsoleOutputAccessor());
+        executor.setOutputAccessor(outputAccessor);
         
         executor.execute();
     }
@@ -91,6 +111,8 @@ public class Main {
         System.out.println("options:");
         System.out.println("-help\t\tprint this information");
         System.out.println("-version\tprint version information");
+        System.out.println("-silent\tsuppress all output");
+        System.out.println("-verbose\tdisplay extended output");
         System.out.println("");
         System.out.println("commands:");
         System.out.println("");

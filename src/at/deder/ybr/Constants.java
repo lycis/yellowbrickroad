@@ -9,8 +9,10 @@ package at.deder.ybr;
 public class Constants {
 
     // option names/keys
-
     public static final String OPTION_VERBOSE = "verbose";
+    public static final String OPTION_SILENT  = "silent";
+    public static final String OPTION_HELP    = "help";
+    public static final String OPTION_VERSION = "version";
 
     // option values
     public static final String VALUE_TRUE = "true";
