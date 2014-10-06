@@ -1,4 +1,4 @@
-package at.deder.ybr.access;
+package at.deder.ybr.channels;
 
 import java.io.BufferedWriter;
 import java.io.File;

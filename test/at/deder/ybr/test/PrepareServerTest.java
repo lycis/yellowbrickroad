@@ -1,7 +1,7 @@
 package at.deder.ybr.test;
 
-import at.deder.ybr.access.IOutputChannel;
-import at.deder.ybr.access.SilentOutputChannel;
+import at.deder.ybr.channels.IOutputChannel;
+import at.deder.ybr.channels.SilentOutputChannel;
 import at.deder.ybr.beans.ServerManifest;
 import java.util.ArrayList;
 

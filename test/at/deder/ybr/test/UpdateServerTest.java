@@ -5,7 +5,7 @@
  */
 package at.deder.ybr.test;
 
-import at.deder.ybr.access.ConsoleOutputChannel;
+import at.deder.ybr.channels.ConsoleOutputChannel;
 import at.deder.ybr.beans.RepositoryEntry;
 import at.deder.ybr.beans.ServerManifest;
 import at.deder.ybr.commands.ICliCommand;

@@ -1,10 +1,10 @@
 package at.deder.ybr;
 
-import at.deder.ybr.access.ConsoleOutputChannel;
-import at.deder.ybr.access.FileOutputChannel;
+import at.deder.ybr.channels.ConsoleOutputChannel;
+import at.deder.ybr.channels.FileOutputChannel;
 import at.deder.ybr.access.FileSystemAccessor;
-import at.deder.ybr.access.IOutputChannel;
-import at.deder.ybr.access.SilentOutputChannel;
+import at.deder.ybr.channels.IOutputChannel;
+import at.deder.ybr.channels.SilentOutputChannel;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
