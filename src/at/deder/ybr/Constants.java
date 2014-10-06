@@ -13,7 +13,8 @@ public class Constants {
     public static final String OPTION_SILENT  = "silent";
     public static final String OPTION_HELP    = "help";
     public static final String OPTION_VERSION = "version";
-
+    public static final String OPTION_LOG     = "log";
+    
     // option values
     public static final String VALUE_TRUE = "true";
     public static final String VALUE_FALSE = "false";

@@ -6,7 +6,7 @@ package at.deder.ybr.access;
  * 
  * @author lycis
  */
-public class SilentOutputAccessor implements IOutputAccessor {
+public class SilentOutputChannel implements IOutputChannel {
 
     @Override
     public void print(String s) {

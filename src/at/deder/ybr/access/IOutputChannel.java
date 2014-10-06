@@ -4,7 +4,7 @@ package at.deder.ybr.access;
  * Provides access to some kind of outputlayer (e.g. stdout)
  * @author lycis
  */
-public interface IOutputAccessor {
+public interface IOutputChannel {
     /**
      * writes the given string to the output.
      * @param s 

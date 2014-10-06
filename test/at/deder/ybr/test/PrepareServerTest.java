@@ -1,7 +1,7 @@
 package at.deder.ybr.test;
 
-import at.deder.ybr.access.IOutputAccessor;
-import at.deder.ybr.access.SilentOutputAccessor;
+import at.deder.ybr.access.IOutputChannel;
+import at.deder.ybr.access.SilentOutputChannel;
 import at.deder.ybr.beans.ServerManifest;
 import java.util.ArrayList;
 
@@ -21,7 +21,7 @@ import org.junit.AfterClass;
 
 public class PrepareServerTest {
 
-    private static IOutputAccessor        mockOut = null;
+    private static IOutputChannel        mockOut = null;
     private static MockFileSystemAccessor mockFSA = null;
     private PrepareServer                 cmd = null;
 
@@ -32,7 +32,7 @@ public class PrepareServerTest {
     public void initTest() {
         // mock for file system access
         mockFSA = new MockFileSystemAccessor();
-        mockOut = new SilentOutputAccessor();
+        mockOut = new SilentOutputChannel();
         cmd = new PrepareServer();
 
         cmd.setFileSystemAccessor(mockFSA);

@@ -3,7 +3,7 @@ package at.deder.ybr.commands;
 import java.util.List;
 
 import at.deder.ybr.access.IFileSystemAccessor;
-import at.deder.ybr.access.IOutputAccessor;
+import at.deder.ybr.access.IOutputChannel;
 
 /**
  * This is the interface for all command line actions.
@@ -48,5 +48,5 @@ public interface ICliCommand {
      * hints, ...)
      * @param o accessor implementation
      */
-    public void setOutputAccessor(IOutputAccessor o);
+    public void setOutputAccessor(IOutputChannel o);
 }

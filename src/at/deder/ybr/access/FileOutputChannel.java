@@ -4,24 +4,22 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Grants access to logfile writer.
  * @author lycis
  */
-public class FileOutputAccessor implements IOutputAccessor {
+public class FileOutputChannel implements IOutputChannel {
 
     private File outputFile             = null;
     private BufferedWriter outputWriter = null;
     
-    public FileOutputAccessor(File f, boolean append) throws IOException {
+    public FileOutputChannel(File f, boolean append) throws IOException {
         outputFile = f;
         outputWriter = new BufferedWriter(new FileWriter(outputFile));
     }
     
-    public FileOutputAccessor(File f) throws IOException {
+    public FileOutputChannel(File f) throws IOException {
         this(f, false);
     }
         

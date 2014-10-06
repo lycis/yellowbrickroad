@@ -1,9 +1,9 @@
 package at.deder.ybr;
 
-import at.deder.ybr.access.ConsoleOutputAccessor;
+import at.deder.ybr.access.ConsoleOutputChannel;
 import at.deder.ybr.access.FileSystemAccessor;
-import at.deder.ybr.access.IOutputAccessor;
-import at.deder.ybr.access.SilentOutputAccessor;
+import at.deder.ybr.access.IOutputChannel;
+import at.deder.ybr.access.SilentOutputChannel;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -12,6 +12,7 @@ import ml.options.OptionSet;
 import ml.options.Options;
 import ml.options.Options.Multiplicity;
 import at.deder.ybr.commands.ICliCommand;
+import ml.options.Options.Separator;
 
 /**
  * This class is the main entry point for the application. It parses all command
@@ -36,8 +37,9 @@ public class Main {
         cliOptions.getSet().addOption(Constants.OPTION_HELP,    Multiplicity.ZERO_OR_ONE);
         cliOptions.getSet().addOption(Constants.OPTION_VERBOSE, Multiplicity.ZERO_OR_ONE);
         cliOptions.getSet().addOption(Constants.OPTION_SILENT,  Multiplicity.ZERO_OR_ONE);
-
-        // evaluate options
+        cliOptions.getSet().addOption(Constants.OPTION_LOG, Separator.BLANK, Multiplicity.ZERO_OR_ONE);
+        
+// evaluate options
         if (!cliOptions.check(true, false)) {
             System.out.println("error: " + cliOptions.getCheckErrors());
             printUsageHint();
@@ -86,15 +88,25 @@ public class Main {
             System.exit(1);
         }
         
+        if(optionSet.isSet(Constants.OPTION_LOG) &&
+                optionSet.isSet(Constants.OPTION_SILENT)) {
+            System.err.println("error: -log and -silent must not be combined");
+            System.exit(1);
+        }
+        
         if(optionSet.isSet(Constants.OPTION_VERBOSE)) { // verbose output
             executor.setOption(Constants.OPTION_VERBOSE, Constants.VALUE_TRUE);
         } else {
             executor.setOption(Constants.OPTION_VERBOSE, Constants.VALUE_FALSE);
         }
         
-        IOutputAccessor outputAccessor = new ConsoleOutputAccessor(); // default for output is console
+        IOutputChannel outputAccessor = new ConsoleOutputChannel(); // default for output is console
         if(optionSet.isSet(Constants.OPTION_SILENT)) { // use silent output accessor
-            outputAccessor = new SilentOutputAccessor();
+            outputAccessor = new SilentOutputChannel();
+        }
+        
+        if(optionSet.isSet(Constants.OPTION_LOG)) { // use logfile
+            // TODO implement
         }
         
         

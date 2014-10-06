@@ -5,7 +5,7 @@
  */
 package at.deder.ybr.test;
 
-import at.deder.ybr.access.ConsoleOutputAccessor;
+import at.deder.ybr.access.ConsoleOutputChannel;
 import at.deder.ybr.beans.RepositoryEntry;
 import at.deder.ybr.beans.ServerManifest;
 import at.deder.ybr.commands.ICliCommand;
@@ -32,7 +32,7 @@ import org.junit.Test;
  */
 public class UpdateServerTest {
 
-    private static ConsoleOutputAccessor  mockOut = null;
+    private static ConsoleOutputChannel  mockOut = null;
     private static MockFileSystemAccessor mockFSA = null;
     private UpdateServer cmd = null;
 
@@ -43,7 +43,7 @@ public class UpdateServerTest {
     public void initTest() {
         // mock for file system access
         mockFSA = new MockFileSystemAccessor();
-        mockOut = new ConsoleOutputAccessor();
+        mockOut = new ConsoleOutputChannel();
         cmd = new UpdateServer();
 
         cmd.setFileSystemAccessor(mockFSA);

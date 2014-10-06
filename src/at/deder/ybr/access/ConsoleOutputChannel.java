@@ -4,7 +4,7 @@ package at.deder.ybr.access;
  * This output accessor forwards output to the default console channels.
  * @author lycis
  */
-public class ConsoleOutputAccessor implements IOutputAccessor {
+public class ConsoleOutputChannel implements IOutputChannel {
 
     @Override
     public void print(String s) {
