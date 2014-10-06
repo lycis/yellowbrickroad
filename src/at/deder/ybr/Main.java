@@ -1,6 +1,7 @@
 package at.deder.ybr;
 
 import at.deder.ybr.access.ConsoleOutputChannel;
+import at.deder.ybr.access.FileOutputChannel;
 import at.deder.ybr.access.FileSystemAccessor;
 import at.deder.ybr.access.IOutputChannel;
 import at.deder.ybr.access.SilentOutputChannel;
@@ -12,6 +13,10 @@ import ml.options.OptionSet;
 import ml.options.Options;
 import ml.options.Options.Multiplicity;
 import at.deder.ybr.commands.ICliCommand;
+import java.io.File;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import ml.options.Options.Separator;
 
 /**
@@ -106,7 +111,14 @@ public class Main {
         }
         
         if(optionSet.isSet(Constants.OPTION_LOG)) { // use logfile
-            // TODO implement
+            File logFile = new File(optionSet.getOption(Constants.OPTION_LOG).getResultValue(0));
+            
+            try {
+                outputAccessor = new FileOutputChannel(logFile);
+            } catch (IOException ex) {
+                System.err.println("error: can not open log file ("+ex.getMessage()+")");
+                System.exit(1);
+            }
         }
         
         
@@ -125,6 +137,7 @@ public class Main {
         System.out.println("-version\tprint version information");
         System.out.println("-silent\tsuppress all output");
         System.out.println("-verbose\tdisplay extended output");
+        System.out.println("-log <file>\twrite output to the given file");
         System.out.println("");
         System.out.println("commands:");
         System.out.println("");

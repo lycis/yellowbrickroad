@@ -1,0 +1,4 @@
+Preparing server structure...
+done.
+
+Please run 'update-server' to rebuild the server manifest.

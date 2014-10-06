@@ -16,7 +16,6 @@ public class FileOutputChannel implements IOutputChannel {
     
     public FileOutputChannel(File f, boolean append) throws IOException {
         outputFile = f;
-        outputWriter = new BufferedWriter(new FileWriter(outputFile));
     }
     
     public FileOutputChannel(File f) throws IOException {
@@ -26,9 +25,16 @@ public class FileOutputChannel implements IOutputChannel {
     @Override
     public void print(String s) {
         try {
+            outputWriter = new BufferedWriter(new FileWriter(outputFile, true));
             outputWriter.write(s);
         } catch (IOException ex) {
-            // TODO what to do with it?
+            System.err.println("exception: "+ex.getMessage());
+        }finally {
+            if(outputWriter != null) {
+                try{
+                    outputWriter.close();
+                } catch (IOException ex) {} 
+            }
         }
     }
 
