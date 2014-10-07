@@ -6,6 +6,7 @@
 package at.deder.ybr.test;
 
 import at.deder.ybr.access.SimpleHTTPServer;
+import at.deder.ybr.beans.Banner;
 import at.deder.ybr.beans.RepositoryEntry;
 import at.deder.ybr.beans.ServerManifest;
 import java.io.ByteArrayInputStream;
@@ -84,5 +85,18 @@ public class SimpleHTTPServerTest {
         instance.setHttpClient(mockHttpClient);
         ServerManifest result = instance.getManifest();
         assertEquals(expectedResult, result);
+    }
+    
+    @Test
+    public void testBanner() throws IOException {
+        Banner expectedBanner = new Banner("banner text");
+        when(mockHttpClient.execute(Matchers.any(HttpGet.class))).thenReturn(mockHttpResponse);
+        when(mockHttpResponse.getEntity()).thenReturn(mockHttpEntity);
+        when(mockHttpEntity.getContent())
+                .thenReturn(new ByteArrayInputStream(expectedBanner.getText().getBytes("utf-8")));
+        SimpleHTTPServer instance = new SimpleHTTPServer("none");
+        instance.setHttpClient(mockHttpClient);
+        Banner result = instance.getBanner();
+        assertEquals(expectedBanner, result);
     }
 }

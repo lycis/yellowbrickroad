@@ -1,5 +1,6 @@
 package at.deder.ybr.access;
 
+import at.deder.ybr.beans.Banner;
 import at.deder.ybr.beans.ServerManifest;
 import java.io.IOException;
 import java.io.InputStream;
@@ -43,18 +44,46 @@ public class SimpleHTTPServer implements IServerGateway {
 
     @Override
     public ServerManifest getManifest() {
-        URI manifestUri;
+        String manifest = getTextFromServer("manifest.yml");
+        ServerManifest sm = ServerManifest.readYaml(new StringReader(manifest));
+        return sm;
+    }
+
+    /**
+     * Allows you to overwrite the used HttpClient. Currently this is for
+     * testing only but may be used in a factory later on.
+     * 
+     * @param client 
+     */
+    public void setHttpClient(HttpClient client) {
+        serverConnection = client;
+    }
+
+    @Override
+    public Banner getBanner() {
+        String text = getTextFromServer("index.html");
+        Banner banner = new Banner(text);
+        return banner;
+    }
+    
+    /**
+     * Fetches a resource as text from the server by using a GET request.
+     * @param path
+     * @return 
+     */
+    private String getTextFromServer(String path) {
+        URI uri;
         try {
-            manifestUri = new URIBuilder()
+            uri = new URIBuilder()
                     .setScheme(SCHEME)
                     .setHost(hostname)
                     .setPort(port)
-                    .setPath("manifest.yml").build();
+                    .setPath("path").build();
         } catch (URISyntaxException ex) {
             return null;
         }
         
-        HttpGet request = new HttpGet(manifestUri);
+        HttpGet request = new HttpGet(uri);
         HttpResponse response;
         try {
             response = serverConnection.execute(request);
@@ -76,17 +105,6 @@ public class SimpleHTTPServer implements IServerGateway {
             return null;
         }
         
-        ServerManifest sm = ServerManifest.readYaml(new StringReader(strWriter.toString()));
-        return sm;
-    }
-
-    /**
-     * Allows you to overwrite the used HttpClient. Currently this is for
-     * testing only but may be used in a factory later on.
-     * 
-     * @param client 
-     */
-    public void setHttpClient(HttpClient client) {
-        serverConnection = client;
+        return strWriter.toString();
     }
 }

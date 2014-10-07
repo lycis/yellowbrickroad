@@ -1,5 +1,6 @@
 package at.deder.ybr.access;
 
+import at.deder.ybr.beans.Banner;
 import at.deder.ybr.beans.ServerManifest;
 
 /**
@@ -17,4 +18,9 @@ public interface IServerGateway {
      * @return manifest bean
      */
     public ServerManifest getManifest();
+    
+    /**
+     * Gives the welcome banner of the server as defined in index.html
+     *     */
+    public Banner getBanner();
 }
