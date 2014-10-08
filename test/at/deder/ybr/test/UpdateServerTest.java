@@ -6,8 +6,8 @@
 package at.deder.ybr.test;
 
 import at.deder.ybr.channels.ConsoleOutputChannel;
-import at.deder.ybr.beans.RepositoryEntry;
-import at.deder.ybr.beans.ServerManifest;
+import at.deder.ybr.repository.RepositoryEntry;
+import at.deder.ybr.server.ServerManifest;
 import at.deder.ybr.commands.ICliCommand;
 import at.deder.ybr.commands.PrepareServer;
 import at.deder.ybr.commands.UpdateServer;

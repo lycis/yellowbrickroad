@@ -2,7 +2,7 @@ package at.deder.ybr.commands;
 
 import java.util.List;
 
-import at.deder.ybr.access.IFileSystemAccessor;
+import at.deder.ybr.filesysttem.IFileSystemAccessor;
 import at.deder.ybr.channels.IOutputChannel;
 
 /**

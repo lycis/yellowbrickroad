@@ -5,7 +5,7 @@
  */
 package at.deder.ybr.test;
 
-import at.deder.ybr.beans.RepositoryEntry;
+import at.deder.ybr.repository.RepositoryEntry;
 import java.util.HashMap;
 import java.util.Map;
 import org.junit.After;
@@ -314,6 +314,23 @@ public class RepositoryEntryTest {
         
         // test
         assertFalse(repositoryA.equals(repositoryB));
+    }
+    
+    @Test
+    public void testGetChildByName() {
+        RepositoryEntry root = new RepositoryEntry();
+        root.setName("root");
+        RepositoryEntry child = new RepositoryEntry();
+        child.setName("child");
+        root.addChild(child);
+        assertEquals(root.getChildByName("child"), child);
+    }
+    
+    @Test
+    public void testGetChildByNameNoChildren() {
+        RepositoryEntry root = new RepositoryEntry();
+        root.setName("root");
+        assertEquals(root.getChildByName("child"), null);
     }
     
 }

@@ -1,4 +1,4 @@
-package at.deder.ybr.beans;
+package at.deder.ybr.server;
 
 import java.util.Objects;
 

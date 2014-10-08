@@ -1,8 +1,9 @@
-package at.deder.ybr.beans;
+package at.deder.ybr.repository;
 
 import at.deder.ybr.structures.Tree;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 
 /**
@@ -30,27 +31,29 @@ public class RepositoryEntry extends Tree {
     public void setDescription(String description) {
         this.description = description;
     }
-    
+
     /**
      * Returns the path from the root note to this node.
-     * @return 
+     *
+     * @return
      */
     public String getAbsolutePath() {
         return buildAbsolutePath("");
-        
+
     }
-    
+
     private String buildAbsolutePath(String path) {
-        if(parent != null) {
-            return ((RepositoryEntry) parent).buildAbsolutePath("/"+getName()+path);
+        if (parent != null) {
+            return ((RepositoryEntry) parent).buildAbsolutePath("/" + getName() + path);
         } else {
-            return "/"+getName()+path;
+            return "/" + getName() + path;
         }
     }
 
     /**
      * Fold this entry and all subentries into a Map.
-     * @return 
+     *
+     * @return
      */
     public Map fold() {
         Map m = new HashMap();
@@ -64,7 +67,7 @@ public class RepositoryEntry extends Tree {
         if (description != null && !description.isEmpty()) {
             nodeInformation.put("description", description);
         }
-        
+
         m.put("nodeInformation", nodeInformation);
 
         getChildren().stream().map((Tree t) -> (RepositoryEntry) t)
@@ -74,32 +77,33 @@ public class RepositoryEntry extends Tree {
 
         return m;
     }
-    
+
     /**
      * Create a tree of entries baed on a Map.
+     *
      * @param m
-     * @return 
+     * @return
      */
-    public static RepositoryEntry unfold(Map m){
+    public static RepositoryEntry unfold(Map m) {
         RepositoryEntry entry = new RepositoryEntry();
-        
+
         m.forEach((k, v) -> {
-            if(!k.equals("nodeInformation") && v instanceof Map) {
+            if (!k.equals("nodeInformation") && v instanceof Map) {
                 entry.addChild(RepositoryEntry.unfold((Map) v));
             }
         });
-        
+
         // process nodeInformation
-        Map<String, String> nodeInformation = (Map<String,String>) m.get("nodeInformation");
-        
-        if(nodeInformation.containsKey("name")) {
+        Map<String, String> nodeInformation = (Map<String, String>) m.get("nodeInformation");
+
+        if (nodeInformation.containsKey("name")) {
             entry.setName(nodeInformation.get("name"));
         }
-        
-        if(nodeInformation.containsKey("description")) {
+
+        if (nodeInformation.containsKey("description")) {
             entry.setDescription(nodeInformation.get("description"));
         }
-        
+
         return entry;
     }
 
@@ -132,6 +136,21 @@ public class RepositoryEntry extends Tree {
         }
         return true;
     }
-    
-    
+
+    public RepositoryEntry getChildByName(String name) {
+        if (name == null) {
+            return null;
+        }
+
+        RepositoryEntry result;
+        try {
+            result = (RepositoryEntry) children.stream()
+                    .filter(e -> name.equals(((RepositoryEntry) e).getName()))
+                    .findFirst()
+                    .get();
+        } catch (NoSuchElementException ex) {
+            result = null;
+        }
+        return result;
+    }
 }

@@ -1,6 +1,6 @@
 package at.deder.ybr.test;
 
-import at.deder.ybr.beans.Banner;
+import at.deder.ybr.server.Banner;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 

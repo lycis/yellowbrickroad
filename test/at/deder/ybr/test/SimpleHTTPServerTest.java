@@ -5,10 +5,10 @@
  */
 package at.deder.ybr.test;
 
-import at.deder.ybr.access.SimpleHTTPServer;
-import at.deder.ybr.beans.Banner;
-import at.deder.ybr.beans.RepositoryEntry;
-import at.deder.ybr.beans.ServerManifest;
+import at.deder.ybr.server.SimpleHTTPServer;
+import at.deder.ybr.server.Banner;
+import at.deder.ybr.repository.RepositoryEntry;
+import at.deder.ybr.server.ServerManifest;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.StringWriter;

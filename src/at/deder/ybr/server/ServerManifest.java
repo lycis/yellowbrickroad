@@ -1,5 +1,6 @@
-package at.deder.ybr.beans;
+package at.deder.ybr.server;
 
+import at.deder.ybr.repository.RepositoryEntry;
 import com.esotericsoftware.yamlbeans.YamlException;
 import com.esotericsoftware.yamlbeans.YamlReader;
 import com.esotericsoftware.yamlbeans.YamlWriter;

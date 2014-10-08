@@ -1,7 +1,7 @@
-package at.deder.ybr.access;
+package at.deder.ybr.server;
 
-import at.deder.ybr.beans.Banner;
-import at.deder.ybr.beans.ServerManifest;
+import at.deder.ybr.server.Banner;
+import at.deder.ybr.server.ServerManifest;
 
 /**
  * This interface represents a gateway to a remote YBR server. The complete
