@@ -1,6 +1,7 @@
 package at.deder.ybr.repository;
 
 import at.deder.ybr.server.IServerGateway;
+import at.deder.ybr.server.ServerManifest;
 import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -13,11 +14,9 @@ import java.util.NoSuchElementException;
  */
 public class Repository {
 
-    private RepositoryEntry root = null;
     private IServerGateway serverGateway = null;
 
-    public Repository(RepositoryEntry root, IServerGateway serverGateway) {
-        this.root = root;
+    public Repository(IServerGateway serverGateway) {
         this.serverGateway = serverGateway;
     }
 
@@ -31,8 +30,13 @@ public class Repository {
         if (name.startsWith(".")) {
             name = name.substring(1);
         }
+        
+        // get repository information from manifest
+        ServerManifest manifest = serverGateway.getManifest();
+        if(manifest == null)
+            return null;
 
-        return getPackageRecursion(root, name);
+        return getPackageRecursion(manifest.getRepository(), name);
     }
 
     /**
@@ -43,6 +47,10 @@ public class Repository {
      * @return null if not found
      */
     private RepositoryEntry getPackageRecursion(RepositoryEntry root, String name) {
+        if(root == null) {
+            return null;
+        }
+        
         List<String> path = Arrays.asList(name.split("\\."));
         if (path.size() < 1) {
             return null;
