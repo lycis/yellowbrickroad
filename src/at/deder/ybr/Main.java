@@ -157,5 +157,9 @@ public class Main {
     private static void initCommandMap() {
         commandMap.put("prepare-server", new at.deder.ybr.commands.PrepareServer());
         commandMap.put("update-server", new at.deder.ybr.commands.UpdateServer());
+        
+        at.deder.ybr.commands.Describe cmdDescribe = new at.deder.ybr.commands.Describe();
+        commandMap.put("describe", cmdDescribe);
+        commandMap.put("desc", cmdDescribe);
     }
 }
