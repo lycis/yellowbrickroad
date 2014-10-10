@@ -6,7 +6,7 @@ import java.util.List;
 import at.deder.ybr.filesysttem.IFileSystemAccessor;
 import at.deder.ybr.channels.IOutputChannel;
 import at.deder.ybr.repository.RepositoryEntry;
-import at.deder.ybr.server.ServerManifest;
+import at.deder.ybr.configuration.ServerManifest;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;

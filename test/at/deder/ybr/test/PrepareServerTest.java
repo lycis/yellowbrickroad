@@ -2,7 +2,7 @@ package at.deder.ybr.test;
 
 import at.deder.ybr.channels.IOutputChannel;
 import at.deder.ybr.channels.SilentOutputChannel;
-import at.deder.ybr.server.ServerManifest;
+import at.deder.ybr.configuration.ServerManifest;
 import java.util.ArrayList;
 
 import org.junit.After;

@@ -1,4 +1,4 @@
-package at.deder.ybr.server;
+package at.deder.ybr.configuration;
 
 import at.deder.ybr.repository.RepositoryEntry;
 import com.esotericsoftware.yamlbeans.YamlException;

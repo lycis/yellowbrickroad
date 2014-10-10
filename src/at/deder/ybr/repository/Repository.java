@@ -1,7 +1,7 @@
 package at.deder.ybr.repository;
 
 import at.deder.ybr.server.IServerGateway;
-import at.deder.ybr.server.ServerManifest;
+import at.deder.ybr.configuration.ServerManifest;
 import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;

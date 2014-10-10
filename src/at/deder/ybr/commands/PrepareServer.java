@@ -7,7 +7,7 @@ import java.util.List;
 import at.deder.ybr.Constants;
 import at.deder.ybr.filesysttem.IFileSystemAccessor;
 import at.deder.ybr.channels.IOutputChannel;
-import at.deder.ybr.server.ServerManifest;
+import at.deder.ybr.configuration.ServerManifest;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 

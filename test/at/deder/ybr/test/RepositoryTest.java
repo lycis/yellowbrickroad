@@ -3,7 +3,7 @@ package at.deder.ybr.test;
 import at.deder.ybr.repository.Repository;
 import at.deder.ybr.repository.RepositoryEntry;
 import at.deder.ybr.server.IServerGateway;
-import at.deder.ybr.server.ServerManifest;
+import at.deder.ybr.configuration.ServerManifest;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;

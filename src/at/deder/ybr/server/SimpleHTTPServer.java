@@ -1,7 +1,7 @@
 package at.deder.ybr.server;
 
 import at.deder.ybr.server.Banner;
-import at.deder.ybr.server.ServerManifest;
+import at.deder.ybr.configuration.ServerManifest;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
