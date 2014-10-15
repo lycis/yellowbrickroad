@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.util.List;
 
 import at.deder.ybr.Constants;
-import at.deder.ybr.filesysttem.IFileSystemAccessor;
+import at.deder.ybr.filesystem.IFileSystemAccessor;
 import at.deder.ybr.channels.IOutputChannel;
 import at.deder.ybr.configuration.ServerManifest;
 import java.io.BufferedWriter;

@@ -7,7 +7,7 @@ import java.util.UUID;
 
 import org.apache.commons.io.FileUtils;
 
-import at.deder.ybr.filesysttem.IFileSystemAccessor;
+import at.deder.ybr.filesystem.IFileSystemAccessor;
 
 /**
  * Mocks access to the file system. Use POSIX paths to access files.

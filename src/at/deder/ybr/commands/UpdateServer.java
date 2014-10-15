@@ -3,7 +3,7 @@ package at.deder.ybr.commands;
 import at.deder.ybr.Constants;
 import java.util.List;
 
-import at.deder.ybr.filesysttem.IFileSystemAccessor;
+import at.deder.ybr.filesystem.IFileSystemAccessor;
 import at.deder.ybr.channels.IOutputChannel;
 import at.deder.ybr.repository.RepositoryEntry;
 import at.deder.ybr.configuration.ServerManifest;
