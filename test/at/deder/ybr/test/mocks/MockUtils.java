@@ -7,7 +7,7 @@ import at.deder.ybr.repository.RepositoryEntry;
  * Implements helper methods for the generation of test data.
  * @author lycis
  */
-public class TestUtils {
+public class MockUtils {
     
     /**
      * Provides a complex repository structure.
@@ -91,7 +91,7 @@ public class TestUtils {
      public static ServerManifest getMockManifest() {
         ServerManifest manifest = new ServerManifest();
         manifest.initDefaults();
-        manifest.setRepository(TestUtils.generateComplexRepository());
+        manifest.setRepository(MockUtils.generateComplexRepository());
         return manifest;
     }
 }

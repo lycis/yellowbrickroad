@@ -5,7 +5,7 @@ import at.deder.ybr.commands.Describe;
 import at.deder.ybr.server.IServerGateway;
 import at.deder.ybr.server.ServerFactory;
 import at.deder.ybr.test.mocks.MockFileSystemAccessor;
-import at.deder.ybr.test.mocks.TestUtils;
+import at.deder.ybr.test.mocks.MockUtils;
 import java.util.ArrayList;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -61,7 +61,7 @@ public class DescribeTest {
     public void testExecute() {
         // prepare mocks
         IServerGateway mockServer = mock(IServerGateway.class);
-        when(mockServer.getManifest()).thenReturn(TestUtils.getMockManifest());
+        when(mockServer.getManifest()).thenReturn(MockUtils.getMockManifest());
         ServerFactory.injectServer(mockServer);
         mockFSA.createFile(null, "ybr-config.yml", false);
         

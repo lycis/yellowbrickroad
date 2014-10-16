@@ -4,7 +4,7 @@ import at.deder.ybr.repository.Repository;
 import at.deder.ybr.repository.RepositoryEntry;
 import at.deder.ybr.server.IServerGateway;
 import at.deder.ybr.configuration.ServerManifest;
-import at.deder.ybr.test.mocks.TestUtils;
+import at.deder.ybr.test.mocks.MockUtils;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
@@ -21,7 +21,7 @@ public class RepositoryTest {
     @Test
     public void testGetPackageTopLevel() {
         IServerGateway mockGateway = mock(IServerGateway.class);
-        ServerManifest dummyManifest = TestUtils.getMockManifest();
+        ServerManifest dummyManifest = MockUtils.getMockManifest();
         when(mockGateway.getManifest()).thenReturn(dummyManifest);
         
         RepositoryEntry root = dummyManifest.getRepository();
@@ -35,7 +35,7 @@ public class RepositoryTest {
     @Test
     public void testGetPackageDeep() {
         IServerGateway mockGateway = mock(IServerGateway.class);
-        ServerManifest dummyManifest = TestUtils.getMockManifest();
+        ServerManifest dummyManifest = MockUtils.getMockManifest();
         when(mockGateway.getManifest()).thenReturn(dummyManifest);
         
         RepositoryEntry root = dummyManifest.getRepository();
@@ -52,7 +52,7 @@ public class RepositoryTest {
     @Test
     public void testGetPackageNoLeadingDot() {
         IServerGateway mockGateway = mock(IServerGateway.class);
-        ServerManifest dummyManifest = TestUtils.getMockManifest();
+        ServerManifest dummyManifest = MockUtils.getMockManifest();
         when(mockGateway.getManifest()).thenReturn(dummyManifest);
         
         RepositoryEntry root = dummyManifest.getRepository();
@@ -69,7 +69,7 @@ public class RepositoryTest {
     @Test
     public void testGetPackageNotExisting() {
         IServerGateway mockGateway = mock(IServerGateway.class);
-        ServerManifest dummyManifest = TestUtils.getMockManifest();
+        ServerManifest dummyManifest = MockUtils.getMockManifest();
         when(mockGateway.getManifest()).thenReturn(dummyManifest);
         
         RepositoryEntry root = dummyManifest.getRepository();
