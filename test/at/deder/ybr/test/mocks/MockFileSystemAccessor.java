@@ -90,7 +90,10 @@ public class MockFileSystemAccessor implements IFileSystemAccessor {
 
     @Override
     public File createFile(File parent, String name, boolean isFolder) {
-
+        if(parent == null) {
+            parent = getWorkingDirectory();
+        }
+        
         File reqFile = new File(parent.getAbsolutePath() + File.separator + name);
         try {
             if (isFolder) {

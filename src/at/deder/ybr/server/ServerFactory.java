@@ -14,6 +14,8 @@ import at.deder.ybr.configuration.ClientConfiguration;
  */
 public class ServerFactory {
     
+    private static IServerGateway injectedServer = null;
+    
     // hide constructor
     private ServerFactory() {};
     
@@ -24,6 +26,10 @@ public class ServerFactory {
      * @return 
      */
     public static IServerGateway createServer(ClientConfiguration config) {
+        if(injectedServer != null) {
+            return injectedServer;
+        }
+        
        return createSimpleServer(config);
     }
     
@@ -47,5 +53,17 @@ public class ServerFactory {
         
         SimpleHTTPServer serverImpl = new SimpleHTTPServer(serverAddress, port);
         return serverImpl;
+    }
+    
+    /**
+     * This method is for testing purposes only. It allows the injection of a 
+     * server gateway that will always be returned by the createServer(...) method.
+     * 
+     * It can be used to inject mocks when testing.
+     * 
+     * @param server 
+     */
+    public static void injectServer(IServerGateway server) {
+        injectedServer = server;
     }
 }
