@@ -23,7 +23,7 @@ import static org.junit.Assert.*;
 import static org.mockito.BDDMockito.given;
 import org.mockito.Matchers;
 import static org.mockito.Mockito.mock;
-import static com.googlecode.catchexception.apis.CatchExceptionAssertJ.when;
+import static com.googlecode.catchexception.apis.BDDCatchException.when;
 import static com.googlecode.catchexception.apis.CatchExceptionAssertJ.then;
 
 /**
