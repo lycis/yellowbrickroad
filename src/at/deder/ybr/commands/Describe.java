@@ -7,11 +7,14 @@ import at.deder.ybr.filesystem.IFileSystemAccessor;
 import at.deder.ybr.repository.Repository;
 import at.deder.ybr.repository.RepositoryEntry;
 import at.deder.ybr.server.IServerGateway;
+import at.deder.ybr.server.ProtocolViolationException;
 import at.deder.ybr.server.ServerFactory;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * This command prints out information regarding a specific package in the
@@ -61,7 +64,16 @@ public class Describe implements ICliCommand {
         
         packageUriList.forEach(packageName -> {
             output.println(packageName);
-            RepositoryEntry entry = repository.getPackage(packageName);
+            RepositoryEntry entry = null;
+            try {
+                entry = repository.getPackage(packageName);
+            } catch (ProtocolViolationException ex) {
+                if(ex.getCause() != null) {
+                    output.printErrLn("error: "+ex.getMessage()+" ("+ex.getCause().getMessage()+")");
+                }else {
+                    output.printErrLn("error: "+ex.getMessage());
+                }
+            }
             if(entry == null) {
                 output.println("<not found>");
             } else {

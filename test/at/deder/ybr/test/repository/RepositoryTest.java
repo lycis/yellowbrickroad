@@ -4,6 +4,7 @@ import at.deder.ybr.repository.Repository;
 import at.deder.ybr.repository.RepositoryEntry;
 import at.deder.ybr.server.IServerGateway;
 import at.deder.ybr.configuration.ServerManifest;
+import at.deder.ybr.server.ProtocolViolationException;
 import at.deder.ybr.test.mocks.MockUtils;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -19,7 +20,7 @@ import static org.mockito.Mockito.when;
 public class RepositoryTest {
 
     @Test
-    public void testGetPackageTopLevel() {
+    public void testGetPackageTopLevel() throws ProtocolViolationException{
         IServerGateway mockGateway = mock(IServerGateway.class);
         ServerManifest dummyManifest = MockUtils.getMockManifest();
         when(mockGateway.getManifest()).thenReturn(dummyManifest);
@@ -33,7 +34,7 @@ public class RepositoryTest {
     }
 
     @Test
-    public void testGetPackageDeep() {
+    public void testGetPackageDeep() throws ProtocolViolationException{
         IServerGateway mockGateway = mock(IServerGateway.class);
         ServerManifest dummyManifest = MockUtils.getMockManifest();
         when(mockGateway.getManifest()).thenReturn(dummyManifest);
@@ -50,7 +51,7 @@ public class RepositoryTest {
     }
     
     @Test
-    public void testGetPackageNoLeadingDot() {
+    public void testGetPackageNoLeadingDot() throws ProtocolViolationException{
         IServerGateway mockGateway = mock(IServerGateway.class);
         ServerManifest dummyManifest = MockUtils.getMockManifest();
         when(mockGateway.getManifest()).thenReturn(dummyManifest);
@@ -67,7 +68,7 @@ public class RepositoryTest {
     }
     
     @Test
-    public void testGetPackageNotExisting() {
+    public void testGetPackageNotExisting() throws ProtocolViolationException {
         IServerGateway mockGateway = mock(IServerGateway.class);
         ServerManifest dummyManifest = MockUtils.getMockManifest();
         when(mockGateway.getManifest()).thenReturn(dummyManifest);

@@ -2,6 +2,7 @@ package at.deder.ybr.test.commands;
 
 import at.deder.ybr.commands.Describe;
 import at.deder.ybr.server.IServerGateway;
+import at.deder.ybr.server.ProtocolViolationException;
 import at.deder.ybr.server.ServerFactory;
 import at.deder.ybr.test.mocks.CheckableSilentOutputChannel;
 import at.deder.ybr.test.mocks.MockFileSystemAccessor;
@@ -59,7 +60,7 @@ public class DescribeTest {
      * Basic test for the execute method with all happy :)
      */
     @Test
-    public void testExecute() {
+    public void testExecute() throws ProtocolViolationException{
         // prepare mocks
         IServerGateway mockServer = mock(IServerGateway.class);
         when(mockServer.getManifest()).thenReturn(MockUtils.getMockManifest());
@@ -82,7 +83,7 @@ public class DescribeTest {
      * Check if describing a not existing package works correctly.
      */
     @Test
-    public void testExecuteNotExistingPackage() {
+    public void testExecuteNotExistingPackage() throws ProtocolViolationException {
         // prepare mocks
         IServerGateway mockServer = mock(IServerGateway.class);
         when(mockServer.getManifest()).thenReturn(MockUtils.getMockManifest());

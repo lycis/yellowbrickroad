@@ -2,6 +2,7 @@ package at.deder.ybr.repository;
 
 import at.deder.ybr.server.IServerGateway;
 import at.deder.ybr.configuration.ServerManifest;
+import at.deder.ybr.server.ProtocolViolationException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -26,7 +27,7 @@ public class Repository {
      * @param name name of the package in DNS-like anootation (e.g. .org.junit)
      * @return
      */
-    public RepositoryEntry getPackage(String name) {
+    public RepositoryEntry getPackage(String name) throws ProtocolViolationException {
         if (name.startsWith(".")) {
             name = name.substring(1);
         }

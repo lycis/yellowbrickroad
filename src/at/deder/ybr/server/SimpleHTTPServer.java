@@ -9,6 +9,8 @@ import java.io.StringWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -43,8 +45,14 @@ public class SimpleHTTPServer implements IServerGateway {
     }
 
     @Override
-    public ServerManifest getManifest() {
-        String manifest = getTextFromServer("manifest.yml");
+    public ServerManifest getManifest() throws ProtocolViolationException {
+        String manifest;
+        try {
+            manifest = getTextFromServer("manifest.yml");
+        } catch (IOException ex) {
+            throw new ProtocolViolationException("server communication failed",
+                                                 ex);
+        }
         ServerManifest sm = ServerManifest.readYaml(new StringReader(manifest));
         return sm;
     }
@@ -60,8 +68,14 @@ public class SimpleHTTPServer implements IServerGateway {
     }
 
     @Override
-    public Banner getBanner() {
-        String text = getTextFromServer("index.html");
+    public Banner getBanner() throws ProtocolViolationException{
+        String text;
+        try {
+            text = getTextFromServer("index.html");
+        } catch (IOException ex) {
+            throw new ProtocolViolationException("server communication failed",
+                                                 ex);
+        }
         Banner banner = new Banner(text);
         return banner;
     }
@@ -71,7 +85,7 @@ public class SimpleHTTPServer implements IServerGateway {
      * @param path
      * @return 
      */
-    private String getTextFromServer(String path) {
+    private String getTextFromServer(String path) throws IOException {
         URI uri;
         try {
             uri = new URIBuilder()
@@ -88,7 +102,7 @@ public class SimpleHTTPServer implements IServerGateway {
         try {
             response = serverConnection.execute(request);
         } catch (IOException ex) {
-            return null;
+            throw ex;
         }
         
         InputStream contentStream;

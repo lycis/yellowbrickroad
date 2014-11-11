@@ -17,10 +17,10 @@ public interface IServerGateway {
      * Provides the manifest of the server.
      * @return manifest bean
      */
-    public ServerManifest getManifest();
+    public ServerManifest getManifest() throws ProtocolViolationException;
     
     /**
      * Gives the welcome banner of the server as defined in index.html
      *     */
-    public Banner getBanner();
+    public Banner getBanner() throws ProtocolViolationException;
 }
