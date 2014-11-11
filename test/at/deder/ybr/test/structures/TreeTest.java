@@ -1,4 +1,4 @@
-package at.deder.ybr.test;
+package at.deder.ybr.test.structures;
 
 import at.deder.ybr.structures.ObjectTree;
 import org.junit.Assert;

@@ -1,4 +1,4 @@
-package at.deder.ybr.test;
+package at.deder.ybr.test.repository;
 
 import at.deder.ybr.repository.Repository;
 import at.deder.ybr.repository.RepositoryEntry;

@@ -1,4 +1,4 @@
-package at.deder.ybr.test;
+package at.deder.ybr.test.configuration;
 
 import at.deder.ybr.configuration.ClientConfiguration;
 import java.io.Reader;

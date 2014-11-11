@@ -1,4 +1,4 @@
-package at.deder.ybr.test;
+package at.deder.ybr.test.server;
 
 import at.deder.ybr.server.Banner;
 import static org.junit.Assert.assertEquals;

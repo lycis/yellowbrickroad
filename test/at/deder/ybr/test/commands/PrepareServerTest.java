@@ -1,4 +1,4 @@
-package at.deder.ybr.test;
+package at.deder.ybr.test.commands;
 
 import at.deder.ybr.channels.IOutputChannel;
 import at.deder.ybr.channels.SilentOutputChannel;

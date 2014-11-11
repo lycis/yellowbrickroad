@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package at.deder.ybr.test;
+package at.deder.ybr.test.repository;
 
 import at.deder.ybr.repository.RepositoryEntry;
 import java.util.HashMap;
