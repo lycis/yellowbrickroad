@@ -18,6 +18,7 @@ public class ClientConfiguration {
     private static final String YAML_TAG = "client-configuration";
 
     private String serverAddress = "";
+    private String targetPath    = "";
 
     public ClientConfiguration() {
 
@@ -29,6 +30,14 @@ public class ClientConfiguration {
 
     public void setServerAddress(String serverAddress) {
         this.serverAddress = serverAddress;
+    }
+    
+    public String getTargetPath() {
+        return targetPath;
+    }
+    
+    public void setTargetPath(String path) {
+        targetPath = path;
     }
 
     public boolean writeYaml(Writer w) {
