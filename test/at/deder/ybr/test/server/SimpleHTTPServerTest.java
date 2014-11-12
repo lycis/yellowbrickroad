@@ -24,7 +24,7 @@ import static org.mockito.BDDMockito.given;
 import org.mockito.Matchers;
 import static org.mockito.Mockito.mock;
 import static com.googlecode.catchexception.apis.BDDCatchException.when;
-import static com.googlecode.catchexception.apis.CatchExceptionAssertJ.then;
+import static org.assertj.core.api.BDDAssertions.then;
 
 /**
  *
@@ -109,6 +109,7 @@ public class SimpleHTTPServerTest {
         given(mockHttpClient.execute(Matchers.any(HttpGet.class))).willThrow(new IOException("Unknown host"));
         SimpleHTTPServer instance = new SimpleHTTPServer("none");
         when(instance).getBanner();
-        then(caughtException()).isInstanceOf(ProtocolViolationException.class);
+        //then(caughtException()).isInstanceOf(ProtocolViolationException.class);
+        then((Throwable) caughtException()).isInstanceOf(ProtocolViolationException.class);
     }
 }

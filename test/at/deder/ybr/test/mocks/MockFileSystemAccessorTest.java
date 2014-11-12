@@ -5,7 +5,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-import at.deder.ybr.test.mocks.MockFileSystemAccessor;
+import static org.assertj.core.api.BDDAssertions.then;
 
 public class MockFileSystemAccessorTest {
 
@@ -32,6 +32,11 @@ public class MockFileSystemAccessorTest {
         mfsa.createFile(mfsa.getFile("/"), "test-file", false);
         mfsa.exists("/test-file");
         Assert.assertTrue("file is null", mfsa.getFile("/test-file") != null);
+    }
+    
+    @Test
+    public void dot_is_current_dir() {
+        then(mfsa.getFile(".")).isEqualTo(mfsa.getRoot());
     }
 
     @After

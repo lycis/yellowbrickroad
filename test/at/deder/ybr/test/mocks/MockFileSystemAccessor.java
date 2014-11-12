@@ -61,6 +61,10 @@ public class MockFileSystemAccessor implements IFileSystemAccessor {
         
         if(currentNode == null)
             return null;
+        
+        if(".".equals(nextNode)) {
+            return currentNode;
+        }
 
         for (File child : currentNode.listFiles()) {
             if (child.getName().equals(nextNode)) {

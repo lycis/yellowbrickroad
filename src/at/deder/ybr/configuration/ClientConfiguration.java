@@ -5,6 +5,7 @@ import com.esotericsoftware.yamlbeans.YamlReader;
 import com.esotericsoftware.yamlbeans.YamlWriter;
 import java.io.IOException;
 import java.io.Reader;
+import java.io.StringWriter;
 import java.io.Writer;
 
 /**
@@ -64,5 +65,20 @@ public class ClientConfiguration {
         }
 
         return config;
+    }
+    
+    /**
+     * Set default values.
+     */
+    public static ClientConfiguration getDefaultConfiguration() {
+        ClientConfiguration cc = new ClientConfiguration();
+        cc.setServerAddress("hostname:80");
+        return cc;
+    }
+    
+    public String toString() {
+        StringWriter sw = new StringWriter();
+        writeYaml(sw);
+        return sw.toString();
     }
 }

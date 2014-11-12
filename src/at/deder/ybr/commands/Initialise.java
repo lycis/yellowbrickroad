@@ -33,7 +33,7 @@ public class Initialise implements ICliCommand {
         if(cliData.size() > 0) {
             targetDir = cliData.get(0);
         } else {
-            targetDir = ".";
+            targetDir = "";
         }
     }
 
@@ -51,9 +51,6 @@ public class Initialise implements ICliCommand {
             return;
         }
         
-        ClientConfiguration cc = new ClientConfiguration();
-        cc.setServerAddress("hostname:80");
-        
         File configFile = null;
         try {
             configFile = fsa.createFile(workDir, Constants.CLIENT_CONFIG_FILE, false);
@@ -63,7 +60,7 @@ public class Initialise implements ICliCommand {
         }
         
         try {
-            cc.writeYaml(new FileWriter(configFile));
+            ClientConfiguration.getDefaultConfiguration().writeYaml(new FileWriter(configFile));
         } catch (IOException ex) {
             output.printErrLn("error: could not write config file ("+ex.getMessage()+")");
         }
