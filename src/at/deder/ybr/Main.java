@@ -140,6 +140,8 @@ public class Main {
         System.out.println("-log <file>\twrite output to the given file");
         System.out.println("");
         System.out.println("commands:");
+        System.out.println("describe <package>\t\tdisplay information about a specific package");
+        System.out.println("initialise [target-dir]\t\tinitialises a directory for the use with ybr");
         System.out.println("");
         System.out.println("server-commands:");
         System.out.println("prepare-server\t\tprepare the basic folder structure for a server");
@@ -161,5 +163,10 @@ public class Main {
         at.deder.ybr.commands.Describe cmdDescribe = new at.deder.ybr.commands.Describe();
         commandMap.put("describe", cmdDescribe);
         commandMap.put("desc", cmdDescribe);
+        
+        at.deder.ybr.commands.Initialise cmdInit = new at.deder.ybr.commands.Initialise();
+        commandMap.put("initialise", cmdInit);
+        commandMap.put("initialize", cmdInit);
+        commandMap.put("init", cmdInit);
     }
 }

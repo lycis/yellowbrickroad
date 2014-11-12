@@ -18,6 +18,9 @@ public class Constants {
     // option values
     public static final String VALUE_TRUE = "true";
     public static final String VALUE_FALSE = "false";
+    
+    // file names
+    public static final String CLIENT_CONFIG_FILE = "ybr-config.yml";
 
     /**
      * Transforms a boolean into a String value
