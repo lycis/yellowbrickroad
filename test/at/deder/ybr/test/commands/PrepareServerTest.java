@@ -12,6 +12,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import at.deder.ybr.commands.PrepareServer;
+import at.deder.ybr.filesystem.FileSystem;
 import at.deder.ybr.test.mocks.MockFileSystemAccessor;
 import java.io.BufferedReader;
 import java.io.File;
@@ -36,7 +37,7 @@ public class PrepareServerTest {
         mockOut = new SilentOutputChannel();
         cmd = new PrepareServer();
 
-        cmd.setFileSystemAccessor(mockFSA);
+        FileSystem.injectAccessor(mockFSA);
         OutputChannelFactory.setOutputChannel(mockOut);
     }
 
@@ -128,17 +129,12 @@ public class PrepareServerTest {
 
     @After
     public void cleanUp() {
-        if (mockFSA != null) {
-            mockFSA.destroy();
-            mockFSA = null;
-        }
+        FileSystem.injectAccessor(null);
     }
 
     @AfterClass
     public static void endCleanUp() {
-        if (mockFSA != null) {
-            mockFSA.destroy();
-        }
+       FileSystem.injectAccessor(null);
     }
 
 }

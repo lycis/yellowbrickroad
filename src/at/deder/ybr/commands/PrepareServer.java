@@ -9,6 +9,7 @@ import at.deder.ybr.filesystem.IFileSystemAccessor;
 import at.deder.ybr.channels.IOutputChannel;
 import at.deder.ybr.channels.OutputChannelFactory;
 import at.deder.ybr.configuration.ServerManifest;
+import at.deder.ybr.filesystem.FileSystem;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 
@@ -43,7 +44,8 @@ public class PrepareServer implements ICliCommand {
 
     @Override
     public void execute() {
-        output = OutputChannelFactory.getOutputChannel();
+        fileSystem = FileSystem.getAccess();
+        output     = OutputChannelFactory.getOutputChannel();
         
         boolean error = false;
         output.println("Preparing server structure...");
@@ -167,10 +169,4 @@ public class PrepareServer implements ICliCommand {
 
         return dir;
     }
-
-    @Override
-    public void setFileSystemAccessor(IFileSystemAccessor f) {
-        fileSystem = f;
-    }
-
 }

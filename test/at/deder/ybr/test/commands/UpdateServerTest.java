@@ -12,6 +12,7 @@ import at.deder.ybr.configuration.ServerManifest;
 import at.deder.ybr.commands.ICliCommand;
 import at.deder.ybr.commands.PrepareServer;
 import at.deder.ybr.commands.UpdateServer;
+import at.deder.ybr.filesystem.FileSystem;
 import at.deder.ybr.test.mocks.MockFileSystemAccessor;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -47,7 +48,7 @@ public class UpdateServerTest {
         mockOut = new ConsoleOutputChannel();
         cmd = new UpdateServer();
 
-        cmd.setFileSystemAccessor(mockFSA);
+        FileSystem.injectAccessor(mockFSA);
         OutputChannelFactory.setOutputChannel(mockOut);
     }
 
@@ -138,24 +139,18 @@ public class UpdateServerTest {
     
     @After
     public void cleanUp() {
-        if (mockFSA != null) {
-            mockFSA.destroy();
-            mockFSA = null;
-        }
+        FileSystem.injectAccessor(null);
     }
 
     @AfterClass
     public static void endCleanUp() {
-        if (mockFSA != null) {
-            mockFSA.destroy();
-        }
+       FileSystem.injectAccessor(null);
     }
     
     private void executeCommand(ICliCommand cmd, String target) {
         ArrayList<String> cliData = new ArrayList<>();
         cliData.add(target);
         cmd.setData(cliData);
-        cmd.setFileSystemAccessor(mockFSA);
         OutputChannelFactory.setOutputChannel(mockOut);
         cmd.execute();
     }

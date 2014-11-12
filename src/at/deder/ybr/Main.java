@@ -2,7 +2,7 @@ package at.deder.ybr;
 
 import at.deder.ybr.channels.ConsoleOutputChannel;
 import at.deder.ybr.channels.FileOutputChannel;
-import at.deder.ybr.filesystem.FileSystemAccessor;
+import at.deder.ybr.filesystem.LocalFileSystemAccessor;
 import at.deder.ybr.channels.IOutputChannel;
 import at.deder.ybr.channels.OutputChannelFactory;
 import at.deder.ybr.channels.SilentOutputChannel;
@@ -14,6 +14,7 @@ import ml.options.OptionSet;
 import ml.options.Options;
 import ml.options.Options.Multiplicity;
 import at.deder.ybr.commands.ICliCommand;
+import at.deder.ybr.filesystem.FileSystem;
 import java.io.File;
 import java.io.IOException;
 import ml.options.Options.Separator;
@@ -122,7 +123,7 @@ public class Main {
         
         
         // set accessors
-        executor.setFileSystemAccessor(new FileSystemAccessor());
+        FileSystem.setAccessorClass(LocalFileSystemAccessor.class);
         OutputChannelFactory.setOutputChannel(outputAccessor);
         
         executor.execute();

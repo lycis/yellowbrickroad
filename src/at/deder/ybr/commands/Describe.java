@@ -4,6 +4,7 @@ import at.deder.ybr.Constants;
 import at.deder.ybr.channels.IOutputChannel;
 import at.deder.ybr.channels.OutputChannelFactory;
 import at.deder.ybr.configuration.ClientConfiguration;
+import at.deder.ybr.filesystem.FileSystem;
 import at.deder.ybr.filesystem.IFileSystemAccessor;
 import at.deder.ybr.repository.Repository;
 import at.deder.ybr.repository.RepositoryEntry;
@@ -24,9 +25,6 @@ import java.util.List;
 public class Describe implements ICliCommand {
     private boolean      verbose        = false;
     private List<String> packageUriList = null;
-    
-    private IFileSystemAccessor fileSystem = null;
-    private IOutputChannel     output     = null;
 
     @Override
     public void setOption(String name, String value) {
@@ -42,7 +40,8 @@ public class Describe implements ICliCommand {
 
     @Override
     public void execute() {
-        output = OutputChannelFactory.getOutputChannel();
+        IFileSystemAccessor fileSystem = FileSystem.getAccess();
+        IOutputChannel          output = OutputChannelFactory.getOutputChannel();
         
         File workDir = fileSystem.getWorkingDirectory();
         File configFile = fileSystem.getFileInDir(workDir, "ybr-config.yml");
@@ -86,10 +85,5 @@ public class Describe implements ICliCommand {
                 }
             }
         });
-    }
-
-    @Override
-    public void setFileSystemAccessor(IFileSystemAccessor f) {
-         fileSystem = f;
     }    
 }

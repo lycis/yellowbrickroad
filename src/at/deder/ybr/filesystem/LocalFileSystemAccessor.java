@@ -11,7 +11,7 @@ import java.io.IOException;
  * @author lycis
  *
  */
-public class FileSystemAccessor implements IFileSystemAccessor {
+public class LocalFileSystemAccessor implements IFileSystemAccessor {
 
     @Override
     public boolean exists(String path) {
@@ -68,6 +68,11 @@ public class FileSystemAccessor implements IFileSystemAccessor {
     @Override
     public File getRoot() {
         return new File("/");
+    }
+
+    @Override
+    public void destroy() {
+        return; // not necessary
     }
 
 }

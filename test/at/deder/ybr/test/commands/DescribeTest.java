@@ -2,6 +2,7 @@ package at.deder.ybr.test.commands;
 
 import at.deder.ybr.channels.OutputChannelFactory;
 import at.deder.ybr.commands.Describe;
+import at.deder.ybr.filesystem.FileSystem;
 import at.deder.ybr.server.IServerGateway;
 import at.deder.ybr.server.ProtocolViolationException;
 import at.deder.ybr.server.ServerFactory;
@@ -37,24 +38,19 @@ public class DescribeTest {
         mockOut = new CheckableSilentOutputChannel();
         cmd = new Describe();
 
-        cmd.setFileSystemAccessor(mockFSA);
+        FileSystem.injectAccessor(mockFSA);
         OutputChannelFactory.setOutputChannel(mockOut);
     }
     
     @After
     public void cleanUp() {
-        if (mockFSA != null) {
-            mockFSA.destroy();
-            mockFSA = null;
-        }
         ServerFactory.injectServer(null); // reset injected server
+        FileSystem.injectAccessor(null);
     }
 
     @AfterClass
     public static void endCleanUp() {
-        if (mockFSA != null) {
-            mockFSA.destroy();
-        }
+        FileSystem.injectAccessor(null);
     }
 
     /**

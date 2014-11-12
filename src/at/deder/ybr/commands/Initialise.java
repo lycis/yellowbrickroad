@@ -4,6 +4,7 @@ import at.deder.ybr.Constants;
 import at.deder.ybr.channels.IOutputChannel;
 import at.deder.ybr.channels.OutputChannelFactory;
 import at.deder.ybr.configuration.ClientConfiguration;
+import at.deder.ybr.filesystem.FileSystem;
 import at.deder.ybr.filesystem.IFileSystemAccessor;
 import java.io.File;
 import java.io.FileWriter;
@@ -21,8 +22,6 @@ import java.util.logging.Logger;
 public class Initialise implements ICliCommand {
     
     private String targetDir;
-    private IFileSystemAccessor fsa;
-    private IOutputChannel      output;
 
     @Override
     public void setOption(String name, String value) {
@@ -40,13 +39,14 @@ public class Initialise implements ICliCommand {
 
     @Override
     public void execute() {
-        output = OutputChannelFactory.getOutputChannel();
+        IFileSystemAccessor fileSystem = FileSystem.getAccess();
+        IOutputChannel          output = OutputChannelFactory.getOutputChannel();
         
         File workDir = null;
         if(targetDir.isEmpty()) {
-            workDir = fsa.getWorkingDirectory();
+            workDir = fileSystem.getWorkingDirectory();
         } else {
-            workDir = fsa.getFile(targetDir);
+            workDir = fileSystem.getFile(targetDir);
         }
         
         if(!workDir.isDirectory()) {
@@ -56,7 +56,7 @@ public class Initialise implements ICliCommand {
         
         File configFile = null;
         try {
-            configFile = fsa.createFile(workDir, Constants.CLIENT_CONFIG_FILE, false);
+            configFile = fileSystem.createFile(workDir, Constants.CLIENT_CONFIG_FILE, false);
         } catch (IOException ex) {
             output.printErrLn("error: could not create config file ("+ex.getMessage()+")");
             return;
@@ -67,11 +67,5 @@ public class Initialise implements ICliCommand {
         } catch (IOException ex) {
             output.printErrLn("error: could not write config file ("+ex.getMessage()+")");
         }
-    }
-
-    @Override
-    public void setFileSystemAccessor(IFileSystemAccessor f) {
-        fsa = f;
-    }
-    
+    }    
 }

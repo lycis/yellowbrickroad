@@ -8,6 +8,7 @@ import at.deder.ybr.channels.IOutputChannel;
 import at.deder.ybr.channels.OutputChannelFactory;
 import at.deder.ybr.repository.RepositoryEntry;
 import at.deder.ybr.configuration.ServerManifest;
+import at.deder.ybr.filesystem.FileSystem;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -43,7 +44,8 @@ public class UpdateServer implements ICliCommand {
 
     @Override
     public void execute() {
-        output = OutputChannelFactory.getOutputChannel();
+        fileSystem = FileSystem.getAccess();
+        output     = OutputChannelFactory.getOutputChannel();
         
         output.println("Updating server manifest...");
 
@@ -90,11 +92,6 @@ public class UpdateServer implements ICliCommand {
         }
 
         output.println("done.");
-    }
-
-    @Override
-    public void setFileSystemAccessor(IFileSystemAccessor f) {
-        fileSystem = f;
     }
 
     /**

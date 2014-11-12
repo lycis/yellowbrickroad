@@ -4,18 +4,16 @@ import at.deder.ybr.Constants;
 import at.deder.ybr.channels.OutputChannelFactory;
 import at.deder.ybr.commands.Initialise;
 import at.deder.ybr.configuration.ClientConfiguration;
+import at.deder.ybr.filesystem.FileSystem;
 import at.deder.ybr.test.mocks.CheckableSilentOutputChannel;
 import at.deder.ybr.test.mocks.MockFileSystemAccessor;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.List;
 import static org.assertj.core.api.BDDAssertions.then;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.mock;
 
 /**
  *
@@ -37,23 +35,18 @@ public class InitialiseTest {
         mockOut = new CheckableSilentOutputChannel();
         cmd = new Initialise();
 
-        cmd.setFileSystemAccessor(mockFSA);
+        FileSystem.injectAccessor(mockFSA);
         OutputChannelFactory.setOutputChannel(mockOut);
     }
 
     @After
     public void cleanUp() {
-        if (mockFSA != null) {
-            mockFSA.destroy();
-            mockFSA = null;
-        }
+        FileSystem.injectAccessor(null);
     }
 
     @AfterClass
     public static void endCleanUp() {
-        if (mockFSA != null) {
-            mockFSA.destroy();
-        }
+        FileSystem.injectAccessor(null);
     }
 
     @Test

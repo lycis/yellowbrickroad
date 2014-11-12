@@ -59,4 +59,9 @@ public interface IFileSystemAccessor {
      * @return 
      */
     public File getRoot();
+    
+    /**
+     * Do any necessary clean ups.
+     */
+    public void destroy();
 }
