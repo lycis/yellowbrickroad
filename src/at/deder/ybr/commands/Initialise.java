@@ -2,6 +2,7 @@ package at.deder.ybr.commands;
 
 import at.deder.ybr.Constants;
 import at.deder.ybr.channels.IOutputChannel;
+import at.deder.ybr.channels.OutputChannelFactory;
 import at.deder.ybr.configuration.ClientConfiguration;
 import at.deder.ybr.filesystem.IFileSystemAccessor;
 import java.io.File;
@@ -39,6 +40,8 @@ public class Initialise implements ICliCommand {
 
     @Override
     public void execute() {
+        output = OutputChannelFactory.getOutputChannel();
+        
         File workDir = null;
         if(targetDir.isEmpty()) {
             workDir = fsa.getWorkingDirectory();
@@ -69,11 +72,6 @@ public class Initialise implements ICliCommand {
     @Override
     public void setFileSystemAccessor(IFileSystemAccessor f) {
         fsa = f;
-    }
-
-    @Override
-    public void setOutputAccessor(IOutputChannel o) {
-        output = o;
     }
     
 }

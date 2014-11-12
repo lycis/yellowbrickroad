@@ -41,12 +41,5 @@ public interface ICliCommand {
      * @param f accessor implementation
      */
     public void setFileSystemAccessor(IFileSystemAccessor f);
-    
-    /**
-     * Configure the output accessor that has to be used. It should be used for
-     * displaying any kind of information to the user (e.g. error messages,
-     * hints, ...)
-     * @param o accessor implementation
-     */
-    public void setOutputAccessor(IOutputChannel o);
+   
 }

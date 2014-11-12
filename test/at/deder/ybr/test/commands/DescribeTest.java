@@ -1,5 +1,6 @@
 package at.deder.ybr.test.commands;
 
+import at.deder.ybr.channels.OutputChannelFactory;
 import at.deder.ybr.commands.Describe;
 import at.deder.ybr.server.IServerGateway;
 import at.deder.ybr.server.ProtocolViolationException;
@@ -37,7 +38,7 @@ public class DescribeTest {
         cmd = new Describe();
 
         cmd.setFileSystemAccessor(mockFSA);
-        cmd.setOutputAccessor(mockOut);
+        OutputChannelFactory.setOutputChannel(mockOut);
     }
     
     @After

@@ -6,6 +6,7 @@
 package at.deder.ybr.test.commands;
 
 import at.deder.ybr.channels.ConsoleOutputChannel;
+import at.deder.ybr.channels.OutputChannelFactory;
 import at.deder.ybr.repository.RepositoryEntry;
 import at.deder.ybr.configuration.ServerManifest;
 import at.deder.ybr.commands.ICliCommand;
@@ -47,7 +48,7 @@ public class UpdateServerTest {
         cmd = new UpdateServer();
 
         cmd.setFileSystemAccessor(mockFSA);
-        cmd.setOutputAccessor(mockOut);
+        OutputChannelFactory.setOutputChannel(mockOut);
     }
 
     @Test
@@ -155,7 +156,7 @@ public class UpdateServerTest {
         cliData.add(target);
         cmd.setData(cliData);
         cmd.setFileSystemAccessor(mockFSA);
-        cmd.setOutputAccessor(mockOut);
+        OutputChannelFactory.setOutputChannel(mockOut);
         cmd.execute();
     }
 }

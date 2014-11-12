@@ -1,6 +1,7 @@
 package at.deder.ybr.test.commands;
 
 import at.deder.ybr.channels.IOutputChannel;
+import at.deder.ybr.channels.OutputChannelFactory;
 import at.deder.ybr.channels.SilentOutputChannel;
 import at.deder.ybr.configuration.ServerManifest;
 import java.util.ArrayList;
@@ -36,7 +37,7 @@ public class PrepareServerTest {
         cmd = new PrepareServer();
 
         cmd.setFileSystemAccessor(mockFSA);
-        cmd.setOutputAccessor(mockOut);
+        OutputChannelFactory.setOutputChannel(mockOut);
     }
 
     /**

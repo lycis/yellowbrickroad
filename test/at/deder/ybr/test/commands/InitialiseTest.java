@@ -1,6 +1,7 @@
 package at.deder.ybr.test.commands;
 
 import at.deder.ybr.Constants;
+import at.deder.ybr.channels.OutputChannelFactory;
 import at.deder.ybr.commands.Initialise;
 import at.deder.ybr.configuration.ClientConfiguration;
 import at.deder.ybr.test.mocks.CheckableSilentOutputChannel;
@@ -37,7 +38,7 @@ public class InitialiseTest {
         cmd = new Initialise();
 
         cmd.setFileSystemAccessor(mockFSA);
-        cmd.setOutputAccessor(mockOut);
+        OutputChannelFactory.setOutputChannel(mockOut);
     }
 
     @After

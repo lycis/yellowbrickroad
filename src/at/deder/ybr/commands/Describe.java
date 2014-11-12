@@ -2,6 +2,7 @@ package at.deder.ybr.commands;
 
 import at.deder.ybr.Constants;
 import at.deder.ybr.channels.IOutputChannel;
+import at.deder.ybr.channels.OutputChannelFactory;
 import at.deder.ybr.configuration.ClientConfiguration;
 import at.deder.ybr.filesystem.IFileSystemAccessor;
 import at.deder.ybr.repository.Repository;
@@ -13,8 +14,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * This command prints out information regarding a specific package in the
@@ -43,6 +42,8 @@ public class Describe implements ICliCommand {
 
     @Override
     public void execute() {
+        output = OutputChannelFactory.getOutputChannel();
+        
         File workDir = fileSystem.getWorkingDirectory();
         File configFile = fileSystem.getFileInDir(workDir, "ybr-config.yml");
         if(configFile == null) {
@@ -90,11 +91,5 @@ public class Describe implements ICliCommand {
     @Override
     public void setFileSystemAccessor(IFileSystemAccessor f) {
          fileSystem = f;
-    }
-
-    @Override
-    public void setOutputAccessor(IOutputChannel o) {
-        output = o;
-    }
-    
+    }    
 }

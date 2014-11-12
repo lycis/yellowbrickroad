@@ -5,6 +5,7 @@ import java.util.List;
 
 import at.deder.ybr.filesystem.IFileSystemAccessor;
 import at.deder.ybr.channels.IOutputChannel;
+import at.deder.ybr.channels.OutputChannelFactory;
 import at.deder.ybr.repository.RepositoryEntry;
 import at.deder.ybr.configuration.ServerManifest;
 import java.io.BufferedReader;
@@ -42,6 +43,8 @@ public class UpdateServer implements ICliCommand {
 
     @Override
     public void execute() {
+        output = OutputChannelFactory.getOutputChannel();
+        
         output.println("Updating server manifest...");
 
         // check if target folder exists
@@ -207,8 +210,4 @@ public class UpdateServer implements ICliCommand {
         }
     }
 
-    @Override
-    public void setOutputAccessor(IOutputChannel o) {
-        output = o;
-    }
 }
