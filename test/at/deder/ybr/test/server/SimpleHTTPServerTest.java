@@ -10,7 +10,9 @@ import at.deder.ybr.server.Banner;
 import at.deder.ybr.repository.RepositoryEntry;
 import at.deder.ybr.configuration.ServerManifest;
 import at.deder.ybr.server.ProtocolViolationException;
+import at.deder.ybr.test.mocks.MockUtils;
 import static com.googlecode.catchexception.CatchException.caughtException;
+import static com.googlecode.catchexception.apis.BDDCatchException.when;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.StringWriter;
@@ -22,9 +24,9 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 import static org.mockito.BDDMockito.given;
 import org.mockito.Matchers;
-import static org.mockito.Mockito.mock;
-import static com.googlecode.catchexception.apis.BDDCatchException.when;
 import static org.assertj.core.api.BDDAssertions.then;
+import static org.mockito.Mockito.mock;
+
 
 /**
  *
@@ -111,5 +113,94 @@ public class SimpleHTTPServerTest {
         when(instance).getBanner();
         //then(caughtException()).isInstanceOf(ProtocolViolationException.class);
         then((Throwable) caughtException()).isInstanceOf(ProtocolViolationException.class);
+    }
+    
+    @Test
+    public void testGetPackageTopLevel() throws ProtocolViolationException, IOException{
+        
+        // given
+        ServerManifest dummyManifest = MockUtils.getMockManifest();
+        
+        given(mockHttpClient.execute(Matchers.any(HttpGet.class))).willReturn(mockHttpResponse);
+        given(mockHttpResponse.getEntity()).willReturn(mockHttpEntity);
+        given(mockHttpEntity.getContent())
+                .willReturn(new ByteArrayInputStream(dummyManifest.toString().getBytes("utf-8")));
+        SimpleHTTPServer instance = new SimpleHTTPServer("none");
+        instance.setHttpClient(mockHttpClient);
+        
+        // when
+        RepositoryEntry result = instance.getPackage("com");
+        
+        // then
+        RepositoryEntry root = dummyManifest.getRepository();
+        RepositoryEntry expResult = root.getChildByName("com");
+        then(result).isEqualTo(expResult);
+    }
+
+    @Test
+    public void testGetPackageDeep() throws ProtocolViolationException, IOException{
+        // given
+        ServerManifest dummyManifest = MockUtils.getMockManifest();
+        
+        given(mockHttpClient.execute(Matchers.any(HttpGet.class))).willReturn(mockHttpResponse);
+        given(mockHttpResponse.getEntity()).willReturn(mockHttpEntity);
+        given(mockHttpEntity.getContent())
+                .willReturn(new ByteArrayInputStream(dummyManifest.toString().getBytes("utf-8")));
+        SimpleHTTPServer instance = new SimpleHTTPServer("none");
+        instance.setHttpClient(mockHttpClient);
+        
+        // when
+        RepositoryEntry result = instance.getPackage(".com.java.io.file");
+        
+        // then
+        RepositoryEntry root = dummyManifest.getRepository();
+        RepositoryEntry expResult = root.getChildByName("com")
+                .getChildByName("java")
+                .getChildByName("io")
+                .getChildByName("file");
+        then(result).isEqualTo(expResult);
+    }
+    
+    @Test
+    public void testGetPackageNoLeadingDot() throws ProtocolViolationException, IOException{
+       // given
+        ServerManifest dummyManifest = MockUtils.getMockManifest();
+        
+        given(mockHttpClient.execute(Matchers.any(HttpGet.class))).willReturn(mockHttpResponse);
+        given(mockHttpResponse.getEntity()).willReturn(mockHttpEntity);
+        given(mockHttpEntity.getContent())
+                .willReturn(new ByteArrayInputStream(dummyManifest.toString().getBytes("utf-8")));
+        SimpleHTTPServer instance = new SimpleHTTPServer("none");
+        instance.setHttpClient(mockHttpClient);
+        
+        // when
+        RepositoryEntry result = instance.getPackage("com.java.io.file");
+        
+        // then
+        RepositoryEntry root = dummyManifest.getRepository();
+        RepositoryEntry expResult = root.getChildByName("com")
+                .getChildByName("java")
+                .getChildByName("io")
+                .getChildByName("file");
+        then(result).isEqualTo(expResult);
+    }
+    
+    @Test
+    public void testGetPackageNotExisting() throws ProtocolViolationException, IOException {
+        // given
+        ServerManifest dummyManifest = MockUtils.getMockManifest();
+        
+        given(mockHttpClient.execute(Matchers.any(HttpGet.class))).willReturn(mockHttpResponse);
+        given(mockHttpResponse.getEntity()).willReturn(mockHttpEntity);
+        given(mockHttpEntity.getContent())
+                .willReturn(new ByteArrayInputStream(dummyManifest.toString().getBytes("utf-8")));
+        SimpleHTTPServer instance = new SimpleHTTPServer("none");
+        instance.setHttpClient(mockHttpClient);
+        
+        // when
+        RepositoryEntry result = instance.getPackage("com.doesnotexist");
+        
+        // then
+        then(result).isEqualTo(null);
     }
 }

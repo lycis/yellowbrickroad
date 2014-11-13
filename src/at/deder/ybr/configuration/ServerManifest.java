@@ -7,6 +7,7 @@ import com.esotericsoftware.yamlbeans.YamlWriter;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Serializable;
+import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Map;
 import java.util.Objects;
@@ -175,5 +176,12 @@ public class ServerManifest implements Serializable {
         hash = 83 * hash + Objects.hashCode(this.name);
         hash = 83 * hash + Objects.hashCode(this.admin);
         return hash;
+    }
+    
+    @Override
+    public String toString() {
+        StringWriter sw = new StringWriter();
+        writeYaml(sw);
+        return sw.toString();
     }
 }

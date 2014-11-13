@@ -1,7 +1,8 @@
 package at.deder.ybr.server;
 
-import at.deder.ybr.server.Banner;
 import at.deder.ybr.configuration.ServerManifest;
+import at.deder.ybr.repository.RepositoryEntry;
+import java.util.Map;
 
 /**
  * This interface represents a gateway to a remote YBR server. The complete
@@ -23,4 +24,14 @@ public interface IServerGateway {
      * Gives the welcome banner of the server as defined in index.html
      *     */
     public Banner getBanner() throws ProtocolViolationException;
+    
+    public Map<String, byte[]> getFilesOfPackage(String pkgName) throws ProtocolViolationException;
+    
+     /**
+     * Searches for a package entry in the repository with the given name.
+     *
+     * @param name name of the package in DNS-like anootation (e.g. .org.junit)
+     * @return
+     */
+    public RepositoryEntry getPackage(String name) throws ProtocolViolationException;
 }

@@ -131,9 +131,22 @@ public class RepositoryEntry extends Tree {
         if (!Objects.equals(this.description, other.description)) {
             return false;
         }
-        if (!Objects.equals(this.children, other.children)) {
+        
+        if (!this.children.stream().map((mT) -> (RepositoryEntry) mT).map((myChild) -> {
+            RepositoryEntry otherChild = null;
+            for(Tree oT: other.children) {
+                if(myChild.equals(((RepositoryEntry) oT))) {
+                    otherChild = (RepositoryEntry) oT;
+                }
+            }
+            return otherChild;
+        }).noneMatch((otherChild) -> (otherChild == null))) {
             return false;
         }
+        
+        /*if (!Objects.equals(this.children, other.children)) {
+            return false;
+        }*/
         return true;
     }
 
@@ -153,4 +166,5 @@ public class RepositoryEntry extends Tree {
         }
         return result;
     }
+    
 }

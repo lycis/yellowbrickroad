@@ -47,7 +47,8 @@ public class MockUtils {
         root.addChild(org);
         RepositoryEntry orgJunit = new RepositoryEntry();
         orgJunit.setName("junit");
-        org.addChild(org);
+        orgJunit.setDescription("JUnit unit test suite");
+        org.addChild(orgJunit);
 
         // build com tree
         RepositoryEntry com = new RepositoryEntry();

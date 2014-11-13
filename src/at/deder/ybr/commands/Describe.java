@@ -6,8 +6,8 @@ import at.deder.ybr.channels.OutputChannelFactory;
 import at.deder.ybr.configuration.ClientConfiguration;
 import at.deder.ybr.filesystem.FileSystem;
 import at.deder.ybr.filesystem.IFileSystemAccessor;
-import at.deder.ybr.repository.Repository;
 import at.deder.ybr.repository.RepositoryEntry;
+
 import at.deder.ybr.server.IServerGateway;
 import at.deder.ybr.server.ProtocolViolationException;
 import at.deder.ybr.server.ServerFactory;
@@ -60,19 +60,23 @@ public class Describe implements ICliCommand {
         
         // search package and display description
         IServerGateway server = ServerFactory.createServer(config);
-        Repository repository = new Repository(server);
         
-        packageUriList.forEach(packageName -> {
+        for(String packageName: packageUriList) {
+            if(!packageName.startsWith(".")) {
+                output.print(".");
+            }
             output.println(packageName);
+            
             RepositoryEntry entry = null;
             try {
-                entry = repository.getPackage(packageName);
+                entry = server.getPackage(packageName);
             } catch (ProtocolViolationException ex) {
                 if(ex.getCause() != null) {
                     output.printErrLn("error: "+ex.getMessage()+" ("+ex.getCause().getMessage()+")");
                 }else {
                     output.printErrLn("error: "+ex.getMessage());
                 }
+                return;
             }
             if(entry == null) {
                 output.println("<not found>");
@@ -84,6 +88,6 @@ public class Describe implements ICliCommand {
                     output.println("<no description>");
                 }
             }
-        });
+        }
     }    
 }

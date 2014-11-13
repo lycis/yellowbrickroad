@@ -2,6 +2,8 @@ package at.deder.ybr.server;
 
 import at.deder.ybr.server.Banner;
 import at.deder.ybr.configuration.ServerManifest;
+import at.deder.ybr.repository.PackageIndex;
+import at.deder.ybr.repository.RepositoryEntry;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
@@ -9,6 +11,10 @@ import java.io.StringWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.io.IOUtils;
@@ -120,5 +126,62 @@ public class SimpleHTTPServer implements IServerGateway {
         }
         
         return strWriter.toString();
+    }
+
+    @Override
+    public Map<String, byte[]> getFilesOfPackage(String pkgName) throws ProtocolViolationException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public RepositoryEntry getPackage(String name) throws ProtocolViolationException {
+         if (name.startsWith(".")) {
+            name = name.substring(1);
+        }
+        
+        // get repository information from manifest
+        ServerManifest manifest = getManifest();
+        if(manifest == null)
+            return null;
+
+        return getPackageRecursion(manifest.getRepository(), name);
+    }
+
+     /**
+     * Recursively walk through the repository tree and resolve a given path.
+     *
+     * @param root
+     * @param name
+     * @return null if not found
+     */
+    private RepositoryEntry getPackageRecursion(RepositoryEntry root, String name) {
+        if(root == null) {
+            return null;
+        }
+        
+        List<String> path = Arrays.asList(name.split("\\."));
+        if (path.size() < 1) {
+            return null;
+        }
+
+        String target = path.get(0);
+        RepositoryEntry nextEntry;
+        try {
+            nextEntry = (RepositoryEntry) root.getChildren().stream()
+                    .filter(entry -> target.equals(((RepositoryEntry) entry).getName()))
+                    .findFirst().get();
+        } catch (NoSuchElementException e) {
+            nextEntry = null;
+        }
+
+        if (!name.contains(".")) {
+            return nextEntry;
+        } else {
+            String remainingPath = name.substring(name.indexOf(".") + 1);
+            if (nextEntry != null && remainingPath.length() > 1) {
+                return getPackageRecursion(nextEntry, remainingPath);
+            }
+        }
+        return nextEntry;
     }
 }
