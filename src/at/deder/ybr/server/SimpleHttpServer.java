@@ -115,7 +115,8 @@ public class SimpleHttpServer implements IServerGateway {
         
         // check response code
         if(response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
-            throw new ProtocolViolationException("access to resource not allowed (status code: "+response.getStatusLine().getStatusCode()+")");
+            throw new ProtocolViolationException("access to resource not allowed ("
+                    +response.getStatusLine().getStatusCode()+" - "+response.getStatusLine().getReasonPhrase()+")");
         }
         
         InputStream contentStream;
@@ -255,7 +256,8 @@ public class SimpleHttpServer implements IServerGateway {
         
         // check response code
         if(response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
-            throw new ProtocolViolationException("access to resource not allowed (status code: "+response.getStatusLine().getStatusCode()+")");
+            throw new ProtocolViolationException("access to resource not allowed ("
+                    +response.getStatusLine().getStatusCode()+" - "+response.getStatusLine().getReasonPhrase()+")");
         }
         
         InputStream contentStream;

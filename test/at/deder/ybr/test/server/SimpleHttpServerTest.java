@@ -308,6 +308,6 @@ public class SimpleHttpServerTest {
         
         // then
         then((Throwable) caughtException()).isInstanceOf(ProtocolViolationException.class);
-        then((Throwable) caughtException()).hasMessage("access to resource not allowed (status code: 403)");
+        then((Throwable) caughtException()).hasMessage("access to resource not allowed (403 - Forbidden)");
     }
 }
