@@ -19,6 +19,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
+import java.util.Random;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -308,6 +309,59 @@ public class SimpleHttpServerTest {
         
         // then
         then((Throwable) caughtException()).isInstanceOf(ProtocolViolationException.class);
-        then((Throwable) caughtException()).hasMessage("access to resource not allowed (403 - Forbidden)");
+        then((Throwable) caughtException()).hasMessage("access to resource '/org/junit/test.dat' not allowed (403 - Forbidden)");
+    }
+    
+    /**
+     * check access to files of a package with more than one file
+     * @throws ProtocolViolationException
+     * @throws IOException 
+     */
+    @Test
+    public void test_get_package_file_multiple() throws ProtocolViolationException, IOException {
+        //given        
+        String contentOneDat = "content of one.dat";
+        String contentTwoDat = "content of one.dat";
+        byte[] contentThreeDat = new byte[20];
+        new Random().nextBytes(contentThreeDat);
+        SimpleHttpServer instance = spy(new SimpleHttpServer("none"));
+        willReturn(MockUtils.getMockManifest()).given(instance).getManifest();
+        // return different response depending on called path
+        given(mockHttpClient.execute(Matchers.any(HttpGet.class))).willAnswer((InvocationOnMock invocation) -> {
+            Object[] args = invocation.getArguments();
+            HttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_OK, "OK");
+            
+            if(args.length != 1 && !(args[0] instanceof HttpGet)) {
+                response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_INTERNAL_SERVER_ERROR, "wrong arguments");
+                return response;
+            }
+            
+            HttpGet request = (HttpGet) args[0];
+            BasicHttpEntity entity = new BasicHttpEntity();
+            if("/org/junit/index".equals(request.getURI().getPath())) {
+                String index = "one.dat\ntwo.dat\nthree.dat";
+                entity.setContent(new ByteArrayInputStream(index.getBytes(StandardCharsets.UTF_8)));
+            } else if("/org/junit/one.dat".equals(request.getURI().getPath())) {
+                entity.setContent(new ByteArrayInputStream(contentOneDat.getBytes(StandardCharsets.UTF_8)));
+            }else if("/org/junit/two.dat".equals(request.getURI().getPath())) {
+                entity.setContent(new ByteArrayInputStream(contentOneDat.getBytes(StandardCharsets.UTF_8)));
+            }else if("/org/junit/three.dat".equals(request.getURI().getPath())) {
+                entity.setContent(new ByteArrayInputStream(contentThreeDat));
+            } else {
+                response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_FORBIDDEN, "Forbidden");
+            }
+            
+            response.setEntity(entity);
+            return response;
+        });
+        instance.setHttpClient(mockHttpClient);
+        
+        // when
+        Map<String, byte[]> files = instance.getFilesOfPackage(".org.junit");
+        
+        // then
+        then(files.get("one.dat")).isEqualTo(IOUtils.toByteArray(new StringReader(contentOneDat)));
+        then(files.get("two.dat")).isEqualTo(IOUtils.toByteArray(new StringReader(contentTwoDat)));
+        then(files.get("three.dat")).isEqualTo(contentThreeDat);
     }
 }
