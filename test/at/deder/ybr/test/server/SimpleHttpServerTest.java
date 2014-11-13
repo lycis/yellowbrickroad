@@ -223,6 +223,11 @@ public class SimpleHttpServerTest {
         then(result).isEqualTo(null);
     }
     
+    /**
+     * check access to a file resource
+     * @throws ProtocolViolationException
+     * @throws IOException 
+     */
     @Test
     public void test_get_package_file_simple_content() throws ProtocolViolationException, IOException {
         //given        
@@ -260,5 +265,49 @@ public class SimpleHttpServerTest {
         
         // then
         then(files.get("test.dat")).isEqualTo(IOUtils.toByteArray(new StringReader(testDatContent)));
+    }
+    
+    /**
+     * access to requested file returns not status code 200 OK but 403 Forbidden.
+     * @throws ProtocolViolationException
+     * @throws IOException 
+     */
+    @Test
+    public void test_get_package_file_403_forbidden_data() throws ProtocolViolationException, IOException {
+        //given        
+        SimpleHttpServer instance = new SimpleHttpServer("none");
+       
+        // return different response depending on called path
+        given(mockHttpClient.execute(Matchers.any(HttpGet.class))).willAnswer((InvocationOnMock invocation) -> {
+            Object[] args = invocation.getArguments();
+            HttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_OK, "OK");
+            
+            if(args.length != 1 && !(args[0] instanceof HttpGet)) {
+                response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_INTERNAL_SERVER_ERROR, "wrong arguments");
+                return response;
+            }
+            
+            HttpGet request = (HttpGet) args[0];
+            BasicHttpEntity entity = new BasicHttpEntity();
+            if("/org/junit/index".equals(request.getURI().getPath())) {
+                String index = "test.dat";
+                entity.setContent(new ByteArrayInputStream(index.getBytes(StandardCharsets.UTF_8)));
+            } else if("/org/junit/test.dat".equals(request.getURI().getPath())) {
+                response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_FORBIDDEN, "Forbidden");
+            }else {
+                response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_FORBIDDEN, "Forbidden");
+            }
+            
+            response.setEntity(entity);
+            return response;
+        });
+        instance.setHttpClient(mockHttpClient);
+        
+        // when
+        when(instance).getFilesOfPackage(".org.junit");
+        
+        // then
+        then((Throwable) caughtException()).isInstanceOf(ProtocolViolationException.class);
+        then((Throwable) caughtException()).hasMessage("access to resource not allowed (status code: 403)");
     }
 }
