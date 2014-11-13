@@ -15,17 +15,29 @@ import static com.googlecode.catchexception.CatchException.caughtException;
 import static com.googlecode.catchexception.apis.BDDCatchException.when;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.StringReader;
 import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
+import java.util.Map;
+import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.HttpVersion;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.entity.BasicHttpEntity;
+import org.apache.http.message.BasicHttpResponse;
+import org.apache.http.message.BasicStatusLine;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import static org.mockito.BDDMockito.given;
 import org.mockito.Matchers;
 import static org.assertj.core.api.BDDAssertions.then;
+import static org.mockito.BDDMockito.willReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import org.mockito.invocation.InvocationOnMock;
 
 
 /**
@@ -53,6 +65,7 @@ public class SimpleHttpServerTest {
         
         given(mockHttpClient.execute(Matchers.any(HttpGet.class))).willReturn(mockHttpResponse);
         given(mockHttpResponse.getEntity()).willReturn(mockHttpEntity);
+        given(mockHttpResponse.getStatusLine()).willReturn(new BasicStatusLine(HttpVersion.HTTP_1_1, HttpStatus.SC_OK, "OK"));
         given(mockHttpEntity.getContent())
                 .willReturn(new ByteArrayInputStream(manifestWriter.toString().getBytes("utf-8")));
                 
@@ -84,6 +97,7 @@ public class SimpleHttpServerTest {
         
         given(mockHttpClient.execute(Matchers.any(HttpGet.class))).willReturn(mockHttpResponse);
         given(mockHttpResponse.getEntity()).willReturn(mockHttpEntity);
+        given(mockHttpResponse.getStatusLine()).willReturn(new BasicStatusLine(HttpVersion.HTTP_1_1, HttpStatus.SC_OK, "OK"));
         given(mockHttpEntity.getContent())
                 .willReturn(new ByteArrayInputStream(manifestWriter.toString().getBytes("utf-8")));
                 
@@ -98,6 +112,7 @@ public class SimpleHttpServerTest {
         Banner expectedBanner = new Banner("banner text");
         given(mockHttpClient.execute(Matchers.any(HttpGet.class))).willReturn(mockHttpResponse);
         given(mockHttpResponse.getEntity()).willReturn(mockHttpEntity);
+        given(mockHttpResponse.getStatusLine()).willReturn(new BasicStatusLine(HttpVersion.HTTP_1_1, HttpStatus.SC_OK, "OK"));
         given(mockHttpEntity.getContent())
                 .willReturn(new ByteArrayInputStream(expectedBanner.getText().getBytes("utf-8")));
         SimpleHttpServer instance = new SimpleHttpServer("none");
@@ -123,6 +138,7 @@ public class SimpleHttpServerTest {
         
         given(mockHttpClient.execute(Matchers.any(HttpGet.class))).willReturn(mockHttpResponse);
         given(mockHttpResponse.getEntity()).willReturn(mockHttpEntity);
+        given(mockHttpResponse.getStatusLine()).willReturn(new BasicStatusLine(HttpVersion.HTTP_1_1, HttpStatus.SC_OK, "OK"));
         given(mockHttpEntity.getContent())
                 .willReturn(new ByteArrayInputStream(dummyManifest.toString().getBytes("utf-8")));
         SimpleHttpServer instance = new SimpleHttpServer("none");
@@ -144,6 +160,7 @@ public class SimpleHttpServerTest {
         
         given(mockHttpClient.execute(Matchers.any(HttpGet.class))).willReturn(mockHttpResponse);
         given(mockHttpResponse.getEntity()).willReturn(mockHttpEntity);
+        given(mockHttpResponse.getStatusLine()).willReturn(new BasicStatusLine(HttpVersion.HTTP_1_1, HttpStatus.SC_OK, "OK"));
         given(mockHttpEntity.getContent())
                 .willReturn(new ByteArrayInputStream(dummyManifest.toString().getBytes("utf-8")));
         SimpleHttpServer instance = new SimpleHttpServer("none");
@@ -168,6 +185,7 @@ public class SimpleHttpServerTest {
         
         given(mockHttpClient.execute(Matchers.any(HttpGet.class))).willReturn(mockHttpResponse);
         given(mockHttpResponse.getEntity()).willReturn(mockHttpEntity);
+        given(mockHttpResponse.getStatusLine()).willReturn(new BasicStatusLine(HttpVersion.HTTP_1_1, HttpStatus.SC_OK, "OK"));
         given(mockHttpEntity.getContent())
                 .willReturn(new ByteArrayInputStream(dummyManifest.toString().getBytes("utf-8")));
         SimpleHttpServer instance = new SimpleHttpServer("none");
@@ -192,6 +210,7 @@ public class SimpleHttpServerTest {
         
         given(mockHttpClient.execute(Matchers.any(HttpGet.class))).willReturn(mockHttpResponse);
         given(mockHttpResponse.getEntity()).willReturn(mockHttpEntity);
+        given(mockHttpResponse.getStatusLine()).willReturn(new BasicStatusLine(HttpVersion.HTTP_1_1, HttpStatus.SC_OK, "OK"));
         given(mockHttpEntity.getContent())
                 .willReturn(new ByteArrayInputStream(dummyManifest.toString().getBytes("utf-8")));
         SimpleHttpServer instance = new SimpleHttpServer("none");
@@ -202,5 +221,44 @@ public class SimpleHttpServerTest {
         
         // then
         then(result).isEqualTo(null);
+    }
+    
+    @Test
+    public void test_get_package_file_simple_content() throws ProtocolViolationException, IOException {
+        //given        
+        String testDatContent = "content of test.dat";
+        SimpleHttpServer instance = spy(new SimpleHttpServer("none"));
+        willReturn(MockUtils.getMockManifest()).given(instance).getManifest();
+        // return different response depending on called path
+        given(mockHttpClient.execute(Matchers.any(HttpGet.class))).willAnswer((InvocationOnMock invocation) -> {
+            Object[] args = invocation.getArguments();
+            HttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_OK, "OK");
+            
+            if(args.length != 1 && !(args[0] instanceof HttpGet)) {
+                response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_INTERNAL_SERVER_ERROR, "wrong arguments");
+                return response;
+            }
+            
+            HttpGet request = (HttpGet) args[0];
+            BasicHttpEntity entity = new BasicHttpEntity();
+            if("/org/junit/index".equals(request.getURI().getPath())) {
+                String index = "test.dat";
+                entity.setContent(new ByteArrayInputStream(index.getBytes(StandardCharsets.UTF_8)));
+            } else if("/org/junit/test.dat".equals(request.getURI().getPath())) {
+                entity.setContent(new ByteArrayInputStream(testDatContent.getBytes(StandardCharsets.UTF_8)));
+            }else {
+                response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_FORBIDDEN, "Forbidden");
+            }
+            
+            response.setEntity(entity);
+            return response;
+        });
+        instance.setHttpClient(mockHttpClient);
+        
+        // when
+        Map<String, byte[]> files = instance.getFilesOfPackage(".org.junit");
+        
+        // then
+        then(files.get("test.dat")).isEqualTo(IOUtils.toByteArray(new StringReader(testDatContent)));
     }
 }

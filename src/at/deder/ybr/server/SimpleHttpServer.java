@@ -1,6 +1,7 @@
 package at.deder.ybr.server;
 
 import at.deder.ybr.configuration.ServerManifest;
+import at.deder.ybr.repository.PackageIndex;
 import at.deder.ybr.repository.RepositoryEntry;
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,11 +11,16 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URIBuilder;
@@ -87,14 +93,14 @@ public class SimpleHttpServer implements IServerGateway {
      * @param path
      * @return 
      */
-    private String getTextFromServer(String path) throws IOException {
+    private String getTextFromServer(String path) throws IOException, ProtocolViolationException {
         URI uri;
         try {
             uri = new URIBuilder()
                     .setScheme(SCHEME)
                     .setHost(hostname)
                     .setPort(port)
-                    .setPath("path").build();
+                    .setPath(path).build();
         } catch (URISyntaxException ex) {
             return null;
         }
@@ -105,6 +111,11 @@ public class SimpleHttpServer implements IServerGateway {
             response = serverConnection.execute(request);
         } catch (IOException ex) {
             throw ex;
+        }
+        
+        // check response code
+        if(response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
+            throw new ProtocolViolationException("access to resource not allowed (status code: "+response.getStatusLine().getStatusCode()+")");
         }
         
         InputStream contentStream;
@@ -126,7 +137,30 @@ public class SimpleHttpServer implements IServerGateway {
 
     @Override
     public Map<String, byte[]> getFilesOfPackage(String pkgName) throws ProtocolViolationException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        String requestBasePath = packageNameToRequestPath(pkgName);
+        
+        // get index from server
+        PackageIndex index;
+        try{
+            index = new PackageIndex(getTextFromServer(requestBasePath+"index"));
+        } catch (IOException ex) {
+            throw new ProtocolViolationException("package index not acessible", ex);
+        }
+        
+        // select files according to index & download
+        Map<String, byte[]> fileMap = new HashMap<>();
+       for(String file: index.getIndex()) {
+            byte[] data = null;
+            try {
+                data = getBinaryFromServer(requestBasePath+file);
+            } catch (IOException ex) {
+                throw new ProtocolViolationException("file '"+requestBasePath+file+"' not accessible", ex);
+            }
+            
+            fileMap.put(file, data);
+        }
+        
+        return fileMap;
     }
 
     @Override
@@ -179,5 +213,58 @@ public class SimpleHttpServer implements IServerGateway {
             }
         }
         return nextEntry;
+    }
+    
+    /**
+     * Translates package ID into the request path to query in the server.
+     * @param pkgName
+     * @return 
+     */
+    private String packageNameToRequestPath(String pkgName) {
+        if(!pkgName.startsWith(".")) {
+            pkgName = "." + pkgName;
+        }
+        
+        return StringUtils.join(pkgName.split("\\."), "/") + "/";
+    }
+
+    /**
+     * Fetches a resource as text from the server by using a GET request.
+     * @param path
+     * @return 
+     */
+    private byte[] getBinaryFromServer(String path) throws IOException, ProtocolViolationException {
+        URI uri;
+        try {
+            uri = new URIBuilder()
+                    .setScheme(SCHEME)
+                    .setHost(hostname)
+                    .setPort(port)
+                    .setPath(path).build();
+        } catch (URISyntaxException ex) {
+            return null;
+        }
+        
+        HttpGet request = new HttpGet(uri);
+        HttpResponse response;
+        try {
+            response = serverConnection.execute(request);
+        } catch (IOException ex) {
+            throw ex;
+        }
+        
+        // check response code
+        if(response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
+            throw new ProtocolViolationException("access to resource not allowed (status code: "+response.getStatusLine().getStatusCode()+")");
+        }
+        
+        InputStream contentStream;
+        try {
+            contentStream = response.getEntity().getContent();
+        } catch (IOException | IllegalStateException ex) {
+            return null;
+        }
+        
+        return IOUtils.toByteArray(contentStream);
     }
 }
