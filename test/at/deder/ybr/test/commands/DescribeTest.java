@@ -6,7 +6,7 @@ import at.deder.ybr.filesystem.FileSystem;
 import at.deder.ybr.server.IServerGateway;
 import at.deder.ybr.server.ProtocolViolationException;
 import at.deder.ybr.server.ServerFactory;
-import at.deder.ybr.server.SimpleHTTPServer;
+import at.deder.ybr.server.SimpleHttpServer;
 import at.deder.ybr.test.mocks.CheckableSilentOutputChannel;
 import at.deder.ybr.test.mocks.MockFileSystemAccessor;
 import at.deder.ybr.test.mocks.MockUtils;
@@ -63,7 +63,7 @@ public class DescribeTest {
     @Test
     public void testExecute() throws ProtocolViolationException{
          // given
-        SimpleHTTPServer spyServer  = spy(new SimpleHTTPServer("none"));
+        SimpleHttpServer spyServer  = spy(new SimpleHttpServer("none"));
         willReturn(MockUtils.getMockManifest()).given(spyServer).getManifest();
         ServerFactory.injectServer(spyServer);
         
@@ -86,7 +86,7 @@ public class DescribeTest {
     @Test
     public void test_execute_without_leading_dot() throws ProtocolViolationException{
         // given
-        SimpleHTTPServer spyServer  = spy(new SimpleHTTPServer("none"));
+        SimpleHttpServer spyServer  = spy(new SimpleHttpServer("none"));
         willReturn(MockUtils.getMockManifest()).given(spyServer).getManifest();
         ServerFactory.injectServer(spyServer);
         

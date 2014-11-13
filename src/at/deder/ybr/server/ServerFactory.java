@@ -51,7 +51,7 @@ public class ServerFactory {
             }
         }
         
-        SimpleHTTPServer serverImpl = new SimpleHTTPServer(serverAddress, port);
+        SimpleHttpServer serverImpl = new SimpleHttpServer(serverAddress, port);
         return serverImpl;
     }
     

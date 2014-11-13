@@ -1,8 +1,6 @@
 package at.deder.ybr.server;
 
-import at.deder.ybr.server.Banner;
 import at.deder.ybr.configuration.ServerManifest;
-import at.deder.ybr.repository.PackageIndex;
 import at.deder.ybr.repository.RepositoryEntry;
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,8 +13,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -31,7 +27,7 @@ import org.apache.http.impl.client.HttpClients;
  *
  * @author lycis
  */
-public class SimpleHTTPServer implements IServerGateway {
+public class SimpleHttpServer implements IServerGateway {
 
     private static final String SCHEME = "http";
     private static final int DEFAULT_PORT = 80;
@@ -40,11 +36,11 @@ public class SimpleHTTPServer implements IServerGateway {
     private String hostname = "";
     private int port = DEFAULT_PORT;
 
-    public SimpleHTTPServer(String hostname) {
+    public SimpleHttpServer(String hostname) {
         this(hostname, DEFAULT_PORT);
     }
 
-    public SimpleHTTPServer(String hostname, int port) {
+    public SimpleHttpServer(String hostname, int port) {
         serverConnection = HttpClients.createDefault();
         this.hostname = hostname;
         this.port = port;

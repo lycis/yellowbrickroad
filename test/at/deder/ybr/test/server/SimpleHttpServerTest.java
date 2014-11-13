@@ -5,7 +5,7 @@
  */
 package at.deder.ybr.test.server;
 
-import at.deder.ybr.server.SimpleHTTPServer;
+import at.deder.ybr.server.SimpleHttpServer;
 import at.deder.ybr.server.Banner;
 import at.deder.ybr.repository.RepositoryEntry;
 import at.deder.ybr.configuration.ServerManifest;
@@ -32,7 +32,7 @@ import static org.mockito.Mockito.mock;
  *
  * @author ederda
  */
-public class SimpleHTTPServerTest {
+public class SimpleHttpServerTest {
     private HttpClient mockHttpClient = mock(HttpClient.class);
     private HttpGet mockHttpGet       = mock (HttpGet.class);
     private HttpResponse mockHttpResponse = mock(HttpResponse.class);
@@ -56,7 +56,7 @@ public class SimpleHTTPServerTest {
         given(mockHttpEntity.getContent())
                 .willReturn(new ByteArrayInputStream(manifestWriter.toString().getBytes("utf-8")));
                 
-        SimpleHTTPServer instance = new SimpleHTTPServer("none");
+        SimpleHttpServer instance = new SimpleHttpServer("none");
         instance.setHttpClient(mockHttpClient);
         ServerManifest result = instance.getManifest();
         assertEquals(expectedResult, result);
@@ -87,7 +87,7 @@ public class SimpleHTTPServerTest {
         given(mockHttpEntity.getContent())
                 .willReturn(new ByteArrayInputStream(manifestWriter.toString().getBytes("utf-8")));
                 
-        SimpleHTTPServer instance = new SimpleHTTPServer("none");
+        SimpleHttpServer instance = new SimpleHttpServer("none");
         instance.setHttpClient(mockHttpClient);
         ServerManifest result = instance.getManifest();
         assertEquals(expectedResult, result);
@@ -100,7 +100,7 @@ public class SimpleHTTPServerTest {
         given(mockHttpResponse.getEntity()).willReturn(mockHttpEntity);
         given(mockHttpEntity.getContent())
                 .willReturn(new ByteArrayInputStream(expectedBanner.getText().getBytes("utf-8")));
-        SimpleHTTPServer instance = new SimpleHTTPServer("none");
+        SimpleHttpServer instance = new SimpleHttpServer("none");
         instance.setHttpClient(mockHttpClient);
         Banner result = instance.getBanner();
         assertEquals(expectedBanner, result);
@@ -109,7 +109,7 @@ public class SimpleHTTPServerTest {
     @Test
     public void testConnectionError() throws IOException, ProtocolViolationException {
         given(mockHttpClient.execute(Matchers.any(HttpGet.class))).willThrow(new IOException("Unknown host"));
-        SimpleHTTPServer instance = new SimpleHTTPServer("none");
+        SimpleHttpServer instance = new SimpleHttpServer("none");
         when(instance).getBanner();
         //then(caughtException()).isInstanceOf(ProtocolViolationException.class);
         then((Throwable) caughtException()).isInstanceOf(ProtocolViolationException.class);
@@ -125,7 +125,7 @@ public class SimpleHTTPServerTest {
         given(mockHttpResponse.getEntity()).willReturn(mockHttpEntity);
         given(mockHttpEntity.getContent())
                 .willReturn(new ByteArrayInputStream(dummyManifest.toString().getBytes("utf-8")));
-        SimpleHTTPServer instance = new SimpleHTTPServer("none");
+        SimpleHttpServer instance = new SimpleHttpServer("none");
         instance.setHttpClient(mockHttpClient);
         
         // when
@@ -146,7 +146,7 @@ public class SimpleHTTPServerTest {
         given(mockHttpResponse.getEntity()).willReturn(mockHttpEntity);
         given(mockHttpEntity.getContent())
                 .willReturn(new ByteArrayInputStream(dummyManifest.toString().getBytes("utf-8")));
-        SimpleHTTPServer instance = new SimpleHTTPServer("none");
+        SimpleHttpServer instance = new SimpleHttpServer("none");
         instance.setHttpClient(mockHttpClient);
         
         // when
@@ -170,7 +170,7 @@ public class SimpleHTTPServerTest {
         given(mockHttpResponse.getEntity()).willReturn(mockHttpEntity);
         given(mockHttpEntity.getContent())
                 .willReturn(new ByteArrayInputStream(dummyManifest.toString().getBytes("utf-8")));
-        SimpleHTTPServer instance = new SimpleHTTPServer("none");
+        SimpleHttpServer instance = new SimpleHttpServer("none");
         instance.setHttpClient(mockHttpClient);
         
         // when
@@ -194,7 +194,7 @@ public class SimpleHTTPServerTest {
         given(mockHttpResponse.getEntity()).willReturn(mockHttpEntity);
         given(mockHttpEntity.getContent())
                 .willReturn(new ByteArrayInputStream(dummyManifest.toString().getBytes("utf-8")));
-        SimpleHTTPServer instance = new SimpleHTTPServer("none");
+        SimpleHttpServer instance = new SimpleHttpServer("none");
         instance.setHttpClient(mockHttpClient);
         
         // when
