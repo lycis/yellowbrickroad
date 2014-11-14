@@ -1,6 +1,9 @@
 package at.deder.ybr.filesystem;
 
+import at.deder.ybr.configuration.ClientConfiguration;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 
 /**
@@ -73,6 +76,30 @@ public class LocalFileSystemAccessor implements IFileSystemAccessor {
     @Override
     public void destroy() {
         return; // not necessary
+    }
+
+    @Override
+    public File getClientConfigFile(String dirPath){
+        File dir = getFile(dirPath);
+        if(dir == null) {
+            return dir;
+        }
+        
+        File[] list = dir.listFiles();
+        for(File f: list) {
+            BufferedReader br = null;
+            try{
+                br = new BufferedReader(new FileReader(f));
+                String firstLine = br.readLine();
+                if(ClientConfiguration.YAML_TAG.equals(firstLine)) {
+                    return f;
+                }
+            } catch (IOException ex) {
+                continue; // when file is not accessible try next one
+            }
+        }
+        
+        return null;
     }
 
 }

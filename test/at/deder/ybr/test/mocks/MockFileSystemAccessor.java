@@ -1,5 +1,6 @@
 package at.deder.ybr.test.mocks;
 
+import at.deder.ybr.configuration.ClientConfiguration;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -8,6 +9,8 @@ import java.util.UUID;
 import org.apache.commons.io.FileUtils;
 
 import at.deder.ybr.filesystem.IFileSystemAccessor;
+import java.io.BufferedReader;
+import java.io.FileReader;
 
 /**
  * Mocks access to the file system. Use POSIX paths to access files.
@@ -149,6 +152,30 @@ public class MockFileSystemAccessor implements IFileSystemAccessor {
     @Override
     public File getRoot() {
         return rootFolder;
+    }
+
+    @Override
+    public File getClientConfigFile(String dirPath) {
+        File dir = getFile(dirPath);
+        if(dir == null) {
+            return dir;
+        }
+        
+        File[] list = dir.listFiles();
+        for(File f: list) {
+            BufferedReader br = null;
+            try{
+                br = new BufferedReader(new FileReader(f));
+                String firstLine = br.readLine();
+                if(ClientConfiguration.YAML_TAG.equals(firstLine)) {
+                    return f;
+                }
+            } catch (IOException ex) {
+                continue; // when file is not accessible try next one
+            }
+        }
+        
+        return null;
     }
 
 }

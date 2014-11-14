@@ -64,4 +64,11 @@ public interface IFileSystemAccessor {
      * Do any necessary clean ups.
      */
     public void destroy();
+    
+    /**
+     * Searches for a client configuration file in the given path.
+     * @param dirPath
+     * @return <code>null</code> if the file was not found
+     */
+    public File getClientConfigFile(String dirPath);
 }

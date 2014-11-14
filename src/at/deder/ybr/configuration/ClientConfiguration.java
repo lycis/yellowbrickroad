@@ -16,7 +16,7 @@ import java.util.ArrayList;
  */
 public class ClientConfiguration {
 
-    private static final String YAML_TAG = "ybr-client-configuration";
+    public static final String YAML_TAG = "ybr-client-configuration";
 
     private String       serverAddress = "";
     private String       targetPath    = "";
