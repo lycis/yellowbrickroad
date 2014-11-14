@@ -63,4 +63,12 @@ public class CheckableSilentOutputChannel extends SilentOutputChannel {
         return completeError.matches(regex);
     }
     
+    public String getOutput() {
+        return completeOutput;
+    }
+    
+    public String getError() {
+        return completeError;
+    }
+    
 }

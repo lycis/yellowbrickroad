@@ -93,4 +93,35 @@ public class InitialiseTest {
         then(mockFSA.getFileInDir(subsubdir, Constants.CLIENT_CONFIG_FILE)).exists();
         then(mockFSA.getFileInDir(subsubdir, Constants.CLIENT_CONFIG_FILE)).hasContent(ClientConfiguration.getDefaultConfiguration().toString());
     }
+    
+    @Test
+    public void not_existing_target_dir() {
+        // giv
+        ArrayList<String> data = new ArrayList<>();
+        data.add("notexistingdir");
+        cmd.setData(data);
+        
+        //when
+        cmd.execute();
+        
+        //then
+        then(mockOut.getOutput()).isEmpty();
+        then(mockOut.getError()).isEqualTo("error: target directory does not exist\n");
+    }
+    
+    @Test
+    public void target_no_directory() {
+        // given
+        mockFSA.createFile(mockFSA.getRoot(), "nodir", false);
+        ArrayList<String> data = new ArrayList<>();
+        data.add("nodir");
+        cmd.setData(data);
+
+        // when
+        cmd.execute();
+
+        //then
+        then(mockOut.getOutput()).isEmpty();
+        then(mockOut.getError()).isEqualTo("error: target is not a directory\n");
+    }
 }

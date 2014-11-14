@@ -49,8 +49,13 @@ public class Initialise implements ICliCommand {
             workDir = fileSystem.getFile(targetDir);
         }
         
+        if(workDir == null) {
+            output.printErrLn("error: target directory does not exist");
+            return;
+        }
+        
         if(!workDir.isDirectory()) {
-            output.printErrLn("target is not a directory");
+            output.printErrLn("error: target is not a directory");
             return;
         }
         

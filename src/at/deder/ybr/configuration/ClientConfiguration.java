@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.util.ArrayList;
 
 /**
  * This bean provides data of the local client configuration
@@ -15,12 +16,14 @@ import java.io.Writer;
  */
 public class ClientConfiguration {
 
-    private static final String YAML_TAG = "client-configuration";
+    private static final String YAML_TAG = "ybr-client-configuration";
 
-    private String serverAddress = "";
-    private String targetPath    = "";
+    private String       serverAddress = "";
+    private String       targetPath    = "";
+    private ArrayList<String> packages;
 
     public ClientConfiguration() {
+        this.packages = new ArrayList<>();
 
     }
 
@@ -38,6 +41,26 @@ public class ClientConfiguration {
     
     public void setTargetPath(String path) {
         targetPath = path;
+    }
+    
+    public ArrayList<String> getPackages() {
+        return packages;
+    }
+    
+    public void addPackage(String pkgName) {
+        if(!packages.contains(pkgName)) {
+            packages.add(pkgName);
+        }
+    }
+    
+    public void setPackages(ArrayList<String> packages) {
+        this.packages = packages;
+    }
+    
+    public void removePackage(String pkgName) {
+        if(packages.contains(pkgName)) {
+            packages.remove(pkgName);
+        }
     }
 
     public boolean writeYaml(Writer w) {
@@ -82,6 +105,8 @@ public class ClientConfiguration {
     public static ClientConfiguration getDefaultConfiguration() {
         ClientConfiguration cc = new ClientConfiguration();
         cc.setServerAddress("hostname:80");
+        cc.setTargetPath(".");
+        cc.addPackage("some.package.here");
         return cc;
     }
     
