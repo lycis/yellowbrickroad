@@ -1,5 +1,7 @@
 package at.deder.ybr.test.mocks;
 
+import at.deder.ybr.channels.IOutputChannel;
+import at.deder.ybr.channels.OutputChannelFactory;
 import at.deder.ybr.configuration.ClientConfiguration;
 import java.io.File;
 import java.io.IOException;
@@ -88,6 +90,10 @@ public class MockFileSystemAccessor implements IFileSystemAccessor {
             // return root
             return rootFolder;
         }
+        
+        if(path.equals(rootFolder.getPath())) {
+            return rootFolder;
+        }
 
         ArrayList<String> remainingNodes = splitFilePath(path);
         File current = rootFolder;
@@ -156,10 +162,12 @@ public class MockFileSystemAccessor implements IFileSystemAccessor {
 
     @Override
     public File getClientConfigFile(String dirPath) {
-        File dir = getFile(dirPath);
+         File dir = getFile(dirPath);
         if(dir == null) {
             return dir;
         }
+        
+        IOutputChannel output = OutputChannelFactory.getOutputChannel();
         
         File[] list = dir.listFiles();
         for(File f: list) {
@@ -167,11 +175,20 @@ public class MockFileSystemAccessor implements IFileSystemAccessor {
             try{
                 br = new BufferedReader(new FileReader(f));
                 String firstLine = br.readLine();
-                if(ClientConfiguration.YAML_TAG.equals(firstLine)) {
+                if(("!"+ClientConfiguration.YAML_TAG).equals(firstLine)) {
                     return f;
                 }
             } catch (IOException ex) {
+                output.println("warning: could not check file "+f.getAbsolutePath()+ "(reason: "+ex.getMessage()+")");
                 continue; // when file is not accessible try next one
+            } finally {
+                if(br != null) {
+                    try{
+                        br.close();
+                    } catch(IOException ex){
+                       output.println("warning: leaked resource");
+                    }
+                }
             }
         }
         

@@ -1,5 +1,7 @@
 package at.deder.ybr.filesystem;
 
+import at.deder.ybr.channels.IOutputChannel;
+import at.deder.ybr.channels.OutputChannelFactory;
 import at.deder.ybr.configuration.ClientConfiguration;
 import java.io.BufferedReader;
 import java.io.File;
@@ -85,17 +87,28 @@ public class LocalFileSystemAccessor implements IFileSystemAccessor {
             return dir;
         }
         
+        IOutputChannel output = OutputChannelFactory.getOutputChannel();
+        
         File[] list = dir.listFiles();
         for(File f: list) {
             BufferedReader br = null;
             try{
                 br = new BufferedReader(new FileReader(f));
                 String firstLine = br.readLine();
-                if(ClientConfiguration.YAML_TAG.equals(firstLine)) {
+                if(("!"+ClientConfiguration.YAML_TAG).equals(firstLine)) {
                     return f;
                 }
             } catch (IOException ex) {
+                output.println("warning: could not check file "+f.getAbsolutePath()+ "(reason: "+ex.getMessage()+")");
                 continue; // when file is not accessible try next one
+            } finally {
+                if(br != null) {
+                    try{
+                        br.close();
+                    } catch(IOException ex){
+                       output.println("warning: leaked resource");
+                    }
+                }
             }
         }
         

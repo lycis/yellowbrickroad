@@ -44,9 +44,9 @@ public class Describe implements ICliCommand {
         IOutputChannel          output = OutputChannelFactory.getOutputChannel();
         
         File workDir = fileSystem.getWorkingDirectory();
-        File configFile = fileSystem.getFileInDir(workDir, "ybr-config.yml");
+        File configFile = fileSystem.getClientConfigFile(workDir.getPath());
         if(configFile == null) {
-            output.printErrLn("error: ybr-config.yml does not exist");
+            output.printErrLn("error: directory does not contain any config file");
             return;
         }
         
@@ -54,7 +54,7 @@ public class Describe implements ICliCommand {
         try {
             config = ClientConfiguration.readYaml(new FileReader(configFile));
         } catch (FileNotFoundException ex) {
-            output.printErrLn("error: ybr-config.yml is not accessible ("+ex.getMessage()+")");
+            output.printErrLn("error: config file "+configFile.getName()+"' is not accessible ("+ex.getMessage()+")");
             return;
         }
         
