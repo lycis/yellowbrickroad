@@ -5,8 +5,9 @@
  */
 package at.deder.ybr.test.commands;
 
-import at.deder.ybr.channels.ConsoleOutputChannel;
+import at.deder.ybr.channels.IOutputChannel;
 import at.deder.ybr.channels.OutputChannelFactory;
+import at.deder.ybr.channels.SilentOutputChannel;
 import at.deder.ybr.repository.RepositoryEntry;
 import at.deder.ybr.configuration.ServerManifest;
 import at.deder.ybr.commands.ICliCommand;
@@ -34,7 +35,7 @@ import org.junit.Test;
  */
 public class UpdateServerTest {
 
-    private static ConsoleOutputChannel  mockOut = null;
+    private static IOutputChannel  mockOut = null;
     private static MockFileSystemAccessor mockFSA = null;
     private UpdateServer cmd = null;
 
@@ -45,7 +46,7 @@ public class UpdateServerTest {
     public void initTest() {
         // mock for file system access
         mockFSA = new MockFileSystemAccessor();
-        mockOut = new ConsoleOutputChannel();
+        mockOut = new SilentOutputChannel();
         cmd = new UpdateServer();
 
         FileSystem.injectAccessor(mockFSA);

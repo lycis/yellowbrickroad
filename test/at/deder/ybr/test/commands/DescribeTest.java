@@ -43,7 +43,7 @@ public class DescribeTest {
     @Before
     public void initTest() {
         // mock for file system access
-        mockFSA = spy(new MockFileSystemAccessor());
+        mockFSA = new MockFileSystemAccessor();
         mockOut = new CheckableSilentOutputChannel();
         cmd = new Describe();
 
@@ -59,6 +59,7 @@ public class DescribeTest {
 
     @AfterClass
     public static void endCleanUp() {
+        ServerFactory.injectServer(null);
         FileSystem.injectAccessor(null);
     }
 
@@ -73,9 +74,7 @@ public class DescribeTest {
         ServerFactory.injectServer(spyServer);
         
         File configFile = mockFSA.createFile(mockFSA.getWorkingDirectory(), "ybr-config.yml", false);
-        BufferedWriter writer = new BufferedWriter(new FileWriter(configFile));
-        writer.write("!" + ClientConfiguration.YAML_TAG + "\n");
-        writer.close();
+        writeTestClientConfig(configFile);
         
         ArrayList<String> parameters = new ArrayList<>();
         parameters.add(".com.cpp.util.x32");
@@ -97,9 +96,7 @@ public class DescribeTest {
         ServerFactory.injectServer(spyServer);
         
         File configFile = mockFSA.createFile(mockFSA.getWorkingDirectory(), "ybr-config.yml", false);
-        BufferedWriter writer = new BufferedWriter(new FileWriter(configFile));
-        writer.write("!" + ClientConfiguration.YAML_TAG + "\n");
-        writer.close();
+        writeTestClientConfig(configFile);
         
         ArrayList<String> parameters = new ArrayList<>();
         parameters.add("org.junit");
@@ -126,9 +123,7 @@ public class DescribeTest {
         ServerFactory.injectServer(mockServer);
         
         File configFile = mockFSA.createFile(mockFSA.getWorkingDirectory(), "ybr-config.yml", false);
-        BufferedWriter writer = new BufferedWriter(new FileWriter(configFile));
-        writer.write("!" + ClientConfiguration.YAML_TAG + "\n");
-        writer.close();
+        writeTestClientConfig(configFile);
         
         // execute command
         ArrayList<String> parameters = new ArrayList<>();
@@ -140,5 +135,14 @@ public class DescribeTest {
                 mockOut.outputEquals(".does.not.exist\n<not found>\n"));
         assertTrue("error log does not match expectation",
                 mockOut.errorEquals(""));
+    }
+
+    private void writeTestClientConfig(File configFile) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(configFile))) {
+            writer.write("!" + ClientConfiguration.YAML_TAG + "\n");
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+        System.gc();
     }
 }

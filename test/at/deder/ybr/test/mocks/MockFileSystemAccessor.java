@@ -11,8 +11,11 @@ import java.util.UUID;
 import org.apache.commons.io.FileUtils;
 
 import at.deder.ybr.filesystem.IFileSystemAccessor;
+import at.deder.ybr.filesystem.LocalFileSystemAccessor;
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Mocks access to the file system. Use POSIX paths to access files.
@@ -20,7 +23,7 @@ import java.io.FileReader;
  * @author lycis
  *
  */
-public class MockFileSystemAccessor implements IFileSystemAccessor {
+public class MockFileSystemAccessor  extends LocalFileSystemAccessor implements IFileSystemAccessor {
 
     private File rootFolder = null;
 
@@ -38,10 +41,14 @@ public class MockFileSystemAccessor implements IFileSystemAccessor {
      */
     public void destroy() {
         try {
+            System.gc(); // workaround to ensure that all streams are closed
+            Thread.sleep(500); // bad workaround fore the one before to work correctly
             FileUtils.deleteDirectory(rootFolder);
         } catch (IOException e) {
             // TODO unclean
             e.printStackTrace();
+        } catch (InterruptedException ex) {
+            
         }
     }
 
@@ -158,41 +165,6 @@ public class MockFileSystemAccessor implements IFileSystemAccessor {
     @Override
     public File getRoot() {
         return rootFolder;
-    }
-
-    @Override
-    public File getClientConfigFile(String dirPath) {
-         File dir = getFile(dirPath);
-        if(dir == null) {
-            return dir;
-        }
-        
-        IOutputChannel output = OutputChannelFactory.getOutputChannel();
-        
-        File[] list = dir.listFiles();
-        for(File f: list) {
-            BufferedReader br = null;
-            try{
-                br = new BufferedReader(new FileReader(f));
-                String firstLine = br.readLine();
-                if(("!"+ClientConfiguration.YAML_TAG).equals(firstLine)) {
-                    return f;
-                }
-            } catch (IOException ex) {
-                output.println("warning: could not check file "+f.getAbsolutePath()+ "(reason: "+ex.getMessage()+")");
-                continue; // when file is not accessible try next one
-            } finally {
-                if(br != null) {
-                    try{
-                        br.close();
-                    } catch(IOException ex){
-                       output.println("warning: leaked resource");
-                    }
-                }
-            }
-        }
-        
-        return null;
     }
 
 }
