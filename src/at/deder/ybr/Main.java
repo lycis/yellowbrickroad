@@ -135,13 +135,14 @@ public class Main {
         System.out.println("options:");
         System.out.println("-help\t\tprint this information");
         System.out.println("-version\tprint version information");
-        System.out.println("-silent\tsuppress all output");
+        System.out.println("-silent\t\tsuppress all output");
         System.out.println("-verbose\tdisplay extended output");
         System.out.println("-log <file>\twrite output to the given file");
         System.out.println("");
         System.out.println("commands:");
-        System.out.println("describe <package>\t\tdisplay information about a specific package");
-        System.out.println("initialise [target-dir]\t\tinitialises a directory for the use with ybr");
+        System.out.println("describe <package>\tdisplay information about a specific package");
+        System.out.println("initialise [target-dir]\tinitialises a directory for the use with ybr");
+        System.out.println("update\t\t\tupdate the locally stored libraries of a project");
         System.out.println("");
         System.out.println("server-commands:");
         System.out.println("prepare-server\t\tprepare the basic folder structure for a server");
