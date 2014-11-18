@@ -6,18 +6,21 @@ import at.deder.ybr.filesystem.LocalFileSystemAccessor;
 import at.deder.ybr.channels.IOutputChannel;
 import at.deder.ybr.channels.OutputChannelFactory;
 import at.deder.ybr.channels.SilentOutputChannel;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import ml.options.OptionSet;
-import ml.options.Options;
-import ml.options.Options.Multiplicity;
 import at.deder.ybr.commands.ICliCommand;
 import at.deder.ybr.filesystem.FileSystem;
 import java.io.File;
 import java.io.IOException;
-import ml.options.Options.Separator;
+import java.util.List;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.OptionBuilder;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+import org.apache.commons.cli.PosixParser;
 
 /**
  * This class is the main entry point for the application. It parses all command
@@ -35,38 +38,35 @@ public class Main {
     }
 
     public static void main(String[] args) {
-        Options cliOptions = new Options(args, 0, 99);
-
-        // define possible command line options
-        cliOptions.getSet().addOption(Constants.OPTION_VERSION, Multiplicity.ZERO_OR_ONE);
-        cliOptions.getSet().addOption(Constants.OPTION_HELP,    Multiplicity.ZERO_OR_ONE);
-        cliOptions.getSet().addOption(Constants.OPTION_VERBOSE, Multiplicity.ZERO_OR_ONE);
-        cliOptions.getSet().addOption(Constants.OPTION_SILENT,  Multiplicity.ZERO_OR_ONE);
-        cliOptions.getSet().addOption(Constants.OPTION_LOG, Separator.BLANK, Multiplicity.ZERO_OR_ONE);
-        
-// evaluate options
-        if (!cliOptions.check(true, false)) {
-            System.out.println("error: " + cliOptions.getCheckErrors());
+       Options cliOptions = buildOptions();
+       
+       // parse command line
+       CommandLineParser clParser = new PosixParser();
+       CommandLine cLine = null;
+        try {
+            cLine = clParser.parse(cliOptions, args);
+        } catch (ParseException ex) {
+            System.out.println("error: "+ex.getMessage());
             printUsageHint();
             System.exit(1);
         }
 
         // process command line options that do not require a command
-        if (cliOptions.getSet().isSet("version")) {
+        if (cLine.hasOption(Constants.OPTION_VERSION)) {
             printVersionInfo();
             return;
         }
 
-        if (cliOptions.getSet().isSet("help")) {
+        if (cLine.hasOption(Constants.OPTION_HELP)) {
             printUsageHint();
             return;
         }
 
         // process according command
-        ArrayList<String> commandList = cliOptions.getSet().getData();
+        List<String> commandList = cLine.getArgList();
 
         if (commandList.isEmpty()) {
-			// if there is no command at this point (no-command options are already
+            // if there is no command at this point (no-command options are already
             // filtered) than the user did not provide enough input
             printUsageHint();
             System.exit(1);
@@ -83,35 +83,32 @@ public class Main {
 
         executor.setData(commandList); // pass remaining cli data
 
-        // set options on command
-        OptionSet optionSet = cliOptions.getSet();
-        
         // process and configure output mode
-        if(optionSet.isSet(Constants.OPTION_VERBOSE) &&
-                optionSet.isSet(Constants.OPTION_SILENT)) {
+        if(cLine.hasOption(Constants.OPTION_VERBOSE) &&
+           cLine.hasOption(Constants.OPTION_SILENT)) {
             System.err.println("error: -verbose and -silent must not be combined");
             System.exit(1);
         }
         
-        if(optionSet.isSet(Constants.OPTION_LOG) &&
-                optionSet.isSet(Constants.OPTION_SILENT)) {
+        if(cLine.hasOption(Constants.OPTION_LOG) &&
+           cLine.hasOption(Constants.OPTION_SILENT)) {
             System.err.println("error: -log and -silent must not be combined");
             System.exit(1);
         }
         
-        if(optionSet.isSet(Constants.OPTION_VERBOSE)) { // verbose output
+        if(cLine.hasOption(Constants.OPTION_VERBOSE)) { // verbose output
             executor.setOption(Constants.OPTION_VERBOSE, Constants.VALUE_TRUE);
         } else {
             executor.setOption(Constants.OPTION_VERBOSE, Constants.VALUE_FALSE);
         }
         
         IOutputChannel outputAccessor = new ConsoleOutputChannel(); // default for output is console
-        if(optionSet.isSet(Constants.OPTION_SILENT)) { // use silent output accessor
+        if(cLine.hasOption(Constants.OPTION_SILENT)) { // use silent output accessor
             outputAccessor = new SilentOutputChannel();
         }
         
-        if(optionSet.isSet(Constants.OPTION_LOG)) { // use logfile
-            File logFile = new File(optionSet.getOption(Constants.OPTION_LOG).getResultValue(0));
+        if(cLine.hasOption(Constants.OPTION_LOG)) { // use logfile
+            File logFile = new File(cLine.getOptionValue(Constants.OPTION_LOG));
             
             try {
                 outputAccessor = new FileOutputChannel(logFile);
@@ -131,13 +128,7 @@ public class Main {
 
     public static void printUsageHint() {
         System.out.println("ybr [options] <command>");
-        System.out.println("");
-        System.out.println("options:");
-        System.out.println("-help\t\tprint this information");
-        System.out.println("-version\tprint version information");
-        System.out.println("-silent\t\tsuppress all output");
-        System.out.println("-verbose\tdisplay extended output");
-        System.out.println("-log <file>\twrite output to the given file");
+        // options
         System.out.println("");
         System.out.println("commands:");
         System.out.println("describe <package>\tdisplay information about a specific package");
@@ -169,5 +160,22 @@ public class Main {
         commandMap.put("initialise", cmdInit);
         commandMap.put("initialize", cmdInit);
         commandMap.put("init", cmdInit);
+    }
+
+    private static Options buildOptions() {
+        Option help    = new Option(Constants.OPTION_HELP,    "print this message");
+        Option version = new Option(Constants.OPTION_VERSION, "print version information");
+        Option verbose = new Option(Constants.OPTION_VERBOSE, "display extended output");
+        Option silent  = new Option(Constants.OPTION_SILENT,  "suppress all output");
+        Option log     = OptionBuilder.withArgName("file").hasArg().withDescription("write output to the given file").create(Constants.OPTION_LOG);
+        
+        
+        Options cliOptions = new Options();
+        cliOptions.addOption(help);
+        cliOptions.addOption(version);
+        cliOptions.addOption(verbose);
+        cliOptions.addOption(silent);
+        cliOptions.addOption(log);
+        return cliOptions;
     }
 }
