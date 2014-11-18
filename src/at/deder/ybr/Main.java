@@ -16,11 +16,13 @@ import java.io.IOException;
 import java.util.List;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
+import static org.apache.http.client.methods.RequestBuilder.options;
 
 /**
  * This class is the main entry point for the application. It parses all command
@@ -127,8 +129,9 @@ public class Main {
     }
 
     public static void printUsageHint() {
-        System.out.println("ybr [options] <command>");
-        // options
+        HelpFormatter formatter = new HelpFormatter();
+        formatter.printHelp( "ybr [options] <command>", buildOptions() );
+        
         System.out.println("");
         System.out.println("commands:");
         System.out.println("describe <package>\tdisplay information about a specific package");
