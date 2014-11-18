@@ -1,6 +1,7 @@
 package at.deder.ybr.commands;
 
 import at.deder.ybr.Constants;
+import static at.deder.ybr.Main.printUsageHint;
 import at.deder.ybr.channels.IOutputChannel;
 import at.deder.ybr.channels.OutputChannelFactory;
 import at.deder.ybr.configuration.ClientConfiguration;
@@ -10,8 +11,14 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.OptionBuilder;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+import org.apache.commons.cli.PosixParser;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * This command initialises a local directory for the use with ybr. Essentially
@@ -22,6 +29,8 @@ import java.util.logging.Logger;
 public class Initialise implements ICliCommand {
     
     private String targetDir;
+    private String targetFile;
+    private boolean validExecution = true;
 
     @Override
     public void setOption(String name, String value) {
@@ -30,6 +39,28 @@ public class Initialise implements ICliCommand {
 
     @Override
     public void setData(List<String> cliData) {
+        Option file = OptionBuilder.withArgName("file").hasArg().withLongOpt("file").create("f");
+        Options opt = new Options();
+        opt.addOption(file);
+        
+        CommandLineParser clParser = new PosixParser();
+        CommandLine cLine = null;
+        try {
+            cLine = clParser.parse(opt, cliData.toArray(new String[cliData.size()]));
+        } catch (ParseException ex) {
+            IOutputChannel output = OutputChannelFactory.getOutputChannel();
+            output.printErrLn("error: "+ex.getMessage());
+            validExecution = false;
+            return;
+        }
+        
+        if(cLine.hasOption("f")) {
+            targetFile = cLine.getOptionValue("f");
+        } else {
+            targetFile = Constants.CLIENT_CONFIG_FILE;
+        }
+        
+        cliData = cLine.getArgList();
         if(cliData.size() > 0) {
             targetDir = cliData.get(0);
         } else {
@@ -39,6 +70,11 @@ public class Initialise implements ICliCommand {
 
     @Override
     public void execute() {
+        if(!validExecution) {
+            return; // execution was aborted before start (e.g. bad options)
+        }
+        
+        
         IFileSystemAccessor fileSystem = FileSystem.getAccess();
         IOutputChannel          output = OutputChannelFactory.getOutputChannel();
         
@@ -69,7 +105,7 @@ public class Initialise implements ICliCommand {
         
         File configFile = null;
         try {
-            configFile = fileSystem.createFile(workDir, Constants.CLIENT_CONFIG_FILE, false);
+            configFile = fileSystem.createFile(workDir, targetFile, false);
         } catch (IOException ex) {
             output.printErrLn("error: could not create config file ("+ex.getMessage()+")");
             return;

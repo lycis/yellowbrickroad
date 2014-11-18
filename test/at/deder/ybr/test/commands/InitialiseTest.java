@@ -124,4 +124,22 @@ public class InitialiseTest {
         then(mockOut.getOutput()).isEmpty();
         then(mockOut.getError()).isEqualTo("error: target is not a directory\n");
     }
+    
+    @Test
+    public void override_target_filename() {
+         // given
+        ArrayList<String> data = new ArrayList<>();
+        data.add("-f");
+        data.add("configuration.yml");
+        cmd.setData(data);
+        
+        //when
+        cmd.execute();
+        
+        //then
+        then(mockOut.getOutput()).isEmpty();
+        then(mockOut.getError()).isEmpty();
+        then(mockFSA.getFileInDir(mockFSA.getWorkingDirectory(), "configuration.yml")).exists();
+        then(mockFSA.getFileInDir(mockFSA.getWorkingDirectory(), "configuration.yml")).hasContent(ClientConfiguration.getDefaultConfiguration().toString());
+    }
 }

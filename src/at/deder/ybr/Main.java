@@ -22,7 +22,6 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
-import static org.apache.http.client.methods.RequestBuilder.options;
 
 /**
  * This class is the main entry point for the application. It parses all command
