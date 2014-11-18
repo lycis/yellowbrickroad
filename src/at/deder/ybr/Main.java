@@ -134,7 +134,7 @@ public class Main {
         System.out.println("");
         System.out.println("commands:");
         System.out.println("describe <package>\tdisplay information about a specific package");
-        System.out.println("initialise [target-dir]\tinitialises a directory for the use with ybr");
+        System.out.println("initialise [-file <filename>] [target-dir]\tinitialises a directory for the use with ybr");
         System.out.println("update\t\t\tupdate the locally stored libraries of a project");
         System.out.println("");
         System.out.println("server-commands:");
