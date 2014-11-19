@@ -19,7 +19,6 @@
     <target name="init" description="initialise folders for build">
         <tstamp/>
         <mkdir dir="${build}"/>
-        <mkdir dir="${dist}"/>
     </target>
 	
     <target name="compile" depends="init" description="compile source code">
@@ -30,6 +29,8 @@
                     <include name="*.jar"/>
                     <exclude name="hamcrest-core*.jar"/>
                     <exclude name="junit*.jar"/>
+					<exclude name="cucumber*.jar"/>
+					<exclude name="picocontainer*.jar"/>
                 </fileset>
             </classpath>
         </javac>
@@ -43,6 +44,8 @@
                     <include name="*.jar"/>
                     <exclude name="hamcrest-core*.jar"/>
                     <exclude name="junit*.jar"/>
+					<exclude name="cucumber*.jar"/>
+					<exclude name="picocontainer*.jar"/>
                 </fileset>
             </classpath>
         </javac>
@@ -61,6 +64,9 @@
                 <attribute name="Class-Path" value="${mf.classpath}"/>
             </manifest>
         </jar>
+		
+		<mkdir dir="${dist}"/>
+		
         <copy todir="${dist}">
             <fileset dir="${lib}">
                 <include name="*.jar"/>
@@ -85,6 +91,8 @@
                     <include name="*.jar"/>
                     <include name="hamcrest-core*.jar"/>
                     <include name="junit*.jar"/>
+					<include name="cucumber*.jar"/>
+					<include name="picocontainer*.jar"/>
                 </fileset>      
                 <pathelement location="${build}"/>
             </classpath>
@@ -113,5 +121,46 @@
             </batchtest>
         </junit>
         <fail message="one or more unit test failed" if="unit.test.failed"/>
+    </target>
+	
+	<target name="runcukes" depends="compile-test">
+        <mkdir dir="test/report/cucumber-junit-report"/>
+        <java classname="cucumber.api.cli.Main" fork="true" failonerror="false" resultproperty="cucumber.exitstatus">
+             <classpath>
+                <fileset dir="${lib}" id="fs-classpath-notest">
+                    <include name="*.jar"/>
+                    <include name="hamcrest-core*.jar"/>
+                    <include name="junit*.jar"/>
+					<include name="cucumber*.jar"/>
+					<include name="picocontainer*.jar"/>
+                </fileset>      
+                <pathelement location="${build}"/>
+                <pathelement location="${test.build}"/>
+            </classpath>
+            <arg value="--format"/>
+            <arg value="junit:test/report/cucumber-junit-report.xml"/>
+            <arg value="--format"/>
+            <arg value="pretty"/>
+            <arg value="--format"/>
+            <arg value="html:test/report/cucumber-html-report"/>
+            <arg value="--glue"/>
+             <arg value="at.deder.ybr.test.cukes.steps"/>
+            <arg value="features"/>
+        </java>
+
+        <junitreport todir="test/report/cucumber-junit-report">
+            <fileset dir="test/report">
+                <include name="cucumber-junit-report.xml"/>
+            </fileset>
+            <report format="frames" todir="test/report/cucumber-junit-report"/>
+        </junitreport>
+
+        <fail message="Cucumber failed">
+            <condition>
+                <not>
+                    <equals arg1="${cucumber.exitstatus}" arg2="0"/>
+                </not>
+            </condition>
+        </fail>
     </target>
 </project>
