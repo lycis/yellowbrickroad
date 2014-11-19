@@ -99,7 +99,7 @@
         </javac>
     </target>
     
-    <target name="test" depends="compile-test" description="execute tests">
+    <target name="test" depends="runcukes" description="execute tests">
         <mkdir dir="${test.report}"/>
         <junit printsummary="yes" failureproperty="unit.test.failed" 
                haltonfailure="no">
