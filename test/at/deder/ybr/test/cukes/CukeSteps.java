@@ -4,6 +4,7 @@ import at.deder.ybr.channels.OutputChannelFactory;
 import at.deder.ybr.commands.ICliCommand;
 import at.deder.ybr.commands.PrepareServer;
 import at.deder.ybr.commands.Update;
+import at.deder.ybr.commands.UpdateServer;
 import at.deder.ybr.configuration.ServerManifest;
 import at.deder.ybr.filesystem.FileSystem;
 import at.deder.ybr.test.mocks.CheckableSilentOutputChannel;
@@ -152,9 +153,19 @@ public class CukeSteps {
         assertThat(content).isEqualTo(PrepareServer.INDEX_DEFAULT_TEXT);
     }
     
-    @When("^I prepare a server in directory \"(.*?)\"")
+    @When("^I prepare a server in directory \"(.*?)\"$")
     public void i_prepare_a_server_in_directory(String dir) throws Throwable{
         executeCommand(new PrepareServer(), dir);
+    }
+    
+    @When("^I update the server$")
+    public void i_update_the_server() {
+        executeCommand(new UpdateServer(), ".");
+    }
+    
+    @Then("^the output shows")
+    public void the_output_shows(String expOutput) {
+        assertThat(output.getOutput()).isEqualTo(expOutput);
     }
     
     // executes a CLI command

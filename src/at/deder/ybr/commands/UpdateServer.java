@@ -46,8 +46,6 @@ public class UpdateServer implements ICliCommand {
     public void execute() {
         fileSystem = FileSystem.getAccess();
         output     = OutputChannelFactory.getOutputChannel();
-        
-        output.println("Updating server manifest...");
 
         // check if target folder exists
         File target;
@@ -64,10 +62,12 @@ public class UpdateServer implements ICliCommand {
 
         // check if server structure is available in the target folder
         if (!isServerStructurePrepared(target)) {
-            output.println("error: target folder does not contain a yellow brick road server");
+            output.printErrLn("error: target folder does not contain a yellow brick road server");
             output.println("Run 'prepare-server' to initialise a server structure.");
             return;
         }
+        
+        output.println("Updating server manifest...");
 
         // recursively walk through the file system and add to the repo tree
         printDetail("Scanning file system...");
@@ -79,7 +79,7 @@ public class UpdateServer implements ICliCommand {
         try {
             manifest = ServerManifest.readYaml(new FileReader(fileSystem.getFileInDir(target, "manifest.yml")));
         } catch (FileNotFoundException ex) {
-            output.printErrLn("error: could not read existing manifest (" + ex.getMessage() + ")");
+            output.printErrLn("error: manifest does not exist");
             return;
         }
 
