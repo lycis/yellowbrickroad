@@ -82,7 +82,7 @@
     </target>	
     
     <!-- test targets -->
-    <target name="compile-test" depends="compile" description="compile test sources">
+    <target name="compile-test" depends="compile-debug" description="compile test sources">
         <mkdir dir="${test.build}"/>
         <javac srcdir="${test.src}" destdir="${test.build}" 
                includeantruntime="false" debug="true">
@@ -131,21 +131,21 @@
                     <include name="*.jar"/>
                     <include name="hamcrest-core*.jar"/>
                     <include name="junit*.jar"/>
-					<include name="cucumber*.jar"/>
-					<include name="picocontainer*.jar"/>
+                    <include name="cucumber*.jar"/>
+                    <include name="picocontainer*.jar"/>
                 </fileset>      
                 <pathelement location="${build}"/>
                 <pathelement location="${test.build}"/>
             </classpath>
-            <arg value="--format"/>
+            <arg value="--plugin"/>
             <arg value="junit:test/report/cucumber-junit-report.xml"/>
-            <arg value="--format"/>
+            <arg value="--plugin"/>
             <arg value="pretty"/>
-            <arg value="--format"/>
+            <arg value="--plugin"/>
             <arg value="html:test/report/cucumber-html-report"/>
             <arg value="--glue"/>
-             <arg value="at.deder.ybr.test.cukes.steps"/>
-            <arg value="features"/>
+            <arg value="at.deder.ybr.test.cukes"/>
+            <arg value="features/"/>
         </java>
 
         <junitreport todir="test/report/cucumber-junit-report">

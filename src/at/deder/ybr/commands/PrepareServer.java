@@ -58,8 +58,8 @@ public class PrepareServer implements ICliCommand {
             target = fileSystem.getFile(targetFolder);
         }
 
-        if (!target.exists()) {
-            output.println("error: target folder does not exist");
+        if (target == null) {
+            output.printErrLn("error: target does not exist");
             return;
         }
 
