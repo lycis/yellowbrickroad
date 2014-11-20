@@ -1,5 +1,10 @@
 package at.deder.ybr.commands;
 
+import at.deder.ybr.channels.IOutputChannel;
+import at.deder.ybr.channels.OutputChannelFactory;
+import at.deder.ybr.filesystem.FileSystem;
+import at.deder.ybr.filesystem.IFileSystemAccessor;
+import java.io.File;
 import java.util.List;
 
 /**
@@ -10,17 +15,25 @@ public class Update implements ICliCommand {
 
     @Override
     public void setOption(String name, String value) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        // TODO implement
     }
 
     @Override
     public void setData(List<String> cliData) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        // TODO implement
     }
 
     @Override
     public void execute() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        IFileSystemAccessor filesystem = FileSystem.getAccess();
+        IOutputChannel      output     = OutputChannelFactory.getOutputChannel();
+        
+        File config = filesystem.getClientConfigFile(filesystem.getWorkingDirectory().getAbsolutePath());
+        if(config == null) {
+            output.printErrLn("error: no configuration available");
+        }
+        
+        FileSystem.releaseAccess(filesystem);
     }
     
 }
