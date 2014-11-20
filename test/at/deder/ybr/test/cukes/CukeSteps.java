@@ -9,7 +9,7 @@ import at.deder.ybr.filesystem.FileSystem;
 import at.deder.ybr.test.mocks.CheckableSilentOutputChannel;
 import at.deder.ybr.test.mocks.MockFileSystemAccessor;
 import at.deder.ybr.test.mocks.MockUtils;
-import cucumber.api.PendingException;
+import cucumber.api.java.After;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
@@ -18,7 +18,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import org.apache.commons.io.FileUtils;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -38,6 +37,11 @@ public class CukeSteps {
         // set default accessors and channels
         FileSystem.injectAccessor(filesystem);
         OutputChannelFactory.setOutputChannel(output);
+    }
+    
+    @After
+    public void clean_up_after_scenario() {
+        FileSystem.injectAccessor(null);
     }
 
     @Given("^there is no config file")
