@@ -120,17 +120,13 @@ public class ServerManifest implements Serializable {
      * @param r reader that points to the YAML file
      * @return instance with properties set according to the file
      */
-    public static ServerManifest readYaml(Reader r) {
+    public static ServerManifest readYaml(Reader r) throws YamlException {
         YamlReader reader = new YamlReader(r);
         reader.getConfig().setClassTag(YAML_TAG, ServerManifest.class);
 
         ServerManifest manifest;
-        try {
-            manifest = reader.read(ServerManifest.class);
-        } catch (YamlException ex) {
-            return null;
-        }
-
+        manifest = reader.read(ServerManifest.class);
+        
         try {
             reader.close();
         } catch (IOException ex) {

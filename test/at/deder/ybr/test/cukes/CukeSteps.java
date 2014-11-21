@@ -10,6 +10,7 @@ import at.deder.ybr.filesystem.FileSystem;
 import at.deder.ybr.test.mocks.CheckableSilentOutputChannel;
 import at.deder.ybr.test.mocks.MockFileSystemAccessor;
 import at.deder.ybr.test.mocks.MockUtils;
+import com.esotericsoftware.yamlbeans.YamlException;
 import cucumber.api.java.After;
 import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
@@ -19,7 +20,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.StringReader;
 import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.commons.io.FileUtils;
 import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.Assert;
@@ -166,6 +170,40 @@ public class CukeSteps {
     @Then("^the output shows")
     public void the_output_shows(String expOutput) {
         assertThat(output.getOutput()).isEqualTo(expOutput);
+    }
+    
+    @Then("^the manifest (\".*?\")*(?:| )looks like$")
+    public void the_manifest_looks_like(String file, String content) {
+        
+        
+        ServerManifest compareManifest = null;
+        try {
+            compareManifest = ServerManifest.readYaml(new StringReader(content));
+        } catch (YamlException ex) {
+            Assert.fail("yaml parse exception: "+ex.getMessage());
+        }
+        
+        if(file == null) {
+            file = "manifest.yml";
+        }
+        
+        File manifestFile = filesystem.getFile(file);
+        assertThat(manifestFile).isNotNull();
+        ServerManifest fileManifest = null;
+        try {
+            fileManifest = ServerManifest.readYaml(new FileReader(manifestFile));
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(CukeSteps.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (YamlException ex) {
+             Assert.fail("yaml parse exception: "+ex.getMessage());
+        }
+        
+        assertThat(compareManifest).isEqualTo(fileManifest);
+    }
+    
+    @Then("^no error is displayed$")
+    public void no_error_is_displayed() {
+        assertThat(output.getError()).isEmpty();
     }
     
     // executes a CLI command

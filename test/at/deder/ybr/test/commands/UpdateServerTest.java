@@ -15,6 +15,7 @@ import at.deder.ybr.commands.PrepareServer;
 import at.deder.ybr.commands.UpdateServer;
 import at.deder.ybr.filesystem.FileSystem;
 import at.deder.ybr.test.mocks.MockFileSystemAccessor;
+import com.esotericsoftware.yamlbeans.YamlException;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -22,6 +23,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -78,6 +81,8 @@ public class UpdateServerTest {
             sm = ServerManifest.readYaml(new FileReader(manifest));
         } catch (FileNotFoundException ex) {
             Assert.fail("manifest file not found");
+        } catch (YamlException ex) {
+             Assert.fail("yaml parse exception: "+ex.getMessage());
         }
         
         Assert.assertEquals("default repository is incorrectly created", 
@@ -132,6 +137,8 @@ public class UpdateServerTest {
             sm = ServerManifest.readYaml(new FileReader(manifest));
         } catch (FileNotFoundException ex) {
             Assert.fail("manifest file not found");
+        } catch (YamlException ex) {
+             Assert.fail("yaml parse exception: "+ex.getMessage());
         }
         
         Assert.assertEquals("descriptions in repository are not set correctly", 
