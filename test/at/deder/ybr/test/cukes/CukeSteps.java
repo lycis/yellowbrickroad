@@ -16,9 +16,11 @@ import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.Arrays;
@@ -68,7 +70,7 @@ public class CukeSteps {
     }
 
     @Given("^the current directory is empty$")
-    public void there_is_an_empty_directory() throws Throwable {
+    public void the_current_directory_is_empty() throws Throwable {
         File currentDir = filesystem.getWorkingDirectory();
         for(File f: currentDir.listFiles()) {
             if(f.isDirectory()) {
@@ -204,6 +206,24 @@ public class CukeSteps {
     @Then("^no error is displayed$")
     public void no_error_is_displayed() {
         assertThat(output.getError()).isEmpty();
+    }
+    
+    @Given("^the current directory contains a prepared server$")
+    public void the_current_directory_contains_a_prepared_server() throws Throwable {
+        the_current_directory_is_empty();
+        i_prepare_a_server_in_directory(".");
+    }
+    
+    @Given("^the file \"(.*?)\" contains$")
+    public void the_file_contains(String file, String content) throws IOException {
+        File f = filesystem.getFile(file);
+        if(f == null) {
+            f = filesystem.createFile(filesystem.getWorkingDirectory(), file, false);
+        }
+        
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(f))) {
+            writer.write(content);
+        }
     }
     
     // executes a CLI command
