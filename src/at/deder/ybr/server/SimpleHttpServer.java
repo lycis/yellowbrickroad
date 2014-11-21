@@ -3,6 +3,7 @@ package at.deder.ybr.server;
 import at.deder.ybr.configuration.ServerManifest;
 import at.deder.ybr.repository.PackageIndex;
 import at.deder.ybr.repository.RepositoryEntry;
+import com.esotericsoftware.yamlbeans.YamlException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
@@ -61,7 +62,12 @@ public class SimpleHttpServer implements IServerGateway {
             throw new ProtocolViolationException("server communication failed",
                                                  ex);
         }
-        ServerManifest sm = ServerManifest.readYaml(new StringReader(manifest));
+        ServerManifest sm;
+        try {
+            sm = ServerManifest.readYaml(new StringReader(manifest));
+        } catch (YamlException ex) {
+            throw new ProtocolViolationException("invalid server manifest", ex);
+        }
         return sm;
     }
 

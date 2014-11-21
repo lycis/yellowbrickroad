@@ -9,12 +9,15 @@ import at.deder.ybr.channels.OutputChannelFactory;
 import at.deder.ybr.repository.RepositoryEntry;
 import at.deder.ybr.configuration.ServerManifest;
 import at.deder.ybr.filesystem.FileSystem;
+import com.esotericsoftware.yamlbeans.YamlException;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class UpdateServer implements ICliCommand {
 
@@ -81,6 +84,8 @@ public class UpdateServer implements ICliCommand {
         } catch (FileNotFoundException ex) {
             output.printErrLn("error: manifest does not exist");
             return;
+        } catch (YamlException ex) {
+            output.printErrLn("error: parsing manifest failed ("+ex.getMessage()+")");
         }
 
         manifest.setRepository(rootNode);
