@@ -62,3 +62,23 @@ repoStruct:
       name: repository
 type: simple
 """
+
+Scenario: Overwriting descriptions
+Given the current directory contains a complex repository
+And the file "repository/com/description" contains 
+"""
+overwritten com description
+"""
+And the file "repository/org/description" contains
+"""
+overwritten org description
+"""
+When I update the server
+Then the repository entry .org has description
+"""
+overwritten org description
+"""
+And the repository entry .com has description
+"""
+overwritten com description
+"""

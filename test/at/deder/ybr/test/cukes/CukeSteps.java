@@ -7,6 +7,7 @@ import at.deder.ybr.commands.Update;
 import at.deder.ybr.commands.UpdateServer;
 import at.deder.ybr.configuration.ServerManifest;
 import at.deder.ybr.filesystem.FileSystem;
+import at.deder.ybr.repository.RepositoryEntry;
 import at.deder.ybr.test.mocks.CheckableSilentOutputChannel;
 import at.deder.ybr.test.mocks.MockFileSystemAccessor;
 import at.deder.ybr.test.mocks.MockUtils;
@@ -24,6 +25,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.Arrays;
+import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.io.FileUtils;
@@ -175,7 +178,7 @@ public class CukeSteps {
     }
     
     @Then("^the manifest (\".*?\")*(?:| )looks like$")
-    public void the_manifest_looks_like(String file, String content) {
+    public void the_manifest_looks_like(String file, String content) throws YamlException, FileNotFoundException {
         
         
         ServerManifest compareManifest = null;
@@ -192,14 +195,8 @@ public class CukeSteps {
         File manifestFile = filesystem.getFile(file);
         assertThat(manifestFile).isNotNull();
         ServerManifest fileManifest = null;
-        try {
-            fileManifest = ServerManifest.readYaml(new FileReader(manifestFile));
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(CukeSteps.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (YamlException ex) {
-             Assert.fail("yaml parse exception: "+ex.getMessage());
-        }
-        
+        fileManifest = ServerManifest.readYaml(new FileReader(manifestFile));
+                
         assertThat(compareManifest).isEqualTo(fileManifest);
     }
     
@@ -226,9 +223,91 @@ public class CukeSteps {
         }
     }
     
+    @Given("^the current directory contains a complex repository$")
+    public void the_current_directory_contains_a_complex_repository() throws IOException, Throwable {
+        the_current_directory_contains_a_prepared_server();
+        
+        // create file structure
+        File comDir = filesystem.getFile("repository/com/");
+        
+        File javaDir = filesystem.createFile(comDir, "java", true);
+        File javaUtilDir = filesystem.createFile(javaDir, "util", true);
+        File javaUtilIoDir = filesystem.createFile(javaUtilDir, "io", true);
+        File javaUtilIoFileDir = filesystem.createFile(javaUtilIoDir, "file", true);
+        
+        File cppDir = filesystem.createFile(comDir, "cpp", true);
+        File cppUtilDir = filesystem.createFile(cppDir, "util", true);
+        File cppUtilx32Dir = filesystem.createFile(cppUtilDir, "x32", true);
+        File cppUtilx64Dir = filesystem.createFile(cppUtilDir, "x64", true);
+        
+        File orgDir = filesystem.getFile("repository/org/");
+        File orgJUnitDir = filesystem.createFile(orgDir, "junit", true);
+        
+        // workaround to wait for file system operations to finish...
+        //Thread.sleep(1000);
+        
+        // place descriptions
+        the_file_contains("repository/com/java/description", "commercial java libraries");
+        the_file_contains("repository/com/java/util/description", "java utilities");
+        the_file_contains("repository/com/java/util/io/description", "java I/O utilities");
+        the_file_contains("repository/com/java/util/io/file/description", "input/output for files in java");
+        the_file_contains("repository/com/cpp/description", "c++ libraries (binary format)");
+        the_file_contains("repository/com/cpp/util/description", "c++ utilities");
+        the_file_contains("repository/com/cpp/util/x32/description", "c++ utilities for x32 arch");
+        the_file_contains("repository/com/cpp/util/x64/description", "c++ utilities for 64bit arch");
+        the_file_contains("repository/org/junit/description", "junit framework");
+    }
+    
+    @Then("^the repository entry (.*?) has description$")
+    public void the_repository_entry_has_description(String entryId, String description) throws YamlException, FileNotFoundException {
+        System.out.println("entry id = "+entryId);
+        ServerManifest manifest = ServerManifest.readYaml(new FileReader(filesystem.getFile("manifest.yml")));
+        RepositoryEntry entry = getPackage(manifest.getRepository(), entryId);
+        assertThat(entry).isNotNull();
+        assertThat(entry.getDescription()).isEqualTo(description);
+    }
+    
     // executes a CLI command
     private void executeCommand(ICliCommand cmd, String... args) {
         cmd.setData(Arrays.asList(args)); // no args
         cmd.execute();
     }
+    
+    // Recursively walk through the repository tree and resolve a given path.
+    private RepositoryEntry getPackage(RepositoryEntry root, String name) {
+        if(name.startsWith(".")) {
+            name = name.substring(1);
+        }
+        
+        if(root == null) {
+            return null;
+        }
+        
+        List<String> path = Arrays.asList(name.split("\\."));
+        if (path.size() < 1) {
+            return null;
+        }
+
+        String target = path.get(0);
+        RepositoryEntry nextEntry;
+        try {
+            nextEntry = (RepositoryEntry) root.getChildren().stream()
+                    .filter(entry -> target.equals(((RepositoryEntry) entry).getName()))
+                    .findFirst().get();
+        } catch (NoSuchElementException e) {
+            nextEntry = null;
+        }
+        
+        if (!name.contains(".")) {
+            return nextEntry;
+        } else {
+            String remainingPath = name.substring(name.indexOf(".") + 1);
+            if (nextEntry != null && remainingPath.length() > 1) {
+                return getPackage(nextEntry, remainingPath);
+            }
+        }
+        return nextEntry;
+    }
+    
+   
 }
