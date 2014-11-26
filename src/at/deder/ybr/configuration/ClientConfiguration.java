@@ -8,6 +8,7 @@ import java.io.Reader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  * This bean provides data of the local client configuration
@@ -115,4 +116,36 @@ public class ClientConfiguration {
         writeYaml(sw);
         return sw.toString();
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 29 * hash + Objects.hashCode(this.serverAddress);
+        hash = 29 * hash + Objects.hashCode(this.targetPath);
+        hash = 29 * hash + Objects.hashCode(this.packages);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final ClientConfiguration other = (ClientConfiguration) obj;
+        if (!Objects.equals(this.serverAddress, other.serverAddress)) {
+            return false;
+        }
+        if (!Objects.equals(this.targetPath, other.targetPath)) {
+            return false;
+        }
+        if (!Objects.equals(this.packages, other.packages)) {
+            return false;
+        }
+        return true;
+    }
+    
+    
 }

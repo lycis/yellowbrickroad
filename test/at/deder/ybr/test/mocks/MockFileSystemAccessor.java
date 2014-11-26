@@ -23,7 +23,7 @@ import java.util.logging.Logger;
  * @author lycis
  *
  */
-public class MockFileSystemAccessor  extends LocalFileSystemAccessor implements IFileSystemAccessor {
+public class MockFileSystemAccessor extends LocalFileSystemAccessor implements IFileSystemAccessor {
 
     private File rootFolder = null;
 
@@ -48,7 +48,7 @@ public class MockFileSystemAccessor  extends LocalFileSystemAccessor implements 
             // TODO unclean
             e.printStackTrace();
         } catch (InterruptedException ex) {
-            
+
         }
     }
 
@@ -70,11 +70,12 @@ public class MockFileSystemAccessor  extends LocalFileSystemAccessor implements 
 
     private File recursiveGetFile(File currentNode, ArrayList<String> remainingNodes) {
         String nextNode = remainingNodes.remove(0);
-        
-        if(currentNode == null)
+
+        if (currentNode == null) {
             return null;
-        
-        if(".".equals(nextNode)) {
+        }
+
+        if (".".equals(nextNode)) {
             return currentNode;
         }
 
@@ -97,8 +98,8 @@ public class MockFileSystemAccessor  extends LocalFileSystemAccessor implements 
             // return root
             return rootFolder;
         }
-        
-        if(path.equals(rootFolder.getPath())) {
+
+        if (path.equals(rootFolder.getPath())) {
             return rootFolder;
         }
 
@@ -110,23 +111,40 @@ public class MockFileSystemAccessor  extends LocalFileSystemAccessor implements 
 
     @Override
     public File createFile(File parent, String name, boolean isFolder) {
-        if(parent == null) {
+        if (parent == null) {
             parent = getWorkingDirectory();
         }
-        
-        File reqFile = new File(parent.getAbsolutePath() + File.separator + name);
-        try {
-            if (isFolder) {
-                reqFile.mkdir();
-            } else {
-                reqFile.createNewFile();
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
+
+        if (name.startsWith("/")) {
+            name = name.substring(1);
         }
 
-        return reqFile;
+        boolean recursive = false;
+        String next = name;
+        if (name.contains("/")) {
+            next = name.split("/")[0];
+            recursive = true;
+        }
+
+        File reqFile = new File(parent.getAbsolutePath() + File.separator + next);
+        if (!reqFile.exists()) {
+            try {
+                if (isFolder) {
+                    reqFile.mkdir();
+                } else {
+                    reqFile.createNewFile();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        if (recursive) {
+            return createFile(reqFile, name.substring(name.indexOf("/")), isFolder);
+        } else {
+            return reqFile;
+        }
     }
 
     private ArrayList<String> splitFilePath(String path) {
@@ -148,17 +166,17 @@ public class MockFileSystemAccessor  extends LocalFileSystemAccessor implements 
 
     @Override
     public File getFileInDir(File dir, String name) {
-        if(!dir.isDirectory()) {
+        if (!dir.isDirectory()) {
             return null;
         }
-        
+
         File[] list = dir.listFiles();
-        for(File f: list) {
-            if(f.getName().equals(name)) {
+        for (File f : list) {
+            if (f.getName().equals(name)) {
                 return f;
             }
         }
-        
+
         return null;
     }
 

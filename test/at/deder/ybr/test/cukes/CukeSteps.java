@@ -2,9 +2,11 @@ package at.deder.ybr.test.cukes;
 
 import at.deder.ybr.channels.OutputChannelFactory;
 import at.deder.ybr.commands.ICliCommand;
+import at.deder.ybr.commands.Initialise;
 import at.deder.ybr.commands.PrepareServer;
 import at.deder.ybr.commands.Update;
 import at.deder.ybr.commands.UpdateServer;
+import at.deder.ybr.configuration.ClientConfiguration;
 import at.deder.ybr.configuration.ServerManifest;
 import at.deder.ybr.filesystem.FileSystem;
 import at.deder.ybr.repository.RepositoryEntry;
@@ -24,11 +26,10 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringReader;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.apache.commons.io.FileUtils;
 import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.Assert;
@@ -260,7 +261,6 @@ public class CukeSteps {
     
     @Then("^the repository entry (.*?) has description$")
     public void the_repository_entry_has_description(String entryId, String description) throws YamlException, FileNotFoundException {
-        System.out.println("entry id = "+entryId);
         ServerManifest manifest = ServerManifest.readYaml(new FileReader(filesystem.getFile("manifest.yml")));
         RepositoryEntry entry = getPackage(manifest.getRepository(), entryId);
         assertThat(entry).isNotNull();
@@ -269,7 +269,12 @@ public class CukeSteps {
     
     // executes a CLI command
     private void executeCommand(ICliCommand cmd, String... args) {
-        cmd.setData(Arrays.asList(args)); // no args
+        if(args.length == 1 && args[0].isEmpty()) {
+            cmd.setData(new ArrayList<String>());
+        } else {
+            cmd.setData(Arrays.asList(args)); // no args
+        }
+        
         cmd.execute();
     }
     
@@ -309,5 +314,19 @@ public class CukeSteps {
         return nextEntry;
     }
     
+    @When("^I execute (?:|an )initialisation$")
+    public void i_execute_an_initialisation() {
+        executeCommand(new Initialise(), "");
+    }
    
+    @When("^I execute (?:|an )initialisation with \"(.*?)\"$")
+    public void i_execute_an_initialisation_with(String args) {
+        executeCommand(new Initialise(), args.split(" "));
+    }
+    
+    @Then("^the file (?:named |)\"(.*?)\" contains the default configuration$")
+    public void the_file_named_contains_the_default_configuration(String file) throws FileNotFoundException {
+        ClientConfiguration config = ClientConfiguration.readYaml(new FileReader(filesystem.getFile(file)));
+        assertThat(config).isEqualTo(ClientConfiguration.getDefaultConfiguration());
+    }
 }
