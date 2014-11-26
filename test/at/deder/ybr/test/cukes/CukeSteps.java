@@ -1,6 +1,7 @@
 package at.deder.ybr.test.cukes;
 
 import at.deder.ybr.channels.OutputChannelFactory;
+import at.deder.ybr.commands.Describe;
 import at.deder.ybr.commands.ICliCommand;
 import at.deder.ybr.commands.Initialise;
 import at.deder.ybr.commands.PrepareServer;
@@ -49,7 +50,7 @@ public class CukeSteps {
         FileSystem.injectAccessor(filesystem);
         OutputChannelFactory.setOutputChannel(output);
     }
-    
+
     @After
     public void clean_up_after_scenario() {
         FileSystem.injectAccessor(null);
@@ -76,21 +77,21 @@ public class CukeSteps {
     @Given("^the current directory is empty$")
     public void the_current_directory_is_empty() throws Throwable {
         File currentDir = filesystem.getWorkingDirectory();
-        for(File f: currentDir.listFiles()) {
-            if(f.isDirectory()) {
+        for (File f : currentDir.listFiles()) {
+            if (f.isDirectory()) {
                 FileUtils.deleteDirectory(f);
             } else {
                 f.delete();
             }
         }
     }
-    
+
     @Given("^the directory \"(.*?)\" is empty$")
     public void the_directory_is_empty(String dir) throws Throwable {
         File currentDir = filesystem.getFile(dir);
         assertThat(dir).isNotNull();
-        for(File f: currentDir.listFiles()) {
-            if(f.isDirectory()) {
+        for (File f : currentDir.listFiles()) {
+            if (f.isDirectory()) {
                 FileUtils.deleteDirectory(f);
             } else {
                 f.delete();
@@ -108,7 +109,7 @@ public class CukeSteps {
         assertThat(filesystem.getFile(arg1)).isNotNull();
         assertThat(filesystem.getFile(arg1)).isDirectory();
     }
-    
+
     @Given("^a directory (?:named|called) \"(.*?)\" was created$")
     public void given_there_is_a_directory_named(String arg1) throws Throwable {
         filesystem.createFile(filesystem.getWorkingDirectory(), arg1, true);
@@ -116,14 +117,14 @@ public class CukeSteps {
 
     @Then("^there is a file (?:named|called) \"(.*?)\"$")
     public void there_is_a_file_named(String arg1) throws Throwable {
-       assertThat(filesystem.getFile(arg1)).isNotNull();
-       assertThat(filesystem.getFile(arg1)).isFile();
+        assertThat(filesystem.getFile(arg1)).isNotNull();
+        assertThat(filesystem.getFile(arg1)).isFile();
     }
 
     @Then("^the file named \"(.*?)\" contains the default manifest$")
     public void the_file_named_contains_the_default_manifest(String arg1) throws Throwable {
         there_is_a_file_named(arg1);
-        
+
         File target = filesystem.getFile(arg1);
         assertThat(target).isNotNull();
         ServerManifest sm = null;
@@ -139,7 +140,7 @@ public class CukeSteps {
     @Then("^the file named \"(.*?)\" contains the default index page$")
     public void the_file_named_contains_the_default_index_page(String arg1) throws Throwable {
         there_is_a_file_named(arg1);
-        
+
         File index = filesystem.getFile(arg1);
         BufferedReader reader = null;
         try {
@@ -156,97 +157,98 @@ public class CukeSteps {
             }
         } catch (IOException ex) {
             Assert.fail("reading content of index.html failed");
-        }finally{
-            try{reader.close();}catch(IOException ex){};
+        } finally {
+            try {
+                reader.close();
+            } catch (IOException ex) {
+            };
         }
-        
+
         assertThat(content).isEqualTo(PrepareServer.INDEX_DEFAULT_TEXT);
     }
-    
+
     @When("^I prepare a server in directory \"(.*?)\"$")
-    public void i_prepare_a_server_in_directory(String dir) throws Throwable{
+    public void i_prepare_a_server_in_directory(String dir) throws Throwable {
         executeCommand(new PrepareServer(), dir);
     }
-    
+
     @When("^I update the server$")
     public void i_update_the_server() {
         executeCommand(new UpdateServer(), ".");
     }
-    
+
     @Then("^the output shows")
     public void the_output_shows(String expOutput) {
         assertThat(output.getOutput()).isEqualTo(expOutput);
     }
-    
+
     @Then("^the manifest (\".*?\")*(?:| )looks like$")
     public void the_manifest_looks_like(String file, String content) throws YamlException, FileNotFoundException {
-        
-        
+
         ServerManifest compareManifest = null;
         try {
             compareManifest = ServerManifest.readYaml(new StringReader(content));
         } catch (YamlException ex) {
-            Assert.fail("yaml parse exception: "+ex.getMessage());
+            Assert.fail("yaml parse exception: " + ex.getMessage());
         }
-        
-        if(file == null) {
+
+        if (file == null) {
             file = "manifest.yml";
         }
-        
+
         File manifestFile = filesystem.getFile(file);
         assertThat(manifestFile).isNotNull();
         ServerManifest fileManifest = null;
         fileManifest = ServerManifest.readYaml(new FileReader(manifestFile));
-                
+
         assertThat(compareManifest).isEqualTo(fileManifest);
     }
-    
+
     @Then("^no error is displayed$")
     public void no_error_is_displayed() {
         assertThat(output.getError()).isEmpty();
     }
-    
+
     @Given("^the current directory contains a prepared server$")
     public void the_current_directory_contains_a_prepared_server() throws Throwable {
         the_current_directory_is_empty();
         i_prepare_a_server_in_directory(".");
     }
-    
+
     @Given("^the file \"(.*?)\" contains$")
     public void the_file_contains(String file, String content) throws IOException {
         File f = filesystem.getFile(file);
-        if(f == null) {
+        if (f == null) {
             f = filesystem.createFile(filesystem.getWorkingDirectory(), file, false);
         }
-        
+
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(f))) {
             writer.write(content);
         }
     }
-    
+
     @Given("^the current directory contains a complex repository$")
     public void the_current_directory_contains_a_complex_repository() throws IOException, Throwable {
         the_current_directory_contains_a_prepared_server();
-        
+
         // create file structure
         File comDir = filesystem.getFile("repository/com/");
-        
+
         File javaDir = filesystem.createFile(comDir, "java", true);
         File javaUtilDir = filesystem.createFile(javaDir, "util", true);
         File javaUtilIoDir = filesystem.createFile(javaUtilDir, "io", true);
         File javaUtilIoFileDir = filesystem.createFile(javaUtilIoDir, "file", true);
-        
+
         File cppDir = filesystem.createFile(comDir, "cpp", true);
         File cppUtilDir = filesystem.createFile(cppDir, "util", true);
         File cppUtilx32Dir = filesystem.createFile(cppUtilDir, "x32", true);
         File cppUtilx64Dir = filesystem.createFile(cppUtilDir, "x64", true);
-        
+
         File orgDir = filesystem.getFile("repository/org/");
         File orgJUnitDir = filesystem.createFile(orgDir, "junit", true);
-        
+
         // workaround to wait for file system operations to finish...
         //Thread.sleep(1000);
-        
         // place descriptions
         the_file_contains("repository/com/java/description", "commercial java libraries");
         the_file_contains("repository/com/java/util/description", "java utilities");
@@ -258,7 +260,7 @@ public class CukeSteps {
         the_file_contains("repository/com/cpp/util/x64/description", "c++ utilities for 64bit arch");
         the_file_contains("repository/org/junit/description", "junit framework");
     }
-    
+
     @Then("^the repository entry (.*?) has description$")
     public void the_repository_entry_has_description(String entryId, String description) throws YamlException, FileNotFoundException {
         ServerManifest manifest = ServerManifest.readYaml(new FileReader(filesystem.getFile("manifest.yml")));
@@ -266,28 +268,28 @@ public class CukeSteps {
         assertThat(entry).isNotNull();
         assertThat(entry.getDescription()).isEqualTo(description);
     }
-    
+
     // executes a CLI command
     private void executeCommand(ICliCommand cmd, String... args) {
-        if(args.length == 1 && args[0].isEmpty()) {
+        if (args.length == 1 && args[0].isEmpty()) {
             cmd.setData(new ArrayList<String>());
         } else {
             cmd.setData(Arrays.asList(args)); // no args
         }
-        
+
         cmd.execute();
     }
-    
+
     // Recursively walk through the repository tree and resolve a given path.
     private RepositoryEntry getPackage(RepositoryEntry root, String name) {
-        if(name.startsWith(".")) {
+        if (name.startsWith(".")) {
             name = name.substring(1);
         }
-        
-        if(root == null) {
+
+        if (root == null) {
             return null;
         }
-        
+
         List<String> path = Arrays.asList(name.split("\\."));
         if (path.size() < 1) {
             return null;
@@ -302,7 +304,7 @@ public class CukeSteps {
         } catch (NoSuchElementException e) {
             nextEntry = null;
         }
-        
+
         if (!name.contains(".")) {
             return nextEntry;
         } else {
@@ -313,20 +315,30 @@ public class CukeSteps {
         }
         return nextEntry;
     }
-    
+
     @When("^I execute (?:|an )initialisation$")
     public void i_execute_an_initialisation() {
         executeCommand(new Initialise(), "");
     }
-   
+
     @When("^I execute (?:|an )initialisation with \"(.*?)\"$")
     public void i_execute_an_initialisation_with(String args) {
         executeCommand(new Initialise(), args.split(" "));
     }
-    
+
     @Then("^the file (?:named |)\"(.*?)\" contains the default configuration$")
     public void the_file_named_contains_the_default_configuration(String file) throws FileNotFoundException {
         ClientConfiguration config = ClientConfiguration.readYaml(new FileReader(filesystem.getFile(file)));
         assertThat(config).isEqualTo(ClientConfiguration.getDefaultConfiguration());
+    }
+
+    @When("^I request the description of package \"(.*?)\"$")
+    public void i_request_the_description_of_package(String arg1) {
+        executeCommand(new Describe(), arg1);
+    }
+
+    @Given("^the default configuration was written to \"(.*?)\"$")
+    public void the_default_configuration_was_written_to(String arg1) throws Throwable {
+        the_file_contains(arg1, ClientConfiguration.getDefaultConfiguration().toString());
     }
 }
