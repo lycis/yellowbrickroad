@@ -14,8 +14,14 @@ When I execute an initialisation with "."
 Then there is a file named "ybr-config.yml"
 And the file "ybr-config.yml" contains the default configuration
 
-Scenario: Initialise in a different directory
-Given a directory named "somedir/subdir/workhere" was created
-When I execute initialisation with "somedir/subdir/workhere"
-Then there is a file named "somedir/subdir/workhere/ybr-config.yml"
-And the file "somedir/subdir/workhere/ybr-config.yml" contains the default configuration
+Scenario Outline: Initialise in a different directory with specific filename
+Given a directory named "<target>" was created
+When I execute initialisation with "-f <file> <target>"
+Then there is a file named "<target>/<file>"
+And the file "<target>/<file>" contains the default configuration
+
+Examples:
+    | target                 | file             |
+    | somedir                | ybr-config.yml   |
+    | parent/child           | ybr.yml          |
+    | somedir/subdir/workdir | foobarconfigfile |
