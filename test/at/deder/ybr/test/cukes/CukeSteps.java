@@ -247,8 +247,6 @@ public class CukeSteps {
         File orgDir = filesystem.getFile("repository/org/");
         File orgJUnitDir = filesystem.createFile(orgDir, "junit", true);
 
-        // workaround to wait for file system operations to finish...
-        //Thread.sleep(1000);
         // place descriptions
         the_file_contains("repository/com/java/description", "commercial java libraries");
         the_file_contains("repository/com/java/util/description", "java utilities");
