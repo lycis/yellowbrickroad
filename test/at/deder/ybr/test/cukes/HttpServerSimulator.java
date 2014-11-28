@@ -24,14 +24,14 @@ import org.mockito.stubbing.Answer;
  *
  * @author ederda
  */
-public class SimpleServerResponseAnswer implements Answer {
+public class HttpServerSimulator implements Answer {
 
     Map<String, Map<String, VirtualResource>> resourceMap = new HashMap<>();
 
     @Override
     public Object answer(InvocationOnMock invocation) throws Throwable {
         Object[] args = invocation.getArguments();
-        HttpResponse response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_OK, "OK");
+        HttpResponse response = null;
 
         if (args.length != 1 && !(args[0] instanceof HttpGet)) {
             response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_INTERNAL_SERVER_ERROR, "wrong arguments");
@@ -47,21 +47,22 @@ public class SimpleServerResponseAnswer implements Answer {
         if (vr == null) {
             response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_NOT_FOUND, "not found");
         } else {
-            entity.setContent(vr.getContentStream());
+            entity.setContent(vr.content);
             entity.setContentType(vr.contentType);
+            response = new BasicHttpResponse(HttpVersion.HTTP_1_1, vr.httpStatus, vr.httpStatusText);
+            response.setEntity(entity);
         }
 
-        response.setEntity(entity);
         return response;
     }
 
     private VirtualResource getResource(String path) {
         if (!path.endsWith("/")) {
-            String resource = path.substring(path.lastIndexOf("/"));
+            String resource = path.substring(path.lastIndexOf("/") + 1);
             path = path.substring(0, path.lastIndexOf("/"));
 
             Map<String, VirtualResource> pathContent = resourceMap.get(path);
-            if (path != null) {
+            if (pathContent != null) {
                 if (pathContent.containsKey(resource)) {
                     return pathContent.get(resource);
                 }
@@ -74,29 +75,50 @@ public class SimpleServerResponseAnswer implements Answer {
     public void configureDefaultRepository() {
         // root level
         addResource("/", "manifest.yml", ContentType.TEXT_PLAIN, MockUtils.getMockManifest().toString());
-        
+
         // TODO complete
     }
     
-    public void addResource(String path, String resource, ContentType contentType, String content) {
-        Map<String, VirtualResource> resMap = new HashMap<>();
-        VirtualResource vr = new VirtualResource(contentType.toString(), MockUtils.getMockManifest().toString());
+    public void addResource(String path, String resource,ContentType contentType, String content) {
+        addResource(path, resource, HttpStatus.SC_OK, "OK", contentType, content);
+    }
+    
+    public void addResource(String path, String resource, int respCode, String respText, ContentType contentType, String content) {
+        addResource(path, resource, respCode, respText, contentType, new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8)));
+    }
+
+    public void addResource(String path, String resource, int respCode, String respText, ContentType contentType, ByteArrayInputStream content) {
+        if (path.endsWith("/")) {
+            path = path.substring(0, path.length() - 1);
+        }
+
+        Map<String, VirtualResource> resMap;
+        if (resourceMap.containsKey(path)) {
+            resMap = resourceMap.get(path);
+        } else {
+            resMap = new HashMap<>();
+        }
+
+        VirtualResource vr = new VirtualResource(contentType.toString(), content);
+        vr.httpStatus = respCode;
+        vr.httpStatusText = respText;
         resMap.put(resource, vr);
-        resourceMap.put(path, resMap);
+
+        if (!resourceMap.containsKey(path)) {
+            resourceMap.put(path, resMap);
+        }
     }
 
     private class VirtualResource {
 
-        public String content;
+        public ByteArrayInputStream content;
         public String contentType;
-        
-        public VirtualResource(String cType, String content) {
+        public int httpStatus;
+        public String httpStatusText;
+
+        public VirtualResource(String cType, ByteArrayInputStream content) {
             this.content = content;
             this.contentType = cType;
-        }
-
-        public ByteArrayInputStream getContentStream() {
-            return new ByteArrayInputStream(content.toString().getBytes(StandardCharsets.UTF_8));
         }
     }
 

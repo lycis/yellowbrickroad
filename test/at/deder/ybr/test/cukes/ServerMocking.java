@@ -45,6 +45,6 @@ public class ServerMocking {
         
         // redirect server to internal instance so we can intercept all calls
         HttpClient mockHttpClient = mock(HttpClient.class);
-        given(mockHttpClient.execute(Matchers.any(HttpGet.class))).willAnswer(new SimpleServerResponseAnswer());
+        given(mockHttpClient.execute(Matchers.any(HttpGet.class))).willAnswer(new HttpServerSimulator());
     }
 }
