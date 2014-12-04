@@ -1,6 +1,6 @@
 package at.deder.ybr.test.mocks;
 
-import at.deder.ybr.channels.IOutputChannel;
+import at.deder.ybr.channels.AbstractOutputChannel;
 import at.deder.ybr.channels.OutputChannelFactory;
 import at.deder.ybr.configuration.ClientConfiguration;
 import java.io.File;

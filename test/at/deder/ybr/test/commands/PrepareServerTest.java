@@ -1,6 +1,6 @@
 package at.deder.ybr.test.commands;
 
-import at.deder.ybr.channels.IOutputChannel;
+import at.deder.ybr.channels.AbstractOutputChannel;
 import at.deder.ybr.channels.OutputChannelFactory;
 import at.deder.ybr.channels.SilentOutputChannel;
 import at.deder.ybr.configuration.ServerManifest;
@@ -26,7 +26,7 @@ import org.junit.Ignore;
 @Ignore("Obsolete because cucumber test")
 public class PrepareServerTest {
 
-    private static IOutputChannel        mockOut = null;
+    private static AbstractOutputChannel        mockOut = null;
     private static MockFileSystemAccessor mockFSA = null;
     private PrepareServer                 cmd = null;
 

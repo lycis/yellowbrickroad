@@ -1,7 +1,7 @@
 package at.deder.ybr.commands;
 
 import at.deder.ybr.Constants;
-import at.deder.ybr.channels.IOutputChannel;
+import at.deder.ybr.channels.AbstractOutputChannel;
 import at.deder.ybr.channels.OutputChannelFactory;
 import at.deder.ybr.configuration.ClientConfiguration;
 import at.deder.ybr.filesystem.FileSystem;
@@ -41,7 +41,7 @@ public class Describe implements ICliCommand {
     @Override
     public void execute() {
         IFileSystemAccessor fileSystem = FileSystem.getAccess();
-        IOutputChannel          output = OutputChannelFactory.getOutputChannel();
+        AbstractOutputChannel          output = OutputChannelFactory.getOutputChannel();
         
         File workDir = fileSystem.getWorkingDirectory();
         File configFile = fileSystem.getClientConfigFile(workDir);

@@ -6,7 +6,7 @@ import java.util.List;
 
 import at.deder.ybr.Constants;
 import at.deder.ybr.filesystem.IFileSystemAccessor;
-import at.deder.ybr.channels.IOutputChannel;
+import at.deder.ybr.channels.AbstractOutputChannel;
 import at.deder.ybr.channels.OutputChannelFactory;
 import at.deder.ybr.configuration.ServerManifest;
 import at.deder.ybr.filesystem.FileSystem;
@@ -19,7 +19,7 @@ public class PrepareServer implements ICliCommand {
     private String targetFolder = ".";
     
     private IFileSystemAccessor fileSystem = null;
-    private IOutputChannel     output     = null;
+    private AbstractOutputChannel     output     = null;
     
     // constants
     public static String INDEX_DEFAULT_TEXT = "Welcome to the Emerald City!\n";

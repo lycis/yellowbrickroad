@@ -1,6 +1,6 @@
 package at.deder.ybr.filesystem;
 
-import at.deder.ybr.channels.IOutputChannel;
+import at.deder.ybr.channels.AbstractOutputChannel;
 import at.deder.ybr.channels.OutputChannelFactory;
 import at.deder.ybr.configuration.ClientConfiguration;
 import java.io.BufferedReader;
@@ -86,7 +86,7 @@ public class LocalFileSystemAccessor implements IFileSystemAccessor {
             return dir;
         }
         
-        IOutputChannel output = OutputChannelFactory.getOutputChannel();
+        AbstractOutputChannel output = OutputChannelFactory.getOutputChannel();
         
         File[] list = dir.listFiles();
         for(File f: list) {

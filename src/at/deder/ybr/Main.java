@@ -3,7 +3,7 @@ package at.deder.ybr;
 import at.deder.ybr.channels.ConsoleOutputChannel;
 import at.deder.ybr.channels.FileOutputChannel;
 import at.deder.ybr.filesystem.LocalFileSystemAccessor;
-import at.deder.ybr.channels.IOutputChannel;
+import at.deder.ybr.channels.AbstractOutputChannel;
 import at.deder.ybr.channels.OutputChannelFactory;
 import at.deder.ybr.channels.SilentOutputChannel;
 import java.util.HashMap;
@@ -103,7 +103,7 @@ public class Main {
             executor.setOption(Constants.OPTION_VERBOSE, Constants.VALUE_FALSE);
         }
         
-        IOutputChannel outputAccessor = new ConsoleOutputChannel(); // default for output is console
+        AbstractOutputChannel outputAccessor = new ConsoleOutputChannel(); // default for output is console
         if(cLine.hasOption(Constants.OPTION_SILENT)) { // use silent output accessor
             outputAccessor = new SilentOutputChannel();
         }

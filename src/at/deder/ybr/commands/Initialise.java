@@ -2,7 +2,7 @@ package at.deder.ybr.commands;
 
 import at.deder.ybr.Constants;
 import static at.deder.ybr.Main.printUsageHint;
-import at.deder.ybr.channels.IOutputChannel;
+import at.deder.ybr.channels.AbstractOutputChannel;
 import at.deder.ybr.channels.OutputChannelFactory;
 import at.deder.ybr.configuration.ClientConfiguration;
 import at.deder.ybr.filesystem.FileSystem;
@@ -48,7 +48,7 @@ public class Initialise implements ICliCommand {
         try {
             cLine = clParser.parse(opt, cliData.toArray(new String[cliData.size()]));
         } catch (ParseException ex) {
-            IOutputChannel output = OutputChannelFactory.getOutputChannel();
+            AbstractOutputChannel output = OutputChannelFactory.getOutputChannel();
             output.printErrLn("error: "+ex.getMessage());
             validExecution = false;
             return;
@@ -76,7 +76,7 @@ public class Initialise implements ICliCommand {
         
         
         IFileSystemAccessor fileSystem = FileSystem.getAccess();
-        IOutputChannel          output = OutputChannelFactory.getOutputChannel();
+        AbstractOutputChannel          output = OutputChannelFactory.getOutputChannel();
         
         File workDir = null;
         if(targetDir.isEmpty()) {

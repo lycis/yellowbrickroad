@@ -10,7 +10,7 @@ import java.io.IOException;
  *
  * @author lycis
  */
-public class FileOutputChannel implements IOutputChannel {
+public class FileOutputChannel extends AbstractOutputChannel {
 
     private File outputFile = null;
 
@@ -47,18 +47,8 @@ public class FileOutputChannel implements IOutputChannel {
     }
 
     @Override
-    public void println(String s) {
-        print(s + "\n");
-    }
-
-    @Override
     public void printErr(String s) {
         print(s);
-    }
-
-    @Override
-    public void printErrLn(String s) {
-        printErr(s + "\n");
     }
 
     /**

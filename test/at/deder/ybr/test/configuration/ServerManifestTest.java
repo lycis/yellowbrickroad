@@ -65,7 +65,6 @@ public class ServerManifestTest {
     /**
      * Test of initDefaults method, of class ServerManifest.
      */
-    @Ignore("not implemented")
     @Test
     public void testInitDefaults() {
         // when

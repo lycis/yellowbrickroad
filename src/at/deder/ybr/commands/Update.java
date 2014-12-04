@@ -1,6 +1,6 @@
 package at.deder.ybr.commands;
 
-import at.deder.ybr.channels.IOutputChannel;
+import at.deder.ybr.channels.AbstractOutputChannel;
 import at.deder.ybr.channels.OutputChannelFactory;
 import at.deder.ybr.configuration.ClientConfiguration;
 import at.deder.ybr.filesystem.FileSystem;
@@ -38,7 +38,7 @@ public class Update implements ICliCommand {
     @Override
     public void execute() {
         final IFileSystemAccessor filesystem = FileSystem.getAccess();
-        final IOutputChannel output = OutputChannelFactory.getOutputChannel();
+        final AbstractOutputChannel output = OutputChannelFactory.getOutputChannel();
 
         File config = filesystem.getClientConfigFile(filesystem.getWorkingDirectory());
         if (config == null || !config.exists()) {

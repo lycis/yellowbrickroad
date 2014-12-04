@@ -6,7 +6,7 @@ package at.deder.ybr.channels;
  * 
  * @author lycis
  */
-public class SilentOutputChannel implements IOutputChannel {
+public class SilentOutputChannel extends AbstractOutputChannel {
 
     @Override
     public void print(String s) {
@@ -14,18 +14,7 @@ public class SilentOutputChannel implements IOutputChannel {
     }
 
     @Override
-    public void println(String s) {
-        return;
-    }
-
-    @Override
     public void printErr(String s) {
         return;
-    }
-
-    @Override
-    public void printErrLn(String s) {
-        return;
-    }
-    
+    }    
 }

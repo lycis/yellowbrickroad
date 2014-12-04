@@ -3,7 +3,7 @@ package at.deder.ybr.commands;
 import java.util.List;
 
 import at.deder.ybr.filesystem.IFileSystemAccessor;
-import at.deder.ybr.channels.IOutputChannel;
+import at.deder.ybr.channels.AbstractOutputChannel;
 
 /**
  * This is the interface for all command line actions.

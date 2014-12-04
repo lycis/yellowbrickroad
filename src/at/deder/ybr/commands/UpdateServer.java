@@ -4,7 +4,7 @@ import at.deder.ybr.Constants;
 import java.util.List;
 
 import at.deder.ybr.filesystem.IFileSystemAccessor;
-import at.deder.ybr.channels.IOutputChannel;
+import at.deder.ybr.channels.AbstractOutputChannel;
 import at.deder.ybr.channels.OutputChannelFactory;
 import at.deder.ybr.repository.RepositoryEntry;
 import at.deder.ybr.configuration.ServerManifest;
@@ -25,7 +25,7 @@ public class UpdateServer implements ICliCommand {
     private String targetFolder = "";
     
     private IFileSystemAccessor fileSystem = null;
-    private IOutputChannel     output     = null;
+    private AbstractOutputChannel     output     = null;
 
     @Override
     public void setOption(String name, String value) {

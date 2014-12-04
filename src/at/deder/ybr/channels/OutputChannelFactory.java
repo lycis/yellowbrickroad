@@ -6,7 +6,7 @@ package at.deder.ybr.channels;
  */
 public class OutputChannelFactory {
     
-    private static IOutputChannel defaultChannel = new ConsoleOutputChannel();
+    private static AbstractOutputChannel defaultChannel = new ConsoleOutputChannel();
     
     // not instantiable
     private OutputChannelFactory() {
@@ -16,14 +16,14 @@ public class OutputChannelFactory {
     /**
      * Provides the default output channel
      */
-    public static IOutputChannel getOutputChannel() {
+    public static AbstractOutputChannel getOutputChannel() {
         return defaultChannel;
     }
     
     /**
      * Changes the default output channel
      */
-    synchronized public static void setOutputChannel(IOutputChannel o) {
+    synchronized public static void setOutputChannel(AbstractOutputChannel o) {
         defaultChannel = o;
     }
 }
