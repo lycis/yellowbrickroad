@@ -46,6 +46,10 @@ public abstract class AbstractOutputChannel {
         }
     }
     
+    public void printDetailLn(String s) {
+        printDetail(s+"\n");
+    }
+    
     /**
      * toggle verbose mode for this channel
      * @param verbose 

@@ -23,14 +23,10 @@ import java.util.List;
  * @author lycis
  */
 public class Describe implements ICliCommand {
-    private boolean      verbose        = false;
     private List<String> packageUriList = null;
 
     @Override
     public void setOption(String name, String value) {
-        if (Constants.OPTION_VERBOSE.equals(name) && Constants.VALUE_TRUE.equals(value)) {
-            verbose = true;
-        }
     }
 
     @Override

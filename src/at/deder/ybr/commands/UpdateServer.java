@@ -21,7 +21,6 @@ import java.util.logging.Logger;
 
 public class UpdateServer implements ICliCommand {
 
-    private boolean verbose = false;
     private String targetFolder = "";
     
     private IFileSystemAccessor fileSystem = null;
@@ -29,9 +28,6 @@ public class UpdateServer implements ICliCommand {
 
     @Override
     public void setOption(String name, String value) {
-        if (Constants.OPTION_VERBOSE.equals(name)) {
-            verbose = true;
-        }
     }
 
     @Override
@@ -73,11 +69,11 @@ public class UpdateServer implements ICliCommand {
         output.println("Updating server manifest...");
 
         // recursively walk through the file system and add to the repo tree
-        printDetail("Scanning file system...");
+        output.printDetailLn("Scanning file system...");
         RepositoryEntry rootNode = parseRepositoryEntry(null, fileSystem.getFileInDir(target, "repository"));
 
         // read existing manifest
-        printDetail("Updating manifest...");
+        output.printDetailLn("Updating manifest...");
         ServerManifest manifest = null;
         try {
             manifest = ServerManifest.readYaml(new FileReader(fileSystem.getFileInDir(target, "manifest.yml")));
@@ -127,7 +123,7 @@ public class UpdateServer implements ICliCommand {
 
         if (parent != null) {
             parent.addChild(entry);
-            printDetail("Registered node '"+entry.getAbsolutePath()+"'");
+            output.printDetailLn("Registered node '"+entry.getAbsolutePath()+"'");
         }
 
         File[] files = target.listFiles();
@@ -185,7 +181,7 @@ public class UpdateServer implements ICliCommand {
             entry.setDescription("");
             return;
         } catch (IOException ex) {
-            printDetail("warning: reading file '"+descriptionFile.getAbsolutePath()+"' resulted in: "+ex.getMessage());
+            output.printDetailLn("warning: reading file '"+descriptionFile.getAbsolutePath()+"' resulted in: "+ex.getMessage());
             entry.setDescription("");
             return;
         } finally {
@@ -193,22 +189,12 @@ public class UpdateServer implements ICliCommand {
                 try {
                     reader.close();
                 } catch (IOException ex) {
-                    printDetail("warning: resource leak #USxxx0 because of exception ("+ex.getMessage()+")");
+                    output.printDetailLn("warning: resource leak #USxxx0 because of exception ("+ex.getMessage()+")");
                 }
             }
         }
     
         entry.setDescription(description);
-    }
-    
-    /**
-     * print a message when verbose mode is active
-     * @param message 
-     */
-    private void printDetail(String message) {
-        if(verbose) {
-            output.println(message);
-        }
     }
 
 }

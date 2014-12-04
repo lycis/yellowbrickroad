@@ -97,16 +97,12 @@ public class Main {
             System.exit(1);
         }
         
-        if(cLine.hasOption(Constants.OPTION_VERBOSE)) { // verbose output
-            executor.setOption(Constants.OPTION_VERBOSE, Constants.VALUE_TRUE);
-        } else {
-            executor.setOption(Constants.OPTION_VERBOSE, Constants.VALUE_FALSE);
-        }
-        
         AbstractOutputChannel outputAccessor = new ConsoleOutputChannel(); // default for output is console
         if(cLine.hasOption(Constants.OPTION_SILENT)) { // use silent output accessor
             outputAccessor = new SilentOutputChannel();
         }
+        
+        outputAccessor.setVerbose(cLine.hasOption(Constants.OPTION_VERBOSE)); // verbose output
         
         if(cLine.hasOption(Constants.OPTION_LOG)) { // use logfile
             File logFile = new File(cLine.getOptionValue(Constants.OPTION_LOG));

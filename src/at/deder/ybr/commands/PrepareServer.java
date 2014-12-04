@@ -15,7 +15,6 @@ import java.io.FileWriter;
 
 public class PrepareServer implements ICliCommand {
 
-    private boolean verbose = false;
     private String targetFolder = ".";
     
     private IFileSystemAccessor fileSystem = null;
@@ -26,9 +25,6 @@ public class PrepareServer implements ICliCommand {
 
     @Override
     public void setOption(String name, String value) {
-        if (Constants.OPTION_VERBOSE.equals(name) && Constants.VALUE_TRUE.equals(value)) {
-            verbose = true;
-        }
     }
 
     @Override
@@ -64,9 +60,8 @@ public class PrepareServer implements ICliCommand {
         }
 
         // create folder structure
-        if (verbose) {
-            output.print("Creating folder structure ... ");
-        }
+        output.printDetailLn("Creating folder structure ... ");
+       
         File repository = createEmptyDirectory(target, "repository");
         if (repository == null) {
             return;
@@ -80,14 +75,10 @@ public class PrepareServer implements ICliCommand {
             return;
         }
 
-        if (verbose) {
-            output.println("done");
-        }
+        output.printDetailLn("done");
 
         // create manifest
-        if (verbose) {
-            output.print("Writing manifest ... ");
-        }
+        output.printDetailLn("Writing manifest ... ");
 
         File manifest = null;
         try {
@@ -113,14 +104,11 @@ public class PrepareServer implements ICliCommand {
         if (error) {
             return; // stop on error
         }
-        if (verbose) {
-            output.println("done");
-        }
+        
+        output.printDetailLn("done");
 
         // create index.html
-        if (verbose) {
-            output.print("Writing index.html ... ");
-        }
+        output.printDetailLn("Writing index.html ... ");
 
         File index = null;
         try {
@@ -148,9 +136,7 @@ public class PrepareServer implements ICliCommand {
         if (error) {
             return; // stop on error
         }
-        if (verbose) {
-            output.println("done");
-        }
+        output.printDetailLn("done");
 
         output.println("done.");
         output.println("");
