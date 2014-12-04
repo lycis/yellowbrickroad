@@ -237,8 +237,8 @@ public class SimpleHttpServerTest {
         willReturn(MockUtils.getMockManifest()).given(instance).getManifest();
         // return different response depending on called path
         HttpServerSimulator simulatedServer = new HttpServerSimulator();
-        simulatedServer.addResource("/org/junit/", "index", ContentType.TEXT_PLAIN, "test.dat");
-        simulatedServer.addResource("/org/junit/", "test.dat", ContentType.TEXT_PLAIN, testDatContent);
+        simulatedServer.addResource("/repository/org/junit/", "index", ContentType.TEXT_PLAIN, "test.dat");
+        simulatedServer.addResource("/repository/org/junit/", "test.dat", ContentType.TEXT_PLAIN, testDatContent);
         given(mockHttpClient.execute(Matchers.any(HttpGet.class))).willAnswer(simulatedServer);
         instance.setHttpClient(mockHttpClient);
 
@@ -263,8 +263,8 @@ public class SimpleHttpServerTest {
 
         // return different response depending on called path
         HttpServerSimulator simulatedServer = new HttpServerSimulator();
-        simulatedServer.addResource("/org/junit/", "index", ContentType.TEXT_PLAIN, "test.dat");
-        simulatedServer.addResource("/org/junit/", "test.dat", HttpStatus.SC_FORBIDDEN, "Forbidden", ContentType.TEXT_PLAIN, "");
+        simulatedServer.addResource("/repository/org/junit/", "index", ContentType.TEXT_PLAIN, "test.dat");
+        simulatedServer.addResource("/repository/org/junit/", "test.dat", HttpStatus.SC_FORBIDDEN, "Forbidden", ContentType.TEXT_PLAIN, "");
         given(mockHttpClient.execute(Matchers.any(HttpGet.class))).willAnswer(simulatedServer);
         instance.setHttpClient(mockHttpClient);
 
@@ -273,7 +273,7 @@ public class SimpleHttpServerTest {
 
         // then
         then((Throwable) caughtException()).isInstanceOf(ProtocolViolationException.class);
-        then((Throwable) caughtException()).hasMessage("access to resource '/org/junit/test.dat' not allowed (403 - Forbidden)");
+        then((Throwable) caughtException()).hasMessage("access to resource '/repository/org/junit/test.dat' not allowed (403 - Forbidden)");
     }
 
     /**
@@ -293,10 +293,10 @@ public class SimpleHttpServerTest {
         willReturn(MockUtils.getMockManifest()).given(instance).getManifest();
         // return different response depending on called path
         HttpServerSimulator simulatedServer = new HttpServerSimulator();
-        simulatedServer.addResource("/org/junit", "index", ContentType.TEXT_PLAIN, "one.dat\ntwo.dat\nthree.dat");
-        simulatedServer.addResource("/org/junit", "one.dat", ContentType.TEXT_PLAIN, contentOneDat);
-        simulatedServer.addResource("/org/junit", "two.dat", ContentType.TEXT_PLAIN, contentTwoDat);
-        simulatedServer.addResource("/org/junit", "three.dat", HttpStatus.SC_OK, "OK", ContentType.TEXT_HTML, new ByteArrayInputStream(contentThreeDat));
+        simulatedServer.addResource("/repository/org/junit", "index", ContentType.TEXT_PLAIN, "one.dat\ntwo.dat\nthree.dat");
+        simulatedServer.addResource("/repository/org/junit", "one.dat", ContentType.TEXT_PLAIN, contentOneDat);
+        simulatedServer.addResource("/repository/org/junit", "two.dat", ContentType.TEXT_PLAIN, contentTwoDat);
+        simulatedServer.addResource("/repository/org/junit", "three.dat", HttpStatus.SC_OK, "OK", ContentType.TEXT_HTML, new ByteArrayInputStream(contentThreeDat));
         given(mockHttpClient.execute(Matchers.any(HttpGet.class))).willAnswer(simulatedServer);
         instance.setHttpClient(mockHttpClient);
 
