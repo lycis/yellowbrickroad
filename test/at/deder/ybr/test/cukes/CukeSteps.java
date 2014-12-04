@@ -232,6 +232,8 @@ public class CukeSteps {
         the_current_directory_contains_a_prepared_server();
 
         // create file structure
+        
+        // TODO base this on the default mock manifest
         File comDir = filesystem.getFile("repository/com/");
 
         File javaDir = filesystem.createFile(comDir, "java", true);

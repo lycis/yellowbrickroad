@@ -15,7 +15,9 @@ Scenario: Update project in current directory
     """
     !ybr-client-configuration
     packages: 
-    - some.package.here
+    - .org.junit
     serverAddress: mockedserver:80
     targetPath: .
     """
+  When I update the project
+  Then there is a file named "junit.txt"
