@@ -41,7 +41,7 @@ public class Update implements ICliCommand {
         final IFileSystemAccessor filesystem = FileSystem.getAccess();
         final IOutputChannel output = OutputChannelFactory.getOutputChannel();
 
-        File config = filesystem.getClientConfigFile(filesystem.getWorkingDirectory().getAbsolutePath());
+        File config = filesystem.getClientConfigFile(filesystem.getWorkingDirectory());
         if (config == null || !config.exists()) {
             output.printErrLn("error: no configuration available");
             return;

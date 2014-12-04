@@ -81,8 +81,7 @@ public class LocalFileSystemAccessor implements IFileSystemAccessor {
     }
 
     @Override
-    public File getClientConfigFile(String dirPath){
-        File dir = getFile(dirPath);
+    public File getClientConfigFile(File dir){
         if(dir == null) {
             return dir;
         }

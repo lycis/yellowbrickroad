@@ -61,7 +61,7 @@ public class CukeSteps {
 
     @Given("^there is no config file")
     public void there_is_no_config_file() throws Throwable {
-        File configFile = filesystem.getClientConfigFile(".");
+        File configFile = filesystem.getClientConfigFile(filesystem.getWorkingDirectory());
         if (configFile != null) {
             configFile.delete();
         }

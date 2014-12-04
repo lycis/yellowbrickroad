@@ -151,7 +151,7 @@ public class SimpleHttpServer implements IServerGateway {
         try{
             index = new PackageIndex(getTextFromServer(requestBasePath+"index"));
         } catch (IOException ex) {
-            throw new ProtocolViolationException("package index not acessible", ex);
+            throw new ProtocolViolationException("package index ("+requestBasePath+"index) not acessible", ex);
         }
         
         // select files according to index & download

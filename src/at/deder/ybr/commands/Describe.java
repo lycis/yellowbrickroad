@@ -44,7 +44,7 @@ public class Describe implements ICliCommand {
         IOutputChannel          output = OutputChannelFactory.getOutputChannel();
         
         File workDir = fileSystem.getWorkingDirectory();
-        File configFile = fileSystem.getClientConfigFile(workDir.getPath());
+        File configFile = fileSystem.getClientConfigFile(workDir);
         if(configFile == null) {
             output.printErrLn("error: directory does not contain any config file");
             return;

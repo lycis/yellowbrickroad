@@ -70,5 +70,5 @@ public interface IFileSystemAccessor {
      * @param dirPath
      * @return <code>null</code> if the file was not found
      */
-    public File getClientConfigFile(String dirPath);
+    public File getClientConfigFile(File dir);
 }

@@ -4,7 +4,6 @@ import at.deder.ybr.repository.RepositoryEntry;
 import at.deder.ybr.server.ProtocolViolationException;
 import at.deder.ybr.server.ServerFactory;
 import at.deder.ybr.server.SimpleHttpServer;
-import at.deder.ybr.structures.Tree;
 import at.deder.ybr.test.mocks.MockUtils;
 import cucumber.api.java.After;
 import cucumber.api.java.en.Given;
@@ -59,6 +58,7 @@ public class ServerMocking {
         HttpServerSimulator simulator = new HttpServerSimulator();
         provideGeneratedResource(simulator, MockUtils.getMockManifest().getRepository(), "/");
         given(mockHttpClient.execute(Matchers.any(HttpGet.class))).willAnswer(simulator);
+        mockGateway.setHttpClient(mockHttpClient);
     }
 
     private void provideGeneratedResource(HttpServerSimulator simulator, RepositoryEntry currentEntry, String currentPath) {
@@ -82,7 +82,7 @@ public class ServerMocking {
             currentEntry.getChildren().stream()
                     .map(t -> (RepositoryEntry) t)
                     .forEach((child) -> {
-                        provideGeneratedResource(simulator, child, currentPath + currentEntry.getName());
+                        provideGeneratedResource(simulator, child, currentPath + currentEntry.getName()+"/");
                     });
         }
     }

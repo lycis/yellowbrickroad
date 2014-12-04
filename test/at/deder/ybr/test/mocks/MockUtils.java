@@ -38,7 +38,7 @@ public class MockUtils {
         //     +- junit
 
         RepositoryEntry root = new RepositoryEntry();
-        root.setName("root");
+        root.setName("repository");
 
         // TODO describe all packages
         // build org tree

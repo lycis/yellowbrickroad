@@ -95,7 +95,7 @@ public class Initialise implements ICliCommand {
             return;
         }
         
-        File existingConf = fileSystem.getClientConfigFile(workDir.getPath());
+        File existingConf = fileSystem.getClientConfigFile(workDir);
         if(existingConf != null) {
             output.println("This directory already contains a ybr configuration "+
                            "in file '"+existingConf.getName()+"'. To overwrite this "+

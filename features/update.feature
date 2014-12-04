@@ -20,6 +20,7 @@ Scenario: Update project in current directory
     targetPath: .
     """
   When I update the project
+  Then no error is displayed
   Then there is a file named "junit.txt"
 
 Scenario: Update project with differing target directory
