@@ -232,7 +232,7 @@ public class SimpleHttpServer implements IServerGateway {
             pkgName = "." + pkgName;
         }
         
-        return StringUtils.join(pkgName.split("\\."), "/") + "/";
+        return "/repository"+StringUtils.join(pkgName.split("\\."), "/") + "/";
     }
 
     /**
