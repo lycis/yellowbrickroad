@@ -35,3 +35,29 @@ Scenario: Update project with differing target directory
   And a directory called "lib" was created
   When I update the project
   Then there is a file named "lib/junit.txt"
+
+Scenario: Update project and automatically create target directory
+  Given the file "ybr.yml" contains
+    """
+    !ybr-client-configuration
+    packages: 
+    - .org.junit
+    serverAddress: mockedserver:80
+    targetPath: lib/mylibs
+    """
+  And temporary filesystem cleanup was disabled
+  When I update the project with "-ct"
+  Then there is a file named "lib/mylibs/junit.txt"
+
+Scenario: Update project while the target directory does not exist
+  Given the file "ybr.yml" contains
+    """
+    !ybr-client-configuration
+    packages: 
+    - .org.junit
+    serverAddress: mockedserver:80
+    targetPath: doesnotexist/
+    """
+
+  When I update the project
+  Then the error "target directory does not exist (use --create-target for automatic creation)" is displayed

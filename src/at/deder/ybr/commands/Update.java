@@ -1,5 +1,6 @@
 package at.deder.ybr.commands;
 
+import at.deder.ybr.Constants;
 import at.deder.ybr.channels.AbstractOutputChannel;
 import at.deder.ybr.channels.OutputChannelFactory;
 import at.deder.ybr.configuration.ClientConfiguration;
@@ -16,6 +17,13 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.CommandLineParser;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.OptionBuilder;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
+import org.apache.commons.cli.PosixParser;
 
 /**
  * Fetches all packages according to the config file.
@@ -23,20 +31,40 @@ import java.util.Map;
  * @author lycis
  */
 public class Update implements ICliCommand {
+    
+    private boolean validExecution = true;
+    private boolean createTargetIfNotExists = false;
 
     @Override
     public void setOption(String name, String value) {
-        // TODO implement
-        // TODO --create-target
     }
 
     @Override
     public void setData(List<String> cliData) {
-        // TODO implement
+           Option file = OptionBuilder.withLongOpt("create-file").withDescription("automatically create target directory").create("ct");
+        Options opt = new Options();
+        opt.addOption(file);
+        
+        CommandLineParser clParser = new PosixParser();
+        CommandLine cLine = null;
+        try {
+            cLine = clParser.parse(opt, cliData.toArray(new String[cliData.size()]));
+        } catch (ParseException ex) {
+            AbstractOutputChannel output = OutputChannelFactory.getOutputChannel();
+            output.printErrLn("error: "+ex.getMessage());
+            validExecution = false;
+            return;
+        }
+        
+       createTargetIfNotExists = cLine.hasOption("ct");
     }
 
     @Override
     public void execute() {
+        if(!validExecution) {
+            return;
+        }
+        
         final IFileSystemAccessor filesystem = FileSystem.getAccess();
         final AbstractOutputChannel output = OutputChannelFactory.getOutputChannel();
 
@@ -57,7 +85,15 @@ public class Update implements ICliCommand {
         // get target directory
         File targetDir = filesystem.getFile(clientConf.getTargetPath());
         if(targetDir == null) {
-            output.printErrLn("error: target directory does not exist (use --create-target for automatic creation)");
+            if(createTargetIfNotExists) {
+                try {
+                    filesystem.createFile(filesystem.getWorkingDirectory(), clientConf.getTargetPath(), true);
+                } catch (IOException ex) {
+                    output.printErrLn("error: creation of target directory failed ("+ex.getMessage()+")");
+                }
+            } else {
+                output.printErrLn("error: target directory does not exist (use --create-target for automatic creation)");
+            }
             return;
         }
 

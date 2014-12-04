@@ -1,7 +1,6 @@
 package at.deder.ybr.commands;
 
 import at.deder.ybr.Constants;
-import static at.deder.ybr.Main.printUsageHint;
 import at.deder.ybr.channels.AbstractOutputChannel;
 import at.deder.ybr.channels.OutputChannelFactory;
 import at.deder.ybr.configuration.ClientConfiguration;
@@ -18,7 +17,6 @@ import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
-import org.apache.commons.lang3.StringUtils;
 
 /**
  * This command initialises a local directory for the use with ybr. Essentially

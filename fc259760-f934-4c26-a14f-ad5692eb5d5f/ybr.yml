@@ -1,0 +1,5 @@
+!ybr-client-configuration
+packages: 
+- .org.junit
+serverAddress: mockedserver:80
+targetPath: lib/mylibs

@@ -349,4 +349,9 @@ public class CukeSteps {
     public void temporary_filesystem_cleanup_was_disabled() {
         cleanUpFileSystem = false;
     }
+    
+     @When("^I update the project with \"(.*?)\"$")
+    public void i_update_the_project_with(String args) {
+        executeCommand(new Update(), args.split(" "));
+    }
 }
