@@ -38,7 +38,7 @@ public class LocalFileSystemAccessor implements IFileSystemAccessor {
         File reqFile = new File(parent.getAbsolutePath() + File.separator + name);
         try {
             if (isFolder) {
-                reqFile.mkdir();
+                reqFile.mkdirs();
             } else {
                 reqFile.createNewFile();
             }

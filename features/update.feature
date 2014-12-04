@@ -32,5 +32,6 @@ Scenario: Update project with differing target directory
     serverAddress: mockedserver:80
     targetPath: lib/
     """
+  And a directory called "lib" was created
   When I update the project
   Then there is a file named "lib/junit.txt"

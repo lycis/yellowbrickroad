@@ -16,8 +16,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Fetches all packages according to the config file.
@@ -51,7 +49,14 @@ public class Update implements ICliCommand {
         try {
             clientConf = ClientConfiguration.readYaml(new FileReader(config));
         } catch (FileNotFoundException ex) {
-            output.printErrLn("client configuration could not be loaded (" + ex.getMessage() + ")");
+            output.printErrLn("error: client configuration could not be loaded (" + ex.getMessage() + ")");
+            return;
+        }
+        
+        // get target directory
+        File targetDir = filesystem.getFile(clientConf.getTargetPath());
+        if(targetDir == null) {
+            output.printErrLn("error: target directory does not exist (use --create-target for automatic creation)");
             return;
         }
 
@@ -74,8 +79,7 @@ public class Update implements ICliCommand {
             output.println("Writing package files:");
 
             // write files to target
-            if (files != null) {
-                File targetDir = filesystem.getFile(clientConf.getTargetPath());
+            if (files != null) {                    
                 for (String filename : files.keySet()) {
                     byte[] content = files.get(filename);
                     output.print(filename + " [" + humanReadableByteCount(content.length, false)+"] ... ");
