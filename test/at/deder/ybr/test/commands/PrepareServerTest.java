@@ -20,10 +20,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.junit.AfterClass;
+import org.junit.Ignore;
 
+@Ignore("Obsolete because cucumber test")
 public class PrepareServerTest {
 
     private static IOutputChannel        mockOut = null;
@@ -128,9 +128,6 @@ public class PrepareServerTest {
         Assert.assertEquals("default index.html contains wrong text", 
                 PrepareServer.INDEX_DEFAULT_TEXT, content);
     }
-
-    // TODO use different target directory
-    // TODO test error scenarios (e.g. target directory does not exist)
 
     @After
     public void cleanUp() {

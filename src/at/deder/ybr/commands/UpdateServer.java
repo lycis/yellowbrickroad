@@ -182,11 +182,10 @@ public class UpdateServer implements ICliCommand {
                 description += line;
             }
         } catch (FileNotFoundException ex) {
-            // TODO error handling
             entry.setDescription("");
             return;
         } catch (IOException ex) {
-            // TODO error handling
+            printDetail("warning: reading file '"+descriptionFile.getAbsolutePath()+"' resulted in: "+ex.getMessage());
             entry.setDescription("");
             return;
         } finally {
@@ -194,7 +193,7 @@ public class UpdateServer implements ICliCommand {
                 try {
                     reader.close();
                 } catch (IOException ex) {
-                    // do nothing
+                    printDetail("warning: resource leak #USxxx0 because of exception ("+ex.getMessage()+")");
                 }
             }
         }

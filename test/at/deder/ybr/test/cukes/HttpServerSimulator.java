@@ -41,7 +41,6 @@ public class HttpServerSimulator implements Answer {
         HttpGet request = (HttpGet) args[0];
         BasicHttpEntity entity = new BasicHttpEntity();
 
-        // TODO return content for each package (index + files)
         String requestedPath = request.getURI().getPath();
         VirtualResource vr = getResource(requestedPath);
         if (vr == null) {
@@ -70,13 +69,6 @@ public class HttpServerSimulator implements Answer {
         }
 
         return null;
-    }
-
-    public void configureDefaultRepository() {
-        // root level
-        addResource("/", "manifest.yml", ContentType.TEXT_PLAIN, MockUtils.getMockManifest().toString());
-
-        // TODO complete
     }
     
     public void addResource(String path, String resource,ContentType contentType, String content) {

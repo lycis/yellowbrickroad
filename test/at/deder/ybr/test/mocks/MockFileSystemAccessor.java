@@ -45,7 +45,6 @@ public class MockFileSystemAccessor extends LocalFileSystemAccessor implements I
             Thread.sleep(500); // bad workaround fore the one before to work correctly
             FileUtils.deleteDirectory(rootFolder);
         } catch (IOException e) {
-            // TODO unclean
             e.printStackTrace();
         } catch (InterruptedException ex) {
 

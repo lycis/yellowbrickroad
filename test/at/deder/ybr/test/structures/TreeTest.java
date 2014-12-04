@@ -32,5 +32,4 @@ public class TreeTest {
         Assert.assertFalse("parent of 2nd child is null", secondChild.getParent() == null);
     }
     
-    // TODO more tests!
 }

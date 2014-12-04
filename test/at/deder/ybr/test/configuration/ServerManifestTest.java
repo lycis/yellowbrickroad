@@ -3,6 +3,7 @@ package at.deder.ybr.test.configuration;
 import at.deder.ybr.configuration.ServerManifest;
 import at.deder.ybr.repository.RepositoryEntry;
 import at.deder.ybr.test.mocks.MockUtils;
+import static org.assertj.core.api.BDDAssertions.then;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import org.junit.Ignore;
@@ -60,32 +61,20 @@ public class ServerManifestTest {
         RepositoryEntry result = instance.getRepository();
         assertEquals(expResult, result);
     }
-
-    /**
-     * Test of writeYaml method, of class ServerManifest.
-     */
-    @Ignore("not implemented")
-    @Test
-    public void testWriteYaml() {
-        // TODO implement
-    }
-
-    /**
-     * Test of readYaml method, of class ServerManifest.
-     */
-    @Ignore("not implemented")
-    @Test
-    public void testReadYaml() {
-        // TODO implement
-    }
-
+    
     /**
      * Test of initDefaults method, of class ServerManifest.
      */
     @Ignore("not implemented")
     @Test
     public void testInitDefaults() {
-        // TODO implement
+        // when
+        ServerManifest sm = new ServerManifest();
+        sm.initDefaults();
+        
+        then(sm.getType()).isEqualTo("simple");
+        then(sm.getName()).isEqualTo("yellow-brick-road");
+        then(sm.getAdmin()).isEqualTo("admin@example.com");
     }
 
     /**
@@ -96,8 +85,5 @@ public class ServerManifestTest {
         System.out.println("equals");
         ServerManifest instance = new ServerManifest();
         assertEquals(instance, instance);
-    }
-    
-    // TODO more equals tests
-    
+    }    
 }
