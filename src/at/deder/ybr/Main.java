@@ -162,6 +162,10 @@ public class Main {
         commandMap.put("initialise", cmdInit);
         commandMap.put("initialize", cmdInit);
         commandMap.put("init", cmdInit);
+        
+        at.deder.ybr.commands.Update cmdUpdate = new at.deder.ybr.commands.Update();
+        commandMap.put("update", cmdUpdate);
+        commandMap.put("upd", cmdUpdate);
     }
 
     private static Options buildOptions() {

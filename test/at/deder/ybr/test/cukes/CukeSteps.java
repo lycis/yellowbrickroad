@@ -42,8 +42,9 @@ import org.junit.Assert;
  */
 public class CukeSteps {
 
-    MockFileSystemAccessor filesystem = new MockFileSystemAccessor();
-    CheckableSilentOutputChannel output = new CheckableSilentOutputChannel();
+    private MockFileSystemAccessor filesystem = new MockFileSystemAccessor();
+    private CheckableSilentOutputChannel output = new CheckableSilentOutputChannel();
+    private boolean cleanUpFileSystem = true;
 
     public CukeSteps() {
         // set default accessors and channels
@@ -53,7 +54,9 @@ public class CukeSteps {
 
     @After
     public void clean_up_after_scenario() {
-        FileSystem.injectAccessor(null);
+        if(cleanUpFileSystem) {
+            FileSystem.injectAccessor(null);
+        }
     }
 
     @Given("^there is no config file")
@@ -340,5 +343,10 @@ public class CukeSteps {
     @Given("^the default configuration was written to \"(.*?)\"$")
     public void the_default_configuration_was_written_to(String arg1) throws Throwable {
         the_file_contains(arg1, ClientConfiguration.getDefaultConfiguration().toString());
+    }
+    
+    @Given("^temporary filesystem cleanup was disabled$")
+    public void temporary_filesystem_cleanup_was_disabled() {
+        cleanUpFileSystem = false;
     }
 }
