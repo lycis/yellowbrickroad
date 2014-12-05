@@ -108,7 +108,7 @@ public class CukeSteps {
     }
 
     @Then("^there is a directory (?:named|called) \"(.*?)\"$")
-    public void then_there_is_a_directory_named(String arg1) throws Throwable {
+    public void then_there_is_a_directory_named(String arg1) {
         assertThat(filesystem.getFile(arg1)).isNotNull();
         assertThat(filesystem.getFile(arg1)).isDirectory();
     }
@@ -119,7 +119,7 @@ public class CukeSteps {
     }
 
     @Then("^there is a file (?:named|called) \"(.*?)\"$")
-    public void there_is_a_file_named(String arg1) throws Throwable {
+    public void there_is_a_file_named(String arg1) {
         assertThat(filesystem.getFile(arg1)).isNotNull();
         assertThat(filesystem.getFile(arg1)).isFile();
     }

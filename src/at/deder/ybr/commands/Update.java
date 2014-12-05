@@ -31,7 +31,7 @@ import org.apache.commons.cli.PosixParser;
  * @author lycis
  */
 public class Update implements ICliCommand {
-    
+
     private boolean validExecution = true;
     private boolean createTargetIfNotExists = false;
 
@@ -41,30 +41,30 @@ public class Update implements ICliCommand {
 
     @Override
     public void setData(List<String> cliData) {
-           Option file = OptionBuilder.withLongOpt("create-file").withDescription("automatically create target directory").create("ct");
+        Option file = OptionBuilder.withLongOpt("create-target").withDescription("automatically create target directory").create("ct");
         Options opt = new Options();
         opt.addOption(file);
-        
+
         CommandLineParser clParser = new PosixParser();
         CommandLine cLine = null;
         try {
             cLine = clParser.parse(opt, cliData.toArray(new String[cliData.size()]));
         } catch (ParseException ex) {
             AbstractOutputChannel output = OutputChannelFactory.getOutputChannel();
-            output.printErrLn("error: "+ex.getMessage());
+            output.printErrLn("error: " + ex.getMessage());
             validExecution = false;
             return;
         }
-        
-       createTargetIfNotExists = cLine.hasOption("ct");
+
+        createTargetIfNotExists = cLine.hasOption("ct");
     }
 
     @Override
     public void execute() {
-        if(!validExecution) {
+        if (!validExecution) {
             return;
         }
-        
+
         final IFileSystemAccessor filesystem = FileSystem.getAccess();
         final AbstractOutputChannel output = OutputChannelFactory.getOutputChannel();
 
@@ -79,21 +79,6 @@ public class Update implements ICliCommand {
             clientConf = ClientConfiguration.readYaml(new FileReader(config));
         } catch (FileNotFoundException ex) {
             output.printErrLn("error: client configuration could not be loaded (" + ex.getMessage() + ")");
-            return;
-        }
-        
-        // get target directory
-        File targetDir = filesystem.getFile(clientConf.getTargetPath());
-        if(targetDir == null) {
-            if(createTargetIfNotExists) {
-                try {
-                    filesystem.createFile(filesystem.getWorkingDirectory(), clientConf.getTargetPath(), true);
-                } catch (IOException ex) {
-                    output.printErrLn("error: creation of target directory failed ("+ex.getMessage()+")");
-                }
-            } else {
-                output.printErrLn("error: target directory does not exist (use --create-target for automatic creation)");
-            }
             return;
         }
 
@@ -115,18 +100,34 @@ public class Update implements ICliCommand {
             output.println("ok");
             output.println("Writing package files:");
 
+            // get target directory
+            // TODO move outside of lambda... maybe
+            File targetDir = filesystem.getFile(clientConf.getTargetPath());
+            if (targetDir == null) {
+                if (createTargetIfNotExists) {
+                    try {
+                        targetDir = filesystem.createFile(filesystem.getWorkingDirectory(), clientConf.getTargetPath(), true);
+                    } catch (IOException ex) {
+                        output.printErrLn("error: creation of target directory failed (" + ex.getMessage() + ")");
+                    }
+                } else {
+                    output.printErrLn("error: target directory does not exist (use --create-target for automatic creation)");
+                    return;
+                }
+            }
+
             // write files to target
-            if (files != null) {                    
+            if (files != null) {
                 for (String filename : files.keySet()) {
                     byte[] content = files.get(filename);
-                    output.print(filename + " [" + humanReadableByteCount(content.length, false)+"] ... ");
+                    output.print(filename + " [" + humanReadableByteCount(content.length, false) + "] ... ");
                     try {
                         File f = filesystem.createFile(targetDir, filename, false);
                         DataOutputStream out = new DataOutputStream(new FileOutputStream(f));
                         out.write(content);
                     } catch (IOException ex) {
                         output.println("nok");
-                        output.printErrLn("reason: "+ex.getMessage());
+                        output.printErrLn("reason: " + ex.getMessage());
                     }
                     output.println("ok");
                 }

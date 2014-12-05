@@ -21,7 +21,6 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionBuilder;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.apache.commons.cli.PosixParser;
 
 /**
  * This class is the main entry point for the application. It parses all command
@@ -42,7 +41,7 @@ public class Main {
        Options cliOptions = buildOptions();
        
        // parse command line
-       CommandLineParser clParser = new PosixParser();
+       CommandLineParser clParser = new YbrOptionParser();
        CommandLine cLine = null;
         try {
             cLine = clParser.parse(cliOptions, args);
