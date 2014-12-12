@@ -100,7 +100,9 @@ sub is_valid_platform {
 sub execute_script {
   my $script = shift;
   die(colored("error: script '$script' does not exist", "bold red")."\n") unless -f $script;
-  return (system($^X, $script, $basepath)?0:1);
+  my $rc = system($^X, $script, $basepath);
+  print "rc = $rc\n";
+  return ($rc?0:1);
 }
 
 sub process_step {
