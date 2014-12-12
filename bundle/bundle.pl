@@ -58,7 +58,7 @@ dircopy($scriptpath, 'workdir') or
   die(colored("error: could not instantiate workdir: ", "bold red").colored($!, "red")."\n");
 
 # clean up old artefacts
-unless ($noclean == 1) {
+if (-d 'artefacts' && $noclean == 0) {
   File::Path->remove_tree('artefacts') or
     die(colored('error: deleting old artefacts failed: ', 'bold red').
         colored($!, 'red')."\n");
