@@ -90,6 +90,10 @@ public class LocalFileSystemAccessor implements IFileSystemAccessor {
         
         File[] list = dir.listFiles();
         for(File f: list) {
+            if(f.isDirectory()) {
+                continue; // omit directories
+            }
+            
             BufferedReader br = null;
             try{
                 br = new BufferedReader(new FileReader(f));
