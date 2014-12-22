@@ -135,6 +135,7 @@ public class Main {
         System.out.println("server-commands:");
         System.out.println("prepare-server\t\tprepare the basic folder structure for a server");
         System.out.println("update-server\t\tscan server tree for updates and generate manifest");
+        System.out.println("generate-index\t\tgenerate an index for a package based on index_rules");
     }
 
     public static void printVersionInfo() {
