@@ -1,7 +1,9 @@
 package at.deder.ybr.test.cukes;
 
+import at.deder.ybr.Constants;
 import at.deder.ybr.channels.OutputChannelFactory;
 import at.deder.ybr.commands.Describe;
+import at.deder.ybr.commands.GenerateIndex;
 import at.deder.ybr.commands.ICliCommand;
 import at.deder.ybr.commands.Initialise;
 import at.deder.ybr.commands.PrepareServer;
@@ -10,6 +12,7 @@ import at.deder.ybr.commands.UpdateServer;
 import at.deder.ybr.configuration.ClientConfiguration;
 import at.deder.ybr.configuration.ServerManifest;
 import at.deder.ybr.filesystem.FileSystem;
+import at.deder.ybr.repository.PackageIndex;
 import at.deder.ybr.repository.RepositoryEntry;
 import at.deder.ybr.test.mocks.CheckableSilentOutputChannel;
 import at.deder.ybr.test.mocks.MockFileSystemAccessor;
@@ -22,6 +25,7 @@ import cucumber.api.java.en.When;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -32,6 +36,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import static org.assertj.core.api.Assertions.assertThat;
 import org.junit.Assert;
 
@@ -54,7 +59,7 @@ public class CukeSteps {
 
     @After
     public void clean_up_after_scenario() {
-        if(cleanUpFileSystem) {
+        if (cleanUpFileSystem) {
             FileSystem.injectAccessor(null);
         }
     }
@@ -235,7 +240,6 @@ public class CukeSteps {
         the_current_directory_contains_a_prepared_server();
 
         // create file structure
-        
         // TODO base this on the default mock manifest
         File comDir = filesystem.getFile("repository/com/");
 
@@ -344,14 +348,32 @@ public class CukeSteps {
     public void the_default_configuration_was_written_to(String arg1) throws Throwable {
         the_file_contains(arg1, ClientConfiguration.getDefaultConfiguration().toString());
     }
-    
+
     @Given("^temporary filesystem cleanup was disabled$")
     public void temporary_filesystem_cleanup_was_disabled() {
         cleanUpFileSystem = false;
     }
-    
-     @When("^I update the project with \"(.*?)\"$")
+
+    @When("^I update the project with \"(.*?)\"$")
     public void i_update_the_project_with(String args) {
         executeCommand(new Update(), args.split(" "));
+    }
+
+    @Then("^the index contains (.*?)$")
+    public void the_index_contains(String entry) throws IOException {
+        there_is_a_file_named(Constants.INDEX_FILE);
+        String everything;
+        try (FileInputStream inputStream = new FileInputStream(Constants.INDEX_FILE)) {
+            everything = IOUtils.toString(inputStream);
+        } catch(Exception ex) {
+            throw ex;
+        }
+        PackageIndex index = new PackageIndex(everything);
+        assertThat(index.getIndex()).contains(entry);
+    }
+    
+    @When("^I generate an index based on rules$") 
+    public void i_generate_an_index_based_on_rules() {
+        executeCommand(new GenerateIndex(), "");
     }
 }

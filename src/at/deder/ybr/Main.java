@@ -161,6 +161,12 @@ public class Main {
         at.deder.ybr.commands.Update cmdUpdate = new at.deder.ybr.commands.Update();
         commandMap.put("update", cmdUpdate);
         commandMap.put("upd", cmdUpdate);
+        
+        at.deder.ybr.commands.GenerateIndex cmdGenerateIndex = new at.deder.ybr.commands.GenerateIndex();
+        commandMap.put("generate-index", cmdGenerateIndex);
+        commandMap.put("gen-index", cmdGenerateIndex);
+        commandMap.put("gen-ind", cmdGenerateIndex);
+        commandMap.put("gen-i", cmdGenerateIndex);
     }
 
     private static Options buildOptions() {

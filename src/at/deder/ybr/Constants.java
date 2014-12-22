@@ -21,6 +21,9 @@ public class Constants {
     
     // file names
     public static final String CLIENT_CONFIG_FILE = "ybr-config.yml";
+    public static final String INDEX_RULES_FILE  = "index_rules";
+    public static final String DESCRIPTION_FILE = "description";
+    public static final String INDEX_FILE = "index";
 
     /**
      * Transforms a boolean into a String value

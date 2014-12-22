@@ -16,8 +16,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.ArrayList;
 
 public class UpdateServer implements ICliCommand {
 
@@ -78,7 +77,7 @@ public class UpdateServer implements ICliCommand {
         try {
             manifest = ServerManifest.readYaml(new FileReader(fileSystem.getFileInDir(target, "manifest.yml")));
         } catch (FileNotFoundException ex) {
-            output.printErrLn("error: manifest does not exist");
+            output.printErrLn("error: manifest does not exist ("+ex.getMessage()+")");
             return;
         } catch (YamlException ex) {
             output.printErrLn("error: parsing manifest failed ("+ex.getMessage()+")");
@@ -116,9 +115,21 @@ public class UpdateServer implements ICliCommand {
         entry.setName(target.getName());
 
         // read node description
-        File descriptionFile = fileSystem.getFileInDir(target, "description");
+        File descriptionFile = fileSystem.getFileInDir(target, Constants.DESCRIPTION_FILE);
         if (descriptionFile != null) {
             setNodeDescription(entry, descriptionFile);
+        }
+        
+        // generate index based on rules
+        File indexRulesFile = fileSystem.getFileInDir(target, Constants.INDEX_RULES_FILE);
+        if(indexRulesFile != null) {
+           GenerateIndex cmdGenInd = new GenerateIndex();
+           List<String> args = new ArrayList<>();
+           args.add(Constants.INDEX_RULES_FILE);
+           cmdGenInd.setData(args);
+           output.println("Generating index for '"+entry.getAbsolutePath()+"' (index_rules):");
+           cmdGenInd.execute();
+           output.println("");
         }
 
         if (parent != null) {

@@ -45,7 +45,6 @@ Scenario: Update project and automatically create target directory
     serverAddress: mockedserver:80
     targetPath: lib/mylibs
     """
-  And temporary filesystem cleanup was disabled
   When I update the project with "-ct"
   Then no error is displayed
   Then there is a file named "lib/mylibs/junit.txt"
