@@ -1,11 +1,13 @@
 package at.deder.ybr.commands;
 
-import at.deder.ybr.Constants;
 import at.deder.ybr.channels.AbstractOutputChannel;
 import at.deder.ybr.channels.OutputChannelFactory;
 import at.deder.ybr.configuration.ClientConfiguration;
 import at.deder.ybr.filesystem.FileSystem;
 import at.deder.ybr.filesystem.IFileSystemAccessor;
+import at.deder.ybr.repository.PackageHash;
+import at.deder.ybr.repository.PackageIndex;
+import at.deder.ybr.repository.RepositoryEntry;
 import at.deder.ybr.server.IServerGateway;
 import at.deder.ybr.server.ProtocolViolationException;
 import at.deder.ybr.server.ServerFactory;
@@ -84,22 +86,9 @@ public class Update implements ICliCommand {
 
         IServerGateway server = ServerFactory.createServer(clientConf);
         // TODO option "--parallel" for multithreaded processing?
-        clientConf.getPackages().stream().forEach(pkgName -> {
-            output.print("Fetching content for '" + pkgName + "'... ");
-
-            // download files
-            Map<String, byte[]> files = null;
-            try {
-                files = server.getFilesOfPackage(pkgName);
-            } catch (ProtocolViolationException ex) {
-                output.println("error");
-                output.printErrLn("reason: " + ex.getMessage());
-                return;
-            }
-
-            output.println("ok");
-            output.println("Writing package files:");
-
+        for(String pkgName: clientConf.getPackages()) {
+            output.println(pkgName + ": ");
+            
             // get target directory
             // TODO move outside of lambda... maybe
             File targetDir = filesystem.getFile(clientConf.getTargetPath());
@@ -115,6 +104,37 @@ public class Update implements ICliCommand {
                     return;
                 }
             }
+            
+            // check if update is necessary
+            try {
+                output.printDetail("Check if package is up to date: ");
+                PackageIndex index = server.getPackageIndex(pkgName);
+                PackageHash lokalPkgHash = new PackageHash(targetDir, index);
+                RepositoryEntry remotePkg = server.getPackage(pkgName);
+                if(lokalPkgHash.equals(remotePkg.getPackageHash())) {
+                    output.println("up to date");
+                    continue;
+                }
+            } catch (ProtocolViolationException ex) {
+               output.printErrLn("error: package index could not be checked - "+ex.getMessage());
+               if(ex.getCause() != null) {
+                   output.printErrLn("cause: "+ex.getMessage());
+               }
+            }
+
+            // download files
+            output.printDetail("\nDownloading files... ");
+            Map<String, byte[]> files;
+            try {
+                files = server.getFilesOfPackage(pkgName);
+            } catch (ProtocolViolationException ex) {
+                output.println("error");
+                output.printErrLn("reason: " + ex.getMessage());
+                return;
+            }
+
+            output.printDetailLn("ok");
+            output.printDetailLn("Writing package files:");
 
             // write files to target
             if (files != null) {
@@ -132,7 +152,9 @@ public class Update implements ICliCommand {
                     output.println("ok");
                 }
             }
-        });
+            
+            output.println("");
+        }
 
         FileSystem.releaseAccess(filesystem);
     }

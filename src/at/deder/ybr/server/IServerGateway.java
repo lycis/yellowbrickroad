@@ -1,6 +1,7 @@
 package at.deder.ybr.server;
 
 import at.deder.ybr.configuration.ServerManifest;
+import at.deder.ybr.repository.PackageIndex;
 import at.deder.ybr.repository.RepositoryEntry;
 import java.util.Map;
 
@@ -34,4 +35,12 @@ public interface IServerGateway {
      * @return
      */
     public RepositoryEntry getPackage(String name) throws ProtocolViolationException;
+    
+    /**
+     * retrieves the index of the given package from the server
+     * @param pkgName
+     * @return
+     * @throws ProtocolViolationException 
+     */
+    public PackageIndex getPackageIndex(String pkgName) throws ProtocolViolationException;
 }

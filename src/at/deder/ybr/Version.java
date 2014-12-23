@@ -4,7 +4,7 @@ public class Version {
 
     private static final int MAJOR = 0;
     private static final int MINOR = 0;
-    private static final int PATCH = 0;
+    private static final int PATCH = 1;
     private static final String CODENAME = "alpha";
 
     public static String getCompleteVersion() {
