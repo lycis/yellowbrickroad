@@ -1,6 +1,6 @@
 <project name="ybr" default="dist" basedir=".">
     <description>
-        simple example build file
+        All mastermind build file for ybr.
     </description>
 	
     <!-- set global properties for this build -->
