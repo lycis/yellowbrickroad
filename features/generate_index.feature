@@ -22,16 +22,16 @@ Background:
     """
     a c++ dll
     """
-
-Scenario: Include all files
-  Given the file "index_rules" contains
-    """
-    + .*
-    """
-  When I generate an index based on rules
-  Then no error is displayed
-  Then the index contains junit.jar
-  And the index contains foo.jar
-  And the index contains bar.jar
-  And the index contains c.so
-  And the index contains c_on-windows.dll
+#currently disabled
+#Scenario: Include all files
+#  Given the file "index_rules" contains
+#    """
+#    + .*
+#    """
+#  When I generate an index based on rules
+#  Then no error is displayed
+#  Then the index contains junit.jar
+#  And the index contains foo.jar
+#  And the index contains bar.jar
+#  And the index contains c.so
+#  And the index contains c_on-windows.dll
