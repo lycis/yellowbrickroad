@@ -9,6 +9,8 @@ import at.deder.ybr.channels.OutputChannelFactory;
 import at.deder.ybr.repository.RepositoryEntry;
 import at.deder.ybr.configuration.ServerManifest;
 import at.deder.ybr.filesystem.FileSystem;
+import at.deder.ybr.repository.PackageHash;
+import at.deder.ybr.repository.PackageIndex;
 import com.esotericsoftware.yamlbeans.YamlException;
 import java.io.BufferedReader;
 import java.io.File;
@@ -121,17 +123,11 @@ public class UpdateServer implements ICliCommand {
         }
         
         // generate index based on rules
-        File indexRulesFile = fileSystem.getFileInDir(target, Constants.INDEX_RULES_FILE);
-        if(indexRulesFile != null) {
-           GenerateIndex cmdGenInd = new GenerateIndex();
-           List<String> args = new ArrayList<>();
-           args.add(Constants.INDEX_RULES_FILE);
-           cmdGenInd.setData(args);
-           output.println("Generating index for '"+entry.getAbsolutePath()+"' (index_rules):");
-           cmdGenInd.execute();
-           output.println("");
-        }
-
+        generateIndex(target, entry);
+        
+        // generate overall hash
+        generateHash(target, entry);
+        
         if (parent != null) {
             parent.addChild(entry);
             output.printDetailLn("Registered node '"+entry.getAbsolutePath()+"'");
@@ -206,6 +202,40 @@ public class UpdateServer implements ICliCommand {
         }
     
         entry.setDescription(description);
+    }
+
+    // generate an index file implcitly
+    private void generateIndex(File target, RepositoryEntry entry) {
+        File indexRulesFile = fileSystem.getFileInDir(target, Constants.INDEX_RULES_FILE);
+        if(indexRulesFile != null) {
+           GenerateIndex cmdGenInd = new GenerateIndex();
+           List<String> args = new ArrayList<>();
+           args.add(Constants.INDEX_RULES_FILE);
+           cmdGenInd.setData(args);
+           output.println("Generating index for '"+entry.getAbsolutePath()+"' (index_rules):");
+           cmdGenInd.execute();
+           output.println("");
+        }
+    }
+
+    // hash all files within a package
+    private void generateHash(File target, RepositoryEntry entry) {
+        File indexFile = fileSystem.getFileInDir(target, Constants.INDEX_FILE);
+        if(indexFile == null) {
+            return; // no index, no hash
+        }
+        
+        PackageIndex index;
+        try {
+            index = new PackageIndex(indexFile);
+            
+        } catch(IOException ex) {
+            output.printErrLn("error: parsing index  of '"+entry.getAbsolutePath()+"' failed ("+ex.getMessage()+")");
+            return;
+        }
+        
+        PackageHash hash = new PackageHash(target, index);
+        entry.setPackageHash(hash);
     }
 
 }

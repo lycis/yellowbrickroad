@@ -15,6 +15,7 @@ public class RepositoryEntry extends Tree {
 
     private String name = "";
     private String description = "";
+    private PackageHash packageHash = null;
 
     public String getName() {
         return name;
@@ -30,6 +31,14 @@ public class RepositoryEntry extends Tree {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+    
+    public PackageHash getPackageHash() {
+        return packageHash;
+    }
+    
+    public void setPackageHash(PackageHash hash) {
+        this.packageHash = hash;
     }
 
     /**
@@ -67,6 +76,10 @@ public class RepositoryEntry extends Tree {
         if (description != null && !description.isEmpty()) {
             nodeInformation.put("description", description);
         }
+        
+        if(packageHash != null) {
+            nodeInformation.put("hash", packageHash.toString());
+        }
 
         m.put("nodeInformation", nodeInformation);
 
@@ -103,6 +116,10 @@ public class RepositoryEntry extends Tree {
         if (nodeInformation.containsKey("description")) {
             entry.setDescription(nodeInformation.get("description"));
         }
+        
+        if(nodeInformation.containsKey("hash")) {
+            entry.setPackageHash(new PackageHash(nodeInformation.get("hash")));
+        }
 
         return entry;
     }
@@ -113,6 +130,7 @@ public class RepositoryEntry extends Tree {
         hash = 41 * hash + Objects.hashCode(this.children);
         hash = 7 * hash + Objects.hashCode(this.name);
         hash = 7 * hash + Objects.hashCode(this.description);
+        hash = 4 * hash + Objects.hashCode(this.packageHash);
         return hash;
     }
 
@@ -129,6 +147,9 @@ public class RepositoryEntry extends Tree {
             return false;
         }
         if (!Objects.equals(this.description, other.description)) {
+            return false;
+        }
+        if (!Objects.equals(this.packageHash, other.packageHash)) {
             return false;
         }
         
