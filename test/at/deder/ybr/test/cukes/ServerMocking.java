@@ -74,7 +74,7 @@ public class ServerMocking {
 
             try {
                 simulator.addResource(currentPath + currentEntry.getName(), currentEntry.getName() + ".bin", HttpStatus.SC_OK, "OK",
-                        ContentType.APPLICATION_OCTET_STREAM, new ByteArrayInputStream(currentEntry.getName().getBytes("UTF-8")));
+                        ContentType.APPLICATION_OCTET_STREAM, currentEntry.getName().getBytes("UTF-8"));
             } catch (UnsupportedEncodingException ex) {
                 Logger.getLogger(ServerMocking.class.getName()).log(Level.SEVERE, null, ex);
             }

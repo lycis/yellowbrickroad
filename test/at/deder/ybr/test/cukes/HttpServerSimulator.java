@@ -5,11 +5,13 @@
  */
 package at.deder.ybr.test.cukes;
 
-import at.deder.ybr.test.mocks.MockUtils;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.HttpVersion;
@@ -42,13 +44,13 @@ public class HttpServerSimulator implements Answer {
         BasicHttpEntity entity = new BasicHttpEntity();
 
         String requestedPath = request.getURI().getPath();
-        VirtualResource vr = getResource(requestedPath);
-        if (vr == null) {
+        VirtualResource requestedResource = getResource(requestedPath);
+        if (requestedResource == null) {
             response = new BasicHttpResponse(HttpVersion.HTTP_1_1, HttpStatus.SC_NOT_FOUND, "not found");
         } else {
-            entity.setContent(vr.content);
-            entity.setContentType(vr.contentType);
-            response = new BasicHttpResponse(HttpVersion.HTTP_1_1, vr.httpStatus, vr.httpStatusText);
+            entity.setContent(new ByteArrayInputStream(requestedResource.content));
+            entity.setContentType(requestedResource.contentType);
+            response = new BasicHttpResponse(HttpVersion.HTTP_1_1, requestedResource.httpStatus, requestedResource.httpStatusText);
             response.setEntity(entity);
         }
 
@@ -76,10 +78,10 @@ public class HttpServerSimulator implements Answer {
     }
     
     public void addResource(String path, String resource, int respCode, String respText, ContentType contentType, String content) {
-        addResource(path, resource, respCode, respText, contentType, new ByteArrayInputStream(content.getBytes(StandardCharsets.UTF_8)));
+        addResource(path, resource, respCode, respText, contentType, content.getBytes(StandardCharsets.UTF_8));
     }
 
-    public void addResource(String path, String resource, int respCode, String respText, ContentType contentType, ByteArrayInputStream content) {
+    public void addResource(String path, String resource, int respCode, String respText, ContentType contentType, byte[] content) {
         if (path.endsWith("/")) {
             path = path.substring(0, path.length() - 1);
         }
@@ -103,15 +105,15 @@ public class HttpServerSimulator implements Answer {
 
     private class VirtualResource {
 
-        public ByteArrayInputStream content;
+        public byte[] content;
         public String contentType;
         public int httpStatus;
         public String httpStatusText;
 
-        public VirtualResource(String cType, ByteArrayInputStream content) {
+        public VirtualResource(String cType, byte[] content) {
             this.content = content;
             this.contentType = cType;
-        }
+        }    
     }
 
 }

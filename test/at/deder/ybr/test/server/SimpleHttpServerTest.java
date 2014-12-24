@@ -296,7 +296,7 @@ public class SimpleHttpServerTest {
         simulatedServer.addResource("/repository/org/junit", "index", ContentType.TEXT_PLAIN, "one.dat\ntwo.dat\nthree.dat");
         simulatedServer.addResource("/repository/org/junit", "one.dat", ContentType.TEXT_PLAIN, contentOneDat);
         simulatedServer.addResource("/repository/org/junit", "two.dat", ContentType.TEXT_PLAIN, contentTwoDat);
-        simulatedServer.addResource("/repository/org/junit", "three.dat", HttpStatus.SC_OK, "OK", ContentType.TEXT_HTML, new ByteArrayInputStream(contentThreeDat));
+        simulatedServer.addResource("/repository/org/junit", "three.dat", HttpStatus.SC_OK, "OK", ContentType.TEXT_HTML, contentThreeDat);
         given(mockHttpClient.execute(Matchers.any(HttpGet.class))).willAnswer(simulatedServer);
         instance.setHttpClient(mockHttpClient);
 
