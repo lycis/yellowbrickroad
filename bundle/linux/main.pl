@@ -37,6 +37,10 @@ my $executable = File::Spec->catfile('', $workdir, 'ybr');
 copy($install, $artdir) or die("copying ($install -> $artdir) failed: $!\n");
 copy($executable, $bindir) or die("copying ($executable -> $bindir) failed: $!\n");
 
+# set permissions
+my $pkginstall = File::Spec->catfile('', $artdir, 'install.sh');
+chmod 0755, $pkginstall or warn("setting permissions on install.sh failed: $!\n");
+
 # tar everything
 my $tar = `cd $artefacts && tar -czf ybr.tar.gz ybr`;
 print "tar: $tar\n"; 
