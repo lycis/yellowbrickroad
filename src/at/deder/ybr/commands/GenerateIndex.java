@@ -26,9 +26,13 @@ import java.util.regex.PatternSyntaxException;
 public class GenerateIndex implements ICliCommand {
 
     private String rulesFilePath;
+    private String targetDirectory = "";
 
     @Override
     public void setOption(String name, String value) {
+        if("target".equals(name)) {
+            targetDirectory = value;
+        }
     }
 
     @Override
@@ -44,10 +48,17 @@ public class GenerateIndex implements ICliCommand {
     public void execute() {
         IFileSystemAccessor filesystem = FileSystem.getAccess();
         AbstractOutputChannel output = OutputChannelFactory.getOutputChannel();
-        File workDir = filesystem.getWorkingDirectory();
+        
+        File workDir = null;
+        if(!targetDirectory.isEmpty()) {
+            // operate in non-working directory
+            workDir = filesystem.getFile(targetDirectory);
+        } else {
+            workDir = filesystem.getWorkingDirectory();
+        }
 
         // check if rules file exists
-        File rulesFile = filesystem.getFile(rulesFilePath);
+        File rulesFile = filesystem.getFileInDir(workDir, rulesFilePath);
         if (rulesFile == null) {
             output.printErrLn("error: rules file does not exist");
             return;

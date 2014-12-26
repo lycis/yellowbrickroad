@@ -212,6 +212,7 @@ public class UpdateServer implements ICliCommand {
            List<String> args = new ArrayList<>();
            args.add(Constants.INDEX_RULES_FILE);
            cmdGenInd.setData(args);
+           cmdGenInd.setOption("target", target.getAbsolutePath());
            output.println("Generating index for '"+entry.getAbsolutePath()+"' (index_rules):");
            cmdGenInd.execute();
            output.println("");
