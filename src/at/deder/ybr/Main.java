@@ -131,6 +131,7 @@ public class Main {
         System.out.println("describe <package>\tdisplay information about a specific package");
         System.out.println("initialise [-file <filename>] [target-dir]\tinitialises a directory for the use with ybr");
         System.out.println("update\t\t\tupdate the locally stored libraries of a project");
+        System.out.println("search <mask>\t\tlists all packages with names matching the given regex mask");
         System.out.println("");
         System.out.println("server-commands:");
         System.out.println("prepare-server\t\tprepare the basic folder structure for a server");
@@ -168,6 +169,11 @@ public class Main {
         commandMap.put("gen-index", cmdGenerateIndex);
         commandMap.put("gen-ind", cmdGenerateIndex);
         commandMap.put("gen-i", cmdGenerateIndex);
+        
+        at.deder.ybr.commands.Search cmdSearch = new at.deder.ybr.commands.Search();
+        commandMap.put("search", cmdSearch);
+        commandMap.put("find", cmdSearch);
+        commandMap.put("list", cmdSearch);
     }
 
     private static Options buildOptions() {

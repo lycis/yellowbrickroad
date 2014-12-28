@@ -58,6 +58,18 @@ public class RepositoryEntry extends Tree {
             return "/" + getName() + path;
         }
     }
+    
+    /**
+     * provides the absolute package name in package annotation
+     * @return 
+     */
+    public String getAbsoluteName() {
+        String path = getAbsolutePath();
+        if(path.startsWith("/repository")) {
+            path = path.substring("/repository".length());
+        }
+        return path.replace("/", ".");
+    }
 
     /**
      * Fold this entry and all subentries into a Map.
