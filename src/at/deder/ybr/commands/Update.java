@@ -83,6 +83,12 @@ public class Update implements ICliCommand {
             output.printErrLn("error: client configuration could not be loaded (" + ex.getMessage() + ")");
             return;
         }
+        
+        // check if any packages are given
+        if(clientConf.getPackages() == null) {
+            output.println("no packages to update");
+            return;
+        }
 
         IServerGateway server = ServerFactory.createServer(clientConf);
         // TODO option "--parallel" for multithreaded processing?
