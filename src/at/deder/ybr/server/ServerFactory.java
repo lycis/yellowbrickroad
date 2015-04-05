@@ -64,8 +64,20 @@ public class ServerFactory {
 			throw new InvalidConfigurationException("missing required details");
 		}
 		
+		String serverAddress = config.getServerAddress();
+		int port = 80;
+		if (serverAddress.contains(":")) {
+			String[] parts = serverAddress.split(":");
+			if (parts.length != 2) {
+				serverAddress = parts[0];
+			} else {
+				serverAddress = parts[0];
+				port = Integer.parseInt(parts[1]);
+			}
+		}
 		
-		return new NexusServer((String) details.get("repository"));
+		
+		return new NexusServer(serverAddress, port, (String) details.get("repository"));
 	}
 
 	/**

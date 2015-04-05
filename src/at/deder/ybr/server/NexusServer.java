@@ -13,10 +13,14 @@ import at.deder.ybr.repository.RepositoryEntry;
  *
  */
 public class NexusServer implements IServerGateway {
-	private String repositoryName = "";
+	private String repository = "";
+	private String host = "";
+	private int port = 80;
 	
-	public NexusServer(String repositoryName) {
-		this.repositoryName = repositoryName;
+	public NexusServer(String host, int port, String repository) {
+		this.repository = repository;
+		this.host = host;
+		this.port = port;
 	}
 
 	@Override
@@ -27,7 +31,9 @@ public class NexusServer implements IServerGateway {
 
 	@Override
 	public Banner getBanner() throws ProtocolViolationException {
-		throw new NotImplementedException();
+		Banner nexusBanner = new Banner();
+		nexusBanner.setText("** Nexus @ "+host+":"+port+" ["+repository+"]");
+		return nexusBanner;
 	}
 
 	@Override
@@ -45,6 +51,12 @@ public class NexusServer implements IServerGateway {
 	@Override
 	public PackageIndex getPackageIndex(String pkgName)
 			throws ProtocolViolationException {
+		
+		// TODO parse POM: 
+		// https://192.168.41.27/nexus/service/local/artifact/maven/resolve?g=com.automic.ae&a=ucdj&v=LATEST&r=snapshots&p=jar
+		// -> get baseVersion
+		// create regex from artefact+baseversion+*+extension
+		// -> add to index
 		throw new NotImplementedException();
 	}
 
