@@ -29,6 +29,14 @@ public class PackageIndex {
     }
     
     /**
+     * Adds the given string as entry to the index.
+     * @param entry
+     */
+    public void addEntry(String entry) {
+    	index.add(entry);
+    }
+    
+    /**
      * get all files in a directory that match the index
      * @param dir
      * @return 
@@ -41,7 +49,23 @@ public class PackageIndex {
         return Arrays.asList(dir.listFiles(new FilenameFilter() {
             @Override
             public boolean accept(File dir, String name) {
-                return getIndex().contains(name);
+            	for(String entry: getIndex()) {
+            		
+            		// apply regular expression
+            		if(entry.startsWith("r::")) {
+            			String rex = entry.substring("r::".length());
+            			if(name.matches(rex)) {
+            				return true;
+            			}
+            		}
+            		
+            		// check for exact match
+            		if(entry.equals(name)) {
+            			return true;
+            		}
+            	}
+            	
+                return false;
             }
         }));
     }
