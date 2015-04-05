@@ -16,6 +16,8 @@ public class ServerFactory {
     
     private static IServerGateway injectedServer = null;
     
+    public static final String TYPE_SIMPLE = "simple";
+    
     // hide constructor
     private ServerFactory() {};
     
@@ -25,12 +27,16 @@ public class ServerFactory {
      * @param config
      * @return 
      */
-    public static IServerGateway createServer(ClientConfiguration config) {
+    public static IServerGateway createServer(ClientConfiguration config) throws UnknownServerTypeException {
         if(injectedServer != null) {
             return injectedServer;
         }
         
-       return createSimpleServer(config);
+        if(ServerFactory.TYPE_SIMPLE.equalsIgnoreCase(config.getType())) {
+        	return createSimpleServer(config);
+        }
+        
+        throw new UnknownServerTypeException(config.getType());
     }
     
     /**

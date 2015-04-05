@@ -7,10 +7,11 @@ import at.deder.ybr.configuration.ClientConfiguration;
 import at.deder.ybr.filesystem.FileSystem;
 import at.deder.ybr.filesystem.IFileSystemAccessor;
 import at.deder.ybr.repository.RepositoryEntry;
-
 import at.deder.ybr.server.IServerGateway;
 import at.deder.ybr.server.ProtocolViolationException;
 import at.deder.ybr.server.ServerFactory;
+import at.deder.ybr.server.UnknownServerTypeException;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -55,7 +56,12 @@ public class Describe implements ICliCommand {
         }
         
         // search package and display description
-        IServerGateway server = ServerFactory.createServer(config);
+        IServerGateway server = null;
+		try {
+			server = ServerFactory.createServer(config);
+		} catch (UnknownServerTypeException e) {
+			output.printErrLn("unknown server type: "+config.getType());
+		}
         
         for(String packageName: packageUriList) {
             if(!packageName.startsWith(".")) {

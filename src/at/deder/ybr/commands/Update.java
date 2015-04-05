@@ -11,6 +11,8 @@ import at.deder.ybr.repository.RepositoryEntry;
 import at.deder.ybr.server.IServerGateway;
 import at.deder.ybr.server.ProtocolViolationException;
 import at.deder.ybr.server.ServerFactory;
+import at.deder.ybr.server.UnknownServerTypeException;
+
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -19,6 +21,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.Option;
@@ -90,7 +93,12 @@ public class Update implements ICliCommand {
             return;
         }
 
-        IServerGateway server = ServerFactory.createServer(clientConf);
+        IServerGateway server = null;
+		try {
+			server = ServerFactory.createServer(clientConf);
+		} catch (UnknownServerTypeException e) {
+			output.printErrLn("unknown server type: "+clientConf.getType());
+		}
         // TODO option "--parallel" for multithreaded processing?
         for(String pkgName: clientConf.getPackages()) {
             output.println(pkgName + ": ");

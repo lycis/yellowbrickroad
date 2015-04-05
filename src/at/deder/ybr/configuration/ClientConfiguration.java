@@ -1,14 +1,18 @@
 package at.deder.ybr.configuration;
 
-import com.esotericsoftware.yamlbeans.YamlException;
-import com.esotericsoftware.yamlbeans.YamlReader;
-import com.esotericsoftware.yamlbeans.YamlWriter;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.Objects;
+
+import at.deder.ybr.server.ServerFactory;
+
+import com.esotericsoftware.yamlbeans.YamlException;
+import com.esotericsoftware.yamlbeans.YamlReader;
+import com.esotericsoftware.yamlbeans.YamlWriter;
 
 /**
  * This bean provides data of the local client configuration
@@ -19,13 +23,40 @@ public class ClientConfiguration {
 
     public static final String YAML_TAG = "ybr-client-configuration";
 
-    private String       serverAddress = "";
-    private String       targetPath    = "";
-    private ArrayList<String> packages;
+    private String             serverAddress = "";
+    private String             targetPath    = "";
+    private ArrayList<String>  packages;
+    private String             type = "";
+    private Map<String,String> serverDetails;
 
     public ClientConfiguration() {
         this.packages = new ArrayList<>();
 
+    }
+    
+    public Map<String,String> getServerDetails() {
+    	return serverDetails;
+    }
+    
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+	public void setServerDetails(Map serverDetails) {
+    	this.serverDetails = serverDetails;
+    }
+    
+    public String getType() {
+    	if(type == null) {
+    		return ServerFactory.TYPE_SIMPLE;
+    	}
+    	
+    	if(type.isEmpty()) {
+    		return ServerFactory.TYPE_SIMPLE;
+    	}
+    	
+    	return type;
+    }
+    
+    public void setType(String type) {
+    	this.type = type;
     }
 
     public String getServerAddress() {

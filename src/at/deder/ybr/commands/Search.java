@@ -10,7 +10,9 @@ import at.deder.ybr.repository.RepositoryEntry;
 import at.deder.ybr.server.IServerGateway;
 import at.deder.ybr.server.ProtocolViolationException;
 import at.deder.ybr.server.ServerFactory;
+import at.deder.ybr.server.UnknownServerTypeException;
 import at.deder.ybr.structures.Tree;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -18,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
+
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -81,7 +84,13 @@ public class Search implements ICliCommand {
             return;
         }
 
-        IServerGateway server = ServerFactory.createServer(clientConf);
+        IServerGateway server = null;
+		try {
+			server = ServerFactory.createServer(clientConf);
+		} catch (UnknownServerTypeException e1) {
+			output.printErrLn("unknown server type: "+clientConf.getType());
+		}
+		
         ServerManifest manifest;
         try {
             manifest = server.getManifest();
