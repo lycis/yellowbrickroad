@@ -3,6 +3,7 @@ package at.deder.ybr.commands;
 import at.deder.ybr.channels.AbstractOutputChannel;
 import at.deder.ybr.channels.OutputChannelFactory;
 import at.deder.ybr.configuration.ClientConfiguration;
+import at.deder.ybr.configuration.InvalidConfigurationException;
 import at.deder.ybr.filesystem.FileSystem;
 import at.deder.ybr.filesystem.IFileSystemAccessor;
 import at.deder.ybr.repository.PackageHash;
@@ -98,7 +99,10 @@ public class Update implements ICliCommand {
 			server = ServerFactory.createServer(clientConf);
 		} catch (UnknownServerTypeException e) {
 			output.printErrLn("unknown server type: "+clientConf.getType());
+		} catch (InvalidConfigurationException e) {
+			output.printErrLn("configuration error: "+e.getMessage());
 		}
+		
         // TODO option "--parallel" for multithreaded processing?
         for(String pkgName: clientConf.getPackages()) {
             output.println(pkgName + ": ");

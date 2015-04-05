@@ -3,6 +3,7 @@ package at.deder.ybr.commands;
 import at.deder.ybr.channels.AbstractOutputChannel;
 import at.deder.ybr.channels.OutputChannelFactory;
 import at.deder.ybr.configuration.ClientConfiguration;
+import at.deder.ybr.configuration.InvalidConfigurationException;
 import at.deder.ybr.configuration.ServerManifest;
 import at.deder.ybr.filesystem.FileSystem;
 import at.deder.ybr.filesystem.IFileSystemAccessor;
@@ -89,6 +90,8 @@ public class Search implements ICliCommand {
 			server = ServerFactory.createServer(clientConf);
 		} catch (UnknownServerTypeException e1) {
 			output.printErrLn("unknown server type: "+clientConf.getType());
+		} catch (InvalidConfigurationException e) {
+			output.printErrLn("configuration error: "+e.getMessage());
 		}
 		
         ServerManifest manifest;

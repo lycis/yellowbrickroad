@@ -4,6 +4,7 @@ import at.deder.ybr.Constants;
 import at.deder.ybr.channels.AbstractOutputChannel;
 import at.deder.ybr.channels.OutputChannelFactory;
 import at.deder.ybr.configuration.ClientConfiguration;
+import at.deder.ybr.configuration.InvalidConfigurationException;
 import at.deder.ybr.filesystem.FileSystem;
 import at.deder.ybr.filesystem.IFileSystemAccessor;
 import at.deder.ybr.repository.RepositoryEntry;
@@ -61,6 +62,8 @@ public class Describe implements ICliCommand {
 			server = ServerFactory.createServer(config);
 		} catch (UnknownServerTypeException e) {
 			output.printErrLn("unknown server type: "+config.getType());
+		} catch (InvalidConfigurationException e) {
+			output.printErrLn("configuration error: "+e.getMessage());
 		}
         
         for(String packageName: packageUriList) {
