@@ -25,7 +25,7 @@ public class NexusServer implements IServerGateway {
 
 	@Override
 	public ServerManifest getManifest() throws ProtocolViolationException {
-		// TODO Auto-generated method stub
+		// TODO crawl through repository: https://<server>/content/repositories/<repository>/
 		throw new NotImplementedException();
 	}
 
