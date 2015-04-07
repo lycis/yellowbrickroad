@@ -1,6 +1,10 @@
 package at.deder.ybr.server;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Map;
+
+import org.apache.http.client.utils.URIBuilder;
 
 import at.deder.ybr.configuration.ClientConfiguration;
 import at.deder.ybr.configuration.InvalidConfigurationException;
@@ -60,24 +64,44 @@ public class ServerFactory {
 		if (details == null) {
 			throw new InvalidConfigurationException("missing required details");
 		}
-		if(!details.containsKey("repository")) {
+		if (!details.containsKey("repository")) {
 			throw new InvalidConfigurationException("missing required details");
 		}
-		
+
 		String serverAddress = config.getServerAddress();
-		int port = 80;
-		if (serverAddress.contains(":")) {
-			String[] parts = serverAddress.split(":");
-			if (parts.length != 2) {
-				serverAddress = parts[0];
-			} else {
-				serverAddress = parts[0];
-				port = Integer.parseInt(parts[1]);
-			}
+		URI parseUri = null;
+		try {
+			parseUri = new URIBuilder(serverAddress).build();
+		} catch (URISyntaxException ex) {
+			throw new InvalidConfigurationException(
+					"malformed Nexus server address");
 		}
 		
-		
-		return new NexusServer(serverAddress, port, (String) details.get("repository"));
+		if(parseUri.getHost() == null) {
+			throw new InvalidConfigurationException("malformed server address");
+		}
+
+		NexusServer serverImpl = new NexusServer(parseUri.getHost(), 
+				                                 parseUri.getPath(),
+				                                 parseUri.getPort(), 
+				                                 (String) details.get("repository"));
+
+		if (parseUri.getScheme() != null && !parseUri.getScheme().isEmpty()) {
+			serverImpl.setScheme(parseUri.getScheme());
+		}
+
+		if (details.containsKey("trust")) {
+			if ("all".equals(details.get("trust"))) {
+				// trust every certificate
+				serverImpl.setTrustEveryone(true);
+			} else {
+				serverImpl.setTrustEveryone(false);
+			}
+		} else {
+			serverImpl.setTrustEveryone(false);
+		}
+
+		return serverImpl;
 	}
 
 	/**
@@ -86,20 +110,38 @@ public class ServerFactory {
 	 * @param config
 	 * @return
 	 */
-	private static IServerGateway createSimpleServer(ClientConfiguration config) {
+	private static IServerGateway createSimpleServer(ClientConfiguration config) 
+			throws InvalidConfigurationException {
+		
 		String serverAddress = config.getServerAddress();
-		int port = 80;
-		if (serverAddress.contains(":")) {
-			String[] parts = serverAddress.split(":");
-			if (parts.length != 2) {
-				serverAddress = parts[0];
-			} else {
-				serverAddress = parts[0];
-				port = Integer.parseInt(parts[1]);
+		URI parseUri = null;
+		try {
+			parseUri = new URIBuilder(serverAddress).build();
+		} catch (URISyntaxException ex) {
+			throw new InvalidConfigurationException("malformed server address");
+		}
+		
+		if(parseUri.getHost() == null) {
+			throw new InvalidConfigurationException("malformed server address");
+		}
+
+		SimpleHttpServer serverImpl = new SimpleHttpServer(parseUri.getHost(), 
+				                                           parseUri.getPath(),
+				                                           parseUri.getPort());
+		// set details
+		Map details = config.getServerDetails();
+		if (details != null) {
+			if (details.containsKey("trust")) {
+				if ("all".equals(details.get("trust"))) {
+					// trust every certificate
+					serverImpl.setTrustEveryone(true);
+				}
 			}
 		}
 
-		SimpleHttpServer serverImpl = new SimpleHttpServer(serverAddress, port);
+		if (parseUri.getScheme() != null && !parseUri.getScheme().isEmpty()) {
+			serverImpl.setScheme(parseUri.getScheme());
+		}
 		return serverImpl;
 	}
 

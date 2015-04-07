@@ -135,9 +135,12 @@ public class Update implements ICliCommand {
                 }
             } catch (ProtocolViolationException ex) {
                output.printErrLn("error: package index could not be checked - "+ex.getMessage());
-               if(ex.getCause() != null) {
-                   output.printErrLn("cause: "+ex.getMessage());
+               Throwable x = ex;
+               while(x.getCause() != null) {
+            	   x = x.getCause();
+                   output.printErrLn("cause: "+x.getMessage());
                }
+               return;
             }
 
             // download files

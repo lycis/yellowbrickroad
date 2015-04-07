@@ -1,9 +1,5 @@
 package at.deder.ybr.server;
 
-import at.deder.ybr.configuration.ServerManifest;
-import at.deder.ybr.repository.PackageIndex;
-import at.deder.ybr.repository.RepositoryEntry;
-import com.esotericsoftware.yamlbeans.YamlException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
@@ -11,19 +7,39 @@ import java.io.StringWriter;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
+import java.security.KeyStore;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+
+import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
+import org.apache.http.HttpVersion;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.conn.ClientConnectionManager;
+import org.apache.http.conn.scheme.PlainSocketFactory;
+import org.apache.http.conn.scheme.Scheme;
+import org.apache.http.conn.scheme.SchemeRegistry;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpParams;
+import org.apache.http.params.HttpProtocolParams;
+import org.apache.http.protocol.HTTP;
+
+import at.deder.ybr.configuration.ServerManifest;
+import at.deder.ybr.repository.PackageIndex;
+import at.deder.ybr.repository.RepositoryEntry;
+
+import com.esotericsoftware.yamlbeans.YamlException;
 
 /**
  * This implementation of the IServerGateway interface gives access to a remote
@@ -34,20 +50,23 @@ import org.apache.http.impl.client.HttpClients;
  */
 public class SimpleHttpServer implements IServerGateway {
 
-    private static final String SCHEME = "http";
+    private String scheme = "http";
     private static final int DEFAULT_PORT = 80;
 
     private HttpClient serverConnection = null;
     private String hostname = "";
+    private String fixedPath = "";
     private int port = DEFAULT_PORT;
 
     public SimpleHttpServer(String hostname) {
-        this(hostname, DEFAULT_PORT);
+        this(hostname, null, DEFAULT_PORT);
     }
 
-    public SimpleHttpServer(String hostname, int port) {
+    public SimpleHttpServer(String hostname, String fixedPath, int port) {
         serverConnection = HttpClients.createDefault();
+        int indexSlash = hostname.indexOf('/');
         this.hostname = hostname;
+        this.fixedPath = (fixedPath!=null?fixedPath:"");
         this.port = port;
     }
 
@@ -91,6 +110,16 @@ public class SimpleHttpServer implements IServerGateway {
         Banner banner = new Banner(text);
         return banner;
     }
+    
+    /**
+     * provide an URI builder with basic settings that can be extended (e.g. with a path)
+     * @return
+     */
+    protected URIBuilder getBaseUriBuilder() {
+    	return new SimpleHttpServerUriBuilder(fixedPath).setScheme(scheme)
+    			.setHost(hostname)
+    			.setPort(port);
+    }
 
     /**
      * Fetches a resource as text from the server by using a GET request.
@@ -98,23 +127,40 @@ public class SimpleHttpServer implements IServerGateway {
      * @param path
      * @return
      */
-    private String getTextFromServer(String path) throws IOException, ProtocolViolationException {
+    protected String getTextFromServer(String path) throws IOException, ProtocolViolationException {
         if (!path.startsWith("/")) {
             path = "/" + path;
         }
 
         URI uri;
         try {
-            uri = new URIBuilder()
-                    .setScheme(SCHEME)
-                    .setHost(hostname)
-                    .setPort(port)
-                    .setPath(path).build();
+            uri = getBaseUriBuilder().setPath(path).build();
         } catch (URISyntaxException ex) {
             return null;
         }
 
-        HttpGet request = new HttpGet(uri);
+        return getTextFromServer(uri);
+    }
+    
+    /**
+     * Fetches a resource as text from the server by using a GET request.
+     * @param uri
+     * @return
+     * @throws IOException
+     * @throws ProtocolViolationException
+     */
+    @SuppressWarnings("deprecation")
+	protected String getTextFromServer(URI uri) throws IOException, ProtocolViolationException {
+    	// convert URI
+    	try {
+           URIBuilder b = getBaseUriBuilder().setPath(uri.getPath());
+           b.setQuery(uri.getQuery());
+           uri = b.build();
+        } catch (URISyntaxException ex) {
+            return null;
+        }
+    	
+    	HttpGet request = new HttpGet(uri);
         HttpResponse response;
         try {
             response = serverConnection.execute(request);
@@ -124,7 +170,7 @@ public class SimpleHttpServer implements IServerGateway {
 
         // check response code
         if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
-            throw new ProtocolViolationException("access to resource '" + path + "' not allowed ("
+            throw new ProtocolViolationException("access to resource '" + uri.toString() + "' not allowed ("
                     + response.getStatusLine().getStatusCode() + " - " + response.getStatusLine().getReasonPhrase() + ")");
         }
 
@@ -253,7 +299,7 @@ public class SimpleHttpServer implements IServerGateway {
         URI uri;
         try {
             uri = new URIBuilder()
-                    .setScheme(SCHEME)
+                    .setScheme(scheme)
                     .setHost(hostname)
                     .setPort(port)
                     .setPath(path).build();
@@ -296,4 +342,78 @@ public class SimpleHttpServer implements IServerGateway {
 
         return index;
     }
+    
+    public String getHostname() {
+    	return this.hostname;
+    }
+    
+    public int getPort() {
+    	return this.port;
+    }
+
+    /**
+     * configures the client to trust every certificate (including invalid ones).
+     * @param b
+     */
+	public void setTrustEveryone(boolean b) {
+		if(b) {
+			try {
+				KeyStore trustStore = KeyStore.getInstance(KeyStore.getDefaultType());
+				trustStore.load(null, null);
+
+				SSLSocketFactory sf = new TrustEveryoneSslSocketFactory(trustStore);
+				sf.setHostnameVerifier(SSLSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER);
+
+				HttpParams params = new BasicHttpParams();
+				HttpProtocolParams.setVersion(params, HttpVersion.HTTP_1_1);
+				HttpProtocolParams.setContentCharset(params, HTTP.UTF_8);
+
+				SchemeRegistry registry = new SchemeRegistry();
+				registry.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
+				registry.register(new Scheme("https", sf, 443));
+
+				ClientConnectionManager ccm = new ThreadSafeClientConnManager(params, registry);
+
+				serverConnection = new DefaultHttpClient(ccm, params);
+			} catch (Exception e) {
+				serverConnection = HttpClients.createDefault(); // does not work
+			}
+		} else {
+			serverConnection = HttpClients.createDefault();
+		}
+	}
+	
+	/**
+	 * change the scheme (http or https are allowed)
+	 * @param scheme
+	 */
+	public void setScheme(String scheme) {
+		if(scheme.equalsIgnoreCase("http") || scheme.equalsIgnoreCase("https")) {
+			this.scheme = scheme;
+		}
+	}
+	
+	/**
+	 * internal implementation for URI builder
+	 * @author lycis
+	 *
+	 */
+	private class SimpleHttpServerUriBuilder extends URIBuilder {
+		private String basePath = "";
+		
+		public SimpleHttpServerUriBuilder(String basePath) {
+			this.basePath = basePath;
+			if(!this.basePath.endsWith("/")) {
+				this.basePath += "/";
+			}
+		}
+		
+		@Override
+		public URIBuilder setPath(String path) {
+			if(path.startsWith("/")) {
+				path = path.substring(1);
+			}
+			return super.setPath(basePath + path);
+		}
+	}
 }

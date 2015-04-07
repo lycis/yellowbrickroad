@@ -22,7 +22,7 @@ public class ServerFactoryTest {
 	public void testCreateServerSimpleWithPort() throws UnknownServerTypeException, InvalidConfigurationException {
 		ClientConfiguration clientConf = mock(ClientConfiguration.class);
 		given(clientConf.getType()).willReturn(ServerFactory.TYPE_SIMPLE);
-		given(clientConf.getServerAddress()).willReturn("localhost:80");
+		given(clientConf.getServerAddress()).willReturn("http://localhost:80");
 
 		IServerGateway gw = ServerFactory.createServer(clientConf);
 		then(gw).isInstanceOf(SimpleHttpServer.class);
@@ -46,7 +46,7 @@ public class ServerFactoryTest {
 	public void testCreateSimpleServerWithoutPort() throws UnknownServerTypeException, InvalidConfigurationException {
 		ClientConfiguration clientConf = mock(ClientConfiguration.class);
 		given(clientConf.getType()).willReturn(ServerFactory.TYPE_SIMPLE);
-		given(clientConf.getServerAddress()).willReturn("localhost");
+		given(clientConf.getServerAddress()).willReturn("http://localhost");
 
 		IServerGateway gw = ServerFactory.createServer(clientConf);
 		then(gw).isInstanceOf(SimpleHttpServer.class);

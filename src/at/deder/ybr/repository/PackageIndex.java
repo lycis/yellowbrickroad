@@ -17,7 +17,7 @@ public class PackageIndex {
     private List<String> index = new ArrayList<>();
     
     public PackageIndex(String indexContent) {
-        index = Arrays.asList(indexContent.split("\n"));
+        index = new ArrayList<>(Arrays.asList(indexContent.split("\n")));
     }
     
     public PackageIndex(File indexFile) throws IOException {
