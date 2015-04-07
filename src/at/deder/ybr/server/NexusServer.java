@@ -72,26 +72,7 @@ public class NexusServer extends SimpleHttpServer implements IServerGateway {
 			throw new ProtocolViolationException("package index not accessible", ex);
 		}
 		
-		// TODO parse POM: 
-		// https://192.168.41.27/nexus/service/local/artifact/maven/resolve?g=com.automic.ae&a=ucdj&v=LATEST&r=snapshots&p=jar
-		// -> get baseVersion
-		// create regex from artefact+baseversion+*+extension
-		// -> add to index
-		
-		URIBuilder uri = new URIBuilder();
-		uri.setPath("/service/local/artifact/maven/resolve");
-		uri.addParameter("g", nre.getGroupId());
-		uri.addParameter("a", nre.getArtefactId());
-		uri.addParameter("v", nre.getVersion());
-		uri.addParameter("p", nre.getPackageType());
-		uri.addParameter("r", repository);
-		
-		String pomStr = "";
-		try {
-			pomStr = getTextFromServer(uri.build());
-		} catch(IOException | URISyntaxException ex) {
-			throw new ProtocolViolationException("package index not acessible", ex);
-		}
+		String pomStr = resolvePackage(nre);
 		
 		Document doc = null;
 		try {
@@ -117,6 +98,50 @@ public class NexusServer extends SimpleHttpServer implements IServerGateway {
 		String indexRegex = "r::"+nre.getArtefactId()+"-"+baseVersion+".*?\\."+extension;
 		index.addEntry(indexRegex);
 		return index;
+	}
+
+	/**
+	 * call to nexus resolve API request.
+	 * 
+	 * @param pkgName
+	 * @return
+	 * @throws ProtocolViolationException
+	 */
+	private String resolvePackage(String pkgName) throws ProtocolViolationException {
+		NexusRepositoryEntry nre = null;
+		try {
+			nre = new NexusRepositoryEntry(pkgName);
+		} catch (IllegalArgumentException ex) {
+			throw new ProtocolViolationException("package index not accessible", ex);
+		}
+		
+		return resolvePackage(nre);
+	}
+
+	/**
+	 * Call to Nexus resolve API request
+	 * 
+	 * @param pkgName
+	 * @return
+	 * @throws ProtocolViolationException
+	 */
+	private String resolvePackage(NexusRepositoryEntry nre) throws ProtocolViolationException {
+		URIBuilder uri = new URIBuilder();
+		uri.setPath("/service/local/artifact/maven/resolve");
+		uri.addParameter("g", nre.getGroupId());
+		uri.addParameter("a", nre.getArtefactId());
+		uri.addParameter("v", nre.getVersion());
+		uri.addParameter("p", nre.getPackageType());
+		uri.addParameter("r", repository);
+		
+		String pomStr = "";
+		try {
+			pomStr = getTextFromServer(uri.build());
+		} catch(IOException | URISyntaxException ex) {
+			throw new ProtocolViolationException("package index not acessible", ex);
+		}
+		
+		return pomStr;
 	}
 
 }
