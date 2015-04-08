@@ -44,7 +44,8 @@ public class ObjectTree<E> extends Tree{
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final ObjectTree other = (ObjectTree) obj;
+        @SuppressWarnings("rawtypes")
+		final ObjectTree other = (ObjectTree) obj;
         if (!Objects.equals(this.parent, other.parent)) {
             return false;
         }

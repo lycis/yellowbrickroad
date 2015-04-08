@@ -1,8 +1,5 @@
 package at.deder.ybr.test.mocks;
 
-import at.deder.ybr.channels.AbstractOutputChannel;
-import at.deder.ybr.channels.OutputChannelFactory;
-import at.deder.ybr.configuration.ClientConfiguration;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -12,10 +9,6 @@ import org.apache.commons.io.FileUtils;
 
 import at.deder.ybr.filesystem.IFileSystemAccessor;
 import at.deder.ybr.filesystem.LocalFileSystemAccessor;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Mocks access to the file system. Use POSIX paths to access files.

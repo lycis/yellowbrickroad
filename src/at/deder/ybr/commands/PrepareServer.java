@@ -1,17 +1,16 @@
 package at.deder.ybr.commands;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 
-import at.deder.ybr.Constants;
-import at.deder.ybr.filesystem.IFileSystemAccessor;
 import at.deder.ybr.channels.AbstractOutputChannel;
 import at.deder.ybr.channels.OutputChannelFactory;
 import at.deder.ybr.configuration.ServerManifest;
 import at.deder.ybr.filesystem.FileSystem;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
+import at.deder.ybr.filesystem.IFileSystemAccessor;
 
 public class PrepareServer implements ICliCommand {
 

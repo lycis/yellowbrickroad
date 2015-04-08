@@ -6,10 +6,12 @@ import at.deder.ybr.channels.OutputChannelFactory;
 import at.deder.ybr.configuration.ClientConfiguration;
 import at.deder.ybr.filesystem.FileSystem;
 import at.deder.ybr.filesystem.IFileSystemAccessor;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.Option;
@@ -35,9 +37,13 @@ public class Initialise implements ICliCommand {
         
     }
 
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     public void setData(List<String> cliData) {
-        Option file = OptionBuilder.withArgName("file").hasArg().withLongOpt("file").create("f");
+        @SuppressWarnings("static-access")
+		Option file = OptionBuilder.withArgName(Constants.OPTION_FILE).hasArg()
+        		                    .withLongOpt(Constants.OPTION_FILE)
+        		                    .create(Constants.OPTION_FILE_SHORT);
         Options opt = new Options();
         opt.addOption(file);
         

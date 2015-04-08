@@ -1,7 +1,5 @@
 package at.deder.ybr.repository;
 
-import at.deder.ybr.channels.AbstractOutputChannel;
-import at.deder.ybr.channels.OutputChannelFactory;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -13,8 +11,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import at.deder.ybr.channels.AbstractOutputChannel;
+import at.deder.ybr.channels.OutputChannelFactory;
 
 /**
  * Calculates and stores the hashcode of a package.
@@ -67,9 +66,8 @@ public class PackageHash {
         }
 
         List<String> hashCodes = new ArrayList<>();
-        MessageDigest digest;
         try {
-            digest = MessageDigest.getInstance("SHA-1");
+            MessageDigest.getInstance("SHA-1");
         } catch (NoSuchAlgorithmException ex) {
             AbstractOutputChannel out = OutputChannelFactory.getOutputChannel();
             out.printErrLn("error: #PHx01 - " + ex.getMessage());

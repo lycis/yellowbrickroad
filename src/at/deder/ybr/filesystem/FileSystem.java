@@ -1,7 +1,5 @@
 package at.deder.ybr.filesystem;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * This central service provides access to the file system.

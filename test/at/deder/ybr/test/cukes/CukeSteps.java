@@ -246,15 +246,15 @@ public class CukeSteps {
         File javaDir = filesystem.createFile(comDir, "java", true);
         File javaUtilDir = filesystem.createFile(javaDir, "util", true);
         File javaUtilIoDir = filesystem.createFile(javaUtilDir, "io", true);
-        File javaUtilIoFileDir = filesystem.createFile(javaUtilIoDir, "file", true);
+        filesystem.createFile(javaUtilIoDir, "file", true);
 
         File cppDir = filesystem.createFile(comDir, "cpp", true);
         File cppUtilDir = filesystem.createFile(cppDir, "util", true);
-        File cppUtilx32Dir = filesystem.createFile(cppUtilDir, "x32", true);
-        File cppUtilx64Dir = filesystem.createFile(cppUtilDir, "x64", true);
+        filesystem.createFile(cppUtilDir, "x32", true);
+        filesystem.createFile(cppUtilDir, "x64", true);
 
         File orgDir = filesystem.getFile("repository/org/");
-        File orgJUnitDir = filesystem.createFile(orgDir, "junit", true);
+        filesystem.createFile(orgDir, "junit", true);
 
         // place descriptions
         the_file_contains("repository/com/java/description", "commercial java libraries");

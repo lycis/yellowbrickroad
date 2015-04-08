@@ -78,7 +78,7 @@ public class Search implements ICliCommand {
 
         // check if search string compiles
         try {
-            Pattern p = Pattern.compile(searchString);
+            Pattern.compile(searchString);
         } catch (PatternSyntaxException ex) {
             output.printErrLn("error: syntax error in search pattern (" + ex.getPattern() + ")");
             output.printErrLn("cause: " + ex.getMessage());

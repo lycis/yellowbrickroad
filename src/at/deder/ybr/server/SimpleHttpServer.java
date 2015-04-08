@@ -48,6 +48,7 @@ import com.esotericsoftware.yamlbeans.YamlException;
  *
  * @author lycis
  */
+@SuppressWarnings("deprecation")
 public class SimpleHttpServer implements IServerGateway {
 
     private String scheme = "http";
@@ -64,7 +65,6 @@ public class SimpleHttpServer implements IServerGateway {
 
     public SimpleHttpServer(String hostname, String fixedPath, int port) {
         serverConnection = HttpClients.createDefault();
-        int indexSlash = hostname.indexOf('/');
         this.hostname = hostname;
         this.fixedPath = (fixedPath!=null?fixedPath:"");
         this.port = port;

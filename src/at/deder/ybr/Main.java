@@ -6,14 +6,17 @@ import at.deder.ybr.filesystem.LocalFileSystemAccessor;
 import at.deder.ybr.channels.AbstractOutputChannel;
 import at.deder.ybr.channels.OutputChannelFactory;
 import at.deder.ybr.channels.SilentOutputChannel;
+
 import java.util.HashMap;
 import java.util.Map;
 
 import at.deder.ybr.commands.ICliCommand;
 import at.deder.ybr.filesystem.FileSystem;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.HelpFormatter;
@@ -63,7 +66,8 @@ public class Main {
         }
 
         // process according command
-        List<String> commandList = cLine.getArgList();
+        @SuppressWarnings("unchecked")
+		List<String> commandList = cLine.getArgList();
 
         if (commandList.isEmpty()) {
             // if there is no command at this point (no-command options are already
@@ -181,7 +185,10 @@ public class Main {
         Option version = new Option(Constants.OPTION_VERSION, "print version information");
         Option verbose = new Option(Constants.OPTION_VERBOSE, "display extended output");
         Option silent  = new Option(Constants.OPTION_SILENT,  "suppress all output");
-        Option log     = OptionBuilder.withArgName("file").hasArg().withDescription("write output to the given file").create(Constants.OPTION_LOG);
+        @SuppressWarnings("static-access")
+		Option log     = OptionBuilder.withArgName(Constants.OPTION_FILE).hasArg()
+        		                      .withDescription("write output to the given file")
+        		                      .create(Constants.OPTION_LOG);
         
         
         Options cliOptions = new Options();

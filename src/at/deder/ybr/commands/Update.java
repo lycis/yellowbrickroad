@@ -1,19 +1,5 @@
 package at.deder.ybr.commands;
 
-import at.deder.ybr.channels.AbstractOutputChannel;
-import at.deder.ybr.channels.OutputChannelFactory;
-import at.deder.ybr.configuration.ClientConfiguration;
-import at.deder.ybr.configuration.InvalidConfigurationException;
-import at.deder.ybr.filesystem.FileSystem;
-import at.deder.ybr.filesystem.IFileSystemAccessor;
-import at.deder.ybr.repository.PackageHash;
-import at.deder.ybr.repository.PackageIndex;
-import at.deder.ybr.repository.RepositoryEntry;
-import at.deder.ybr.server.IServerGateway;
-import at.deder.ybr.server.ProtocolViolationException;
-import at.deder.ybr.server.ServerFactory;
-import at.deder.ybr.server.UnknownServerTypeException;
-
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -31,6 +17,21 @@ import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.PosixParser;
 
+import at.deder.ybr.Constants;
+import at.deder.ybr.channels.AbstractOutputChannel;
+import at.deder.ybr.channels.OutputChannelFactory;
+import at.deder.ybr.configuration.ClientConfiguration;
+import at.deder.ybr.configuration.InvalidConfigurationException;
+import at.deder.ybr.filesystem.FileSystem;
+import at.deder.ybr.filesystem.IFileSystemAccessor;
+import at.deder.ybr.repository.PackageHash;
+import at.deder.ybr.repository.PackageIndex;
+import at.deder.ybr.repository.RepositoryEntry;
+import at.deder.ybr.server.IServerGateway;
+import at.deder.ybr.server.ProtocolViolationException;
+import at.deder.ybr.server.ServerFactory;
+import at.deder.ybr.server.UnknownServerTypeException;
+
 /**
  * Fetches all packages according to the config file.
  *
@@ -47,7 +48,10 @@ public class Update implements ICliCommand {
 
     @Override
     public void setData(List<String> cliData) {
-        Option file = OptionBuilder.withLongOpt("create-target").withDescription("automatically create target directory").create("ct");
+        @SuppressWarnings("static-access")
+		Option file = OptionBuilder.withLongOpt(Constants.OPTION_CREATE_TARGET)
+        		                   .withDescription("automatically create target directory")
+        		                   .create(Constants.OPTION_CREATE_TARGET_SHORT);
         Options opt = new Options();
         opt.addOption(file);
 
@@ -162,9 +166,17 @@ public class Update implements ICliCommand {
                 for (String filename : files.keySet()) {
                     byte[] content = files.get(filename);
                     output.print(filename + " [" + humanReadableByteCount(content.length, false) + "] ... ");
+                    
+                    File f = null;
+                    
                     try {
-                        File f = filesystem.createFile(targetDir, filename, false);
-                        DataOutputStream out = new DataOutputStream(new FileOutputStream(f));
+						f = filesystem.createFile(targetDir, filename, false);
+					} catch (IOException e) {
+						output.println("nok");
+						output.printErrLn("reason: " + e.getMessage());
+					}
+                    
+                    try(DataOutputStream out = new DataOutputStream(new FileOutputStream(f))) {
                         out.write(content);
                     } catch (IOException ex) {
                         output.println("nok");

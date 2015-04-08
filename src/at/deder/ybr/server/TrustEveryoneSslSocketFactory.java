@@ -13,7 +13,6 @@ import java.security.cert.CertificateException;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
-import javax.security.cert.X509Certificate;
 
 import org.apache.http.conn.ssl.SSLSocketFactory;
 
@@ -22,10 +21,12 @@ import org.apache.http.conn.ssl.SSLSocketFactory;
  * @author lycis
  *
  */
+@SuppressWarnings("deprecation")
 public class TrustEveryoneSslSocketFactory extends SSLSocketFactory {
 	SSLContext sslContext = SSLContext.getInstance("TLS");
 
-    public TrustEveryoneSslSocketFactory(KeyStore truststore) throws NoSuchAlgorithmException, KeyManagementException, KeyStoreException, UnrecoverableKeyException {
+    
+	public TrustEveryoneSslSocketFactory(KeyStore truststore) throws NoSuchAlgorithmException, KeyManagementException, KeyStoreException, UnrecoverableKeyException {
         super(truststore);
 
         TrustManager tm = new X509TrustManager() {

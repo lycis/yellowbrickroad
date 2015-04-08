@@ -67,9 +67,7 @@ public class GenerateIndex implements ICliCommand {
         // build index based on rules in file
         ArrayList<File> index = new ArrayList<>();
 
-        BufferedReader rulesReader;
-        try {
-            rulesReader = new BufferedReader(new FileReader(rulesFile));
+        try(BufferedReader rulesReader = new BufferedReader(new FileReader(rulesFile))) {
             String line;
             while ((line = rulesReader.readLine()) != null) {
                 String operation = line.substring(0, 1);

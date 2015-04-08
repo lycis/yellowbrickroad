@@ -45,7 +45,7 @@ import static org.mockito.Mockito.spy;
 public class SimpleHttpServerTest {
 
     private HttpClient mockHttpClient = mock(HttpClient.class);
-    private HttpGet mockHttpGet = mock(HttpGet.class);
+    //private HttpGet mockHttpGet = mock(HttpGet.class);
     private HttpResponse mockHttpResponse = mock(HttpResponse.class);
     private HttpEntity mockHttpEntity = mock(HttpEntity.class);
 
@@ -90,8 +90,8 @@ public class SimpleHttpServerTest {
         comEntry.setName("com");
         comEntry.setDescription("commercial libraries");
         RepositoryEntry orgEntry = new RepositoryEntry();
-        comEntry.setName("org");
-        comEntry.setDescription("open source libraries");
+        orgEntry.setName("org");
+        orgEntry.setDescription("open source libraries");
         StringWriter manifestWriter = new StringWriter();
         expectedResult.writeYaml(manifestWriter);
 

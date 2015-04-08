@@ -1,10 +1,8 @@
 package at.deder.ybr.test.server;
 
-import static org.mockito.BDDMockito.given;
 import static org.assertj.core.api.BDDAssertions.then;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.mock;
-import static com.googlecode.catchexception.CatchException.caughtException;
-import static com.googlecode.catchexception.apis.BDDCatchException.when;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -35,7 +33,7 @@ public class ServerFactoryTest {
 
 		boolean exOc = false;
 		try {
-			IServerGateway gw = ServerFactory.createServer(clientConf);
+			ServerFactory.createServer(clientConf);
 		} catch (UnknownServerTypeException e) {
 			exOc = true;
 		} 

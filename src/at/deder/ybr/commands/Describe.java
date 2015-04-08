@@ -1,6 +1,10 @@
 package at.deder.ybr.commands;
 
-import at.deder.ybr.Constants;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.util.List;
+
 import at.deder.ybr.channels.AbstractOutputChannel;
 import at.deder.ybr.channels.OutputChannelFactory;
 import at.deder.ybr.configuration.ClientConfiguration;
@@ -12,11 +16,6 @@ import at.deder.ybr.server.IServerGateway;
 import at.deder.ybr.server.ProtocolViolationException;
 import at.deder.ybr.server.ServerFactory;
 import at.deder.ybr.server.UnknownServerTypeException;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.util.List;
 
 /**
  * This command prints out information regarding a specific package in the

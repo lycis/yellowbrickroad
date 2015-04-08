@@ -1,12 +1,13 @@
 package at.deder.ybr.test.configuration;
 
+import static org.assertj.core.api.BDDAssertions.then;
+import static org.junit.Assert.assertEquals;
+
+import org.junit.Test;
+
 import at.deder.ybr.configuration.ServerManifest;
 import at.deder.ybr.repository.RepositoryEntry;
 import at.deder.ybr.test.mocks.MockUtils;
-import static org.assertj.core.api.BDDAssertions.then;
-import org.junit.Test;
-import static org.junit.Assert.*;
-import org.junit.Ignore;
 
 /**
  *

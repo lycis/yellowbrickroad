@@ -5,17 +5,8 @@
  */
 package at.deder.ybr.test.commands;
 
-import at.deder.ybr.channels.AbstractOutputChannel;
-import at.deder.ybr.channels.OutputChannelFactory;
-import at.deder.ybr.channels.SilentOutputChannel;
-import at.deder.ybr.repository.RepositoryEntry;
-import at.deder.ybr.configuration.ServerManifest;
-import at.deder.ybr.commands.ICliCommand;
-import at.deder.ybr.commands.PrepareServer;
-import at.deder.ybr.commands.UpdateServer;
-import at.deder.ybr.filesystem.FileSystem;
-import at.deder.ybr.test.mocks.MockFileSystemAccessor;
-import com.esotericsoftware.yamlbeans.YamlException;
+import static org.junit.Assert.fail;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -23,14 +14,25 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
-import static org.junit.Assert.fail;
 import org.junit.Before;
 import org.junit.Test;
+
+import at.deder.ybr.channels.AbstractOutputChannel;
+import at.deder.ybr.channels.OutputChannelFactory;
+import at.deder.ybr.channels.SilentOutputChannel;
+import at.deder.ybr.commands.ICliCommand;
+import at.deder.ybr.commands.PrepareServer;
+import at.deder.ybr.commands.UpdateServer;
+import at.deder.ybr.configuration.ServerManifest;
+import at.deder.ybr.filesystem.FileSystem;
+import at.deder.ybr.repository.RepositoryEntry;
+import at.deder.ybr.test.mocks.MockFileSystemAccessor;
+
+import com.esotericsoftware.yamlbeans.YamlException;
 
 /**
  *
@@ -40,7 +42,6 @@ public class UpdateServerTest {
 
     private static AbstractOutputChannel  mockOut = null;
     private static MockFileSystemAccessor mockFSA = null;
-    private UpdateServer cmd = null;
 
     /**
      * prepare all necessary objects
@@ -50,7 +51,6 @@ public class UpdateServerTest {
         // mock for file system access
         mockFSA = new MockFileSystemAccessor();
         mockOut = new SilentOutputChannel();
-        cmd = new UpdateServer();
 
         FileSystem.injectAccessor(mockFSA);
         OutputChannelFactory.setOutputChannel(mockOut);

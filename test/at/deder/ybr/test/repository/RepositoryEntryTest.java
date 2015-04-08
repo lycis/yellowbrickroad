@@ -6,13 +6,16 @@
 package at.deder.ybr.test.repository;
 
 import at.deder.ybr.repository.RepositoryEntry;
+
 import java.util.HashMap;
 import java.util.Map;
+
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
 import static org.junit.Assert.*;
 
 /**
@@ -64,7 +67,8 @@ public class RepositoryEntryTest {
     /**
      * Test of fold method, of class RepositoryEntry.
      */
-    @Test
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+	@Test
     public void testFold() {
         // build entry tree
         RepositoryEntry repository = new RepositoryEntry();
@@ -103,7 +107,8 @@ public class RepositoryEntryTest {
     /**
      * Test of unfold method, of class RepositoryEntry.
      */
-    @Test
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+	@Test
     public void testUnfold() {
         // build map for 
         Map unfoldMap = new HashMap();

@@ -1,30 +1,32 @@
 package at.deder.ybr.configuration;
 
-import at.deder.ybr.repository.RepositoryEntry;
-import com.esotericsoftware.yamlbeans.YamlException;
-import com.esotericsoftware.yamlbeans.YamlReader;
-import com.esotericsoftware.yamlbeans.YamlWriter;
 import java.io.IOException;
 import java.io.Reader;
-import java.io.Serializable;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.Map;
 import java.util.Objects;
+
+import at.deder.ybr.repository.RepositoryEntry;
+
+import com.esotericsoftware.yamlbeans.YamlException;
+import com.esotericsoftware.yamlbeans.YamlReader;
+import com.esotericsoftware.yamlbeans.YamlWriter;
 
 /**
  * This bean represents the YBR server manifest file.
  *
  * @author lycis
  */
-public class ServerManifest implements Serializable {
+public class ServerManifest {
 
     private String type = "";
     private String name = "";
     private String admin = "";
 
     private RepositoryEntry repository = null;
-    private Map foldedRepository = null;
+    @SuppressWarnings("rawtypes")
+	private Map foldedRepository = null;
 
     private static final String YAML_TAG = "server-manifest";
 
@@ -44,7 +46,8 @@ public class ServerManifest implements Serializable {
         return repository;
     }
 
-    public Map getRepoStruct() {
+    @SuppressWarnings("rawtypes")
+	public Map getRepoStruct() {
         return foldedRepository;
     }
 
@@ -73,7 +76,8 @@ public class ServerManifest implements Serializable {
         this.repository = repository;
     }
 
-    public void setRepoStruct(Map m) {
+    @SuppressWarnings("rawtypes")
+	public void setRepoStruct(Map m) {
         this.repository = RepositoryEntry.unfold(m);
         this.foldedRepository = null;
     }

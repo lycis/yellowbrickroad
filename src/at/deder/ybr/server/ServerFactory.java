@@ -58,6 +58,7 @@ public class ServerFactory {
 	 * @param config
 	 * @return
 	 */
+	@SuppressWarnings("rawtypes")
 	private static IServerGateway createNexusGateway(ClientConfiguration config)
 			throws InvalidConfigurationException {
 		Map details = config.getServerDetails();
@@ -110,6 +111,7 @@ public class ServerFactory {
 	 * @param config
 	 * @return
 	 */
+	@SuppressWarnings("rawtypes")
 	private static IServerGateway createSimpleServer(ClientConfiguration config) 
 			throws InvalidConfigurationException {
 		

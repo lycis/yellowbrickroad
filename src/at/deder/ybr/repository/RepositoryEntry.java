@@ -1,6 +1,7 @@
 package at.deder.ybr.repository;
 
 import at.deder.ybr.structures.Tree;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -76,7 +77,8 @@ public class RepositoryEntry extends Tree {
      *
      * @return
      */
-    public Map fold() {
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+	public Map fold() {
         Map m = new HashMap();
 
         // write node information
@@ -109,7 +111,8 @@ public class RepositoryEntry extends Tree {
      * @param m
      * @return
      */
-    public static RepositoryEntry unfold(Map m) {
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+	public static RepositoryEntry unfold(Map m) {
         RepositoryEntry entry = new RepositoryEntry();
 
         m.forEach((k, v) -> {

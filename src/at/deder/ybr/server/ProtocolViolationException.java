@@ -6,8 +6,9 @@ package at.deder.ybr.server;
  * @author ederda
  */
 public class ProtocolViolationException extends Exception{
-    
-    public ProtocolViolationException(String message) {
+	private static final long serialVersionUID = 1083447117849279965L;
+
+	public ProtocolViolationException(String message) {
         super(message);
     }
     
