@@ -7,11 +7,13 @@ import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
 import org.apache.http.client.utils.URIBuilder;
 import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
@@ -37,6 +39,31 @@ public class NexusServer extends SimpleHttpServer implements IServerGateway {
 	@Override
 	public ServerManifest getManifest() throws ProtocolViolationException {
 		// TODO crawl through repository: https://<server>/content/repositories/<repository>/
+		String pageContent;
+		try {
+			pageContent = getTextFromServer("/content/repositories/"+repository+"/");
+		} catch (IOException e) {
+			throw new ProtocolViolationException("repository content is not accessible", e);	
+		}
+		
+		Document doc = null;
+		try {
+			doc = DocumentBuilderFactory.newInstance().newDocumentBuilder()
+			      .parse(new InputSource(new StringReader(pageContent)));
+		} catch (SAXException | IOException | ParserConfigurationException e) {
+			throw new ProtocolViolationException("server returned a malformed repository index", e);
+		}
+		
+		// get all links
+		NodeList links = null;  
+		try {
+			links = (NodeList) XPathFactory.newInstance().newXPath().compile("/html/body//a/@href").evaluate(doc, XPathConstants.NODESET);
+		} catch (XPathExpressionException e) {
+			throw new ProtocolViolationException("malformed pom or xpath", e);
+		}
+		
+		// TODO incomplete
+		
 		throw new NotImplementedException();
 	}
 
@@ -56,6 +83,7 @@ public class NexusServer extends SimpleHttpServer implements IServerGateway {
 	@Override
 	public RepositoryEntry getPackage(String name)
 			throws ProtocolViolationException {
+		ServerManifest manifest = getManifest();
 		throw new NotImplementedException();
 	}
 

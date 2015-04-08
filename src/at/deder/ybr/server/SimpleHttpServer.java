@@ -134,7 +134,7 @@ public class SimpleHttpServer implements IServerGateway {
 
         URI uri;
         try {
-            uri = getBaseUriBuilder().setPath(path).build();
+            uri = ((SimpleHttpServerUriBuilder) getBaseUriBuilder()).setPathWithoutBase(path).build();
         } catch (URISyntaxException ex) {
             return null;
         }
@@ -149,7 +149,6 @@ public class SimpleHttpServer implements IServerGateway {
      * @throws IOException
      * @throws ProtocolViolationException
      */
-    @SuppressWarnings("deprecation")
 	protected String getTextFromServer(URI uri) throws IOException, ProtocolViolationException {
     	// convert URI
     	try {
@@ -413,7 +412,11 @@ public class SimpleHttpServer implements IServerGateway {
 			if(path.startsWith("/")) {
 				path = path.substring(1);
 			}
-			return super.setPath(basePath + path);
+			return setPathWithoutBase(basePath + path);
+		}
+		
+		public URIBuilder setPathWithoutBase(String path) {
+			return super.setPath(path);
 		}
 	}
 }
