@@ -3,6 +3,7 @@ package at.deder.ybr.server;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URISyntaxException;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -76,9 +77,46 @@ public class NexusServer extends SimpleHttpServer implements IServerGateway {
 	}
 
 	@Override
-	public Map<String, byte[]> getFilesOfPackage(String pkgName)
-			throws ProtocolViolationException {
-		throw new NotImplementedException();
+	public Map<String, byte[]> getFilesOfPackage(String pkgName) throws ProtocolViolationException {
+		
+		NexusRepositoryEntry nre = null;
+		try {
+			nre = new NexusRepositoryEntry(pkgName);
+		} catch (IllegalArgumentException ex) {
+			throw new ProtocolViolationException("package not accessible", ex);
+		}
+		
+		// resolve package to get some necessary data
+		Document doc = resolvePackage(nre);
+		String version = "";
+		String extension = "";
+		String path = "";
+		String artefactId = "";
+		try {
+			version = XPathFactory.newInstance().newXPath().compile("/artifact-resolution/data/baseVersion").evaluate(doc);
+			extension = XPathFactory.newInstance().newXPath().compile("/artifact-resolution/data/extension").evaluate(doc);
+			path = XPathFactory.newInstance().newXPath().compile("/artifact-resolution/data/repositoryPath").evaluate(doc);
+			artefactId = XPathFactory.newInstance().newXPath().compile("/artifact-resolution/data/artifactId").evaluate(doc);
+		} catch (XPathExpressionException e) {
+			throw new ProtocolViolationException("malformed pom or xpath", e);
+		}
+		
+		// get data
+		URIBuilder uri = new URIBuilder();
+		uri.setPath("/content/repositories/"+repository+"/"+path);
+		byte[] data = null;
+		
+		try {
+			data = getBinaryFromServer(uri.build());
+		} catch (IOException | URISyntaxException e) {
+			throw new ProtocolViolationException("could not get file content", e);
+		}
+		
+		
+		
+		Map<String, byte[]> files = new HashMap<>();
+		files.put(artefactId+"-"+version+"."+extension, data);
+		return files;
 	}
 
 	@Override

@@ -294,14 +294,27 @@ public class SimpleHttpServer implements IServerGateway {
      * @param path
      * @return
      */
-    private byte[] getBinaryFromServer(String path) throws IOException, ProtocolViolationException {
+    protected byte[] getBinaryFromServer(String path) throws IOException, ProtocolViolationException {
+    	if (!path.startsWith("/")) {
+            path = "/" + path;
+        }
+
         URI uri;
         try {
-            uri = new URIBuilder()
-                    .setScheme(scheme)
-                    .setHost(hostname)
-                    .setPort(port)
-                    .setPath(path).build();
+            uri = ((SimpleHttpServerUriBuilder) getBaseUriBuilder()).setPathWithoutBase(path).build();
+        } catch (URISyntaxException ex) {
+            return null;
+        }
+        
+        return getBinaryFromServer(uri);
+    }
+    
+    protected byte[] getBinaryFromServer(URI uri) throws IOException, ProtocolViolationException {
+    	// convert URI
+    	try {
+           URIBuilder b = getBaseUriBuilder().setPath(uri.getPath());
+           b.setQuery(uri.getQuery());
+           uri = b.build();
         } catch (URISyntaxException ex) {
             return null;
         }
@@ -316,7 +329,7 @@ public class SimpleHttpServer implements IServerGateway {
 
         // check response code
         if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
-            throw new ProtocolViolationException("access to resource '" + path + "' not allowed ("
+            throw new ProtocolViolationException("access to resource '" + uri.getPath() + "' not allowed ("
                     + response.getStatusLine().getStatusCode() + " - " + response.getStatusLine().getReasonPhrase() + ")");
         }
 
