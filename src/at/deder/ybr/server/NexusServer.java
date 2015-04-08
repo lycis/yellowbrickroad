@@ -33,6 +33,8 @@ import at.deder.ybr.repository.RepositoryEntry;
 public class NexusServer extends SimpleHttpServer implements IServerGateway {
 	private String repository = "";
 	
+	// TODO implement caching to minimise number of roundtrips to server
+	
 	public NexusServer(String host, String fixedPath, int port, String repository) {
 		super(host, fixedPath, port);
 		this.repository = repository;

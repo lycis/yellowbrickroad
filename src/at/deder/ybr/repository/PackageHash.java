@@ -112,7 +112,7 @@ public class PackageHash {
     }
 
     private String hexHash(InputStream data) throws NoSuchAlgorithmException, IOException {
-        MessageDigest md = MessageDigest.getInstance("MD5");
+        MessageDigest md = MessageDigest.getInstance("SHA-1");
         byte[] dataBytes = new byte[1024];
 
         int nread = 0;
