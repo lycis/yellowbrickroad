@@ -35,7 +35,7 @@ public class NexusServer extends SimpleHttpServer implements IServerGateway {
 		super(host, fixedPath, port);
 		this.repository = repository;
 	}
-
+	
 	@Override
 	public ServerManifest getManifest() throws ProtocolViolationException {
 		// TODO crawl through repository: https://<server>/content/repositories/<repository>/
@@ -82,9 +82,29 @@ public class NexusServer extends SimpleHttpServer implements IServerGateway {
 
 	@Override
 	public RepositoryEntry getPackage(String name)
-			throws ProtocolViolationException {
-		ServerManifest manifest = getManifest();
-		throw new NotImplementedException();
+			throws ProtocolViolationException {		
+		NexusRepositoryEntry nre = null;
+		try {
+			nre = new NexusRepositoryEntry(name);
+		} catch (IllegalArgumentException ex) {
+			throw new ProtocolViolationException("package not accessible", ex);
+		}
+		
+		Document sPom = getSerialisedPom(nre);
+		
+		String description = "";
+		try {
+			description = XPathFactory.newInstance().newXPath().compile("/project/description").evaluate(sPom);
+		} catch (XPathExpressionException e) {
+			throw new ProtocolViolationException("malformed pom or xpath", e);
+		}
+		
+		nre.setParent(null);
+		nre.setDescription(description);
+		
+		// TODO set sha1 hash
+		
+		return nre;
 	}
 
 	@Override
@@ -98,15 +118,7 @@ public class NexusServer extends SimpleHttpServer implements IServerGateway {
 			throw new ProtocolViolationException("package index not accessible", ex);
 		}
 		
-		String pomStr = resolvePackage(nre);
-		
-		Document doc = null;
-		try {
-			doc = DocumentBuilderFactory.newInstance().newDocumentBuilder()
-			      .parse(new InputSource(new StringReader(pomStr)));
-		} catch (SAXException | IOException | ParserConfigurationException e) {
-			throw new ProtocolViolationException("server returned a malformed POM", e);
-		}
+		Document doc = resolvePackage(nre);
 		
 		
 		String baseVersion = "";
@@ -133,7 +145,7 @@ public class NexusServer extends SimpleHttpServer implements IServerGateway {
 	 * @return
 	 * @throws ProtocolViolationException
 	 */
-	private String resolvePackage(String pkgName) throws ProtocolViolationException {
+	private Document resolvePackage(String pkgName) throws ProtocolViolationException {
 		NexusRepositoryEntry nre = null;
 		try {
 			nre = new NexusRepositoryEntry(pkgName);
@@ -151,7 +163,7 @@ public class NexusServer extends SimpleHttpServer implements IServerGateway {
 	 * @return
 	 * @throws ProtocolViolationException
 	 */
-	private String resolvePackage(NexusRepositoryEntry nre) throws ProtocolViolationException {
+	private Document resolvePackage(NexusRepositoryEntry nre) throws ProtocolViolationException {
 		URIBuilder uri = new URIBuilder();
 		uri.setPath("/service/local/artifact/maven/resolve");
 		uri.addParameter("g", nre.getGroupId());
@@ -167,7 +179,51 @@ public class NexusServer extends SimpleHttpServer implements IServerGateway {
 			throw new ProtocolViolationException("package index not acessible", ex);
 		}
 		
-		return pomStr;
+		Document doc = null;
+		try {
+			doc = DocumentBuilderFactory.newInstance().newDocumentBuilder()
+			      .parse(new InputSource(new StringReader(pomStr)));
+		} catch (SAXException | IOException | ParserConfigurationException e) {
+			throw new ProtocolViolationException("server returned a malformed POM", e);
+		}
+		
+		return doc;
+	}
+	
+	private Document getSerialisedPom(String pkgName) throws ProtocolViolationException {
+		NexusRepositoryEntry nre = null;
+		try {
+			nre = new NexusRepositoryEntry(pkgName);
+		} catch (IllegalArgumentException ex) {
+			throw new ProtocolViolationException("package index not accessible", ex);
+		}
+		
+		return getSerialisedPom(nre);
 	}
 
+	private Document getSerialisedPom(NexusRepositoryEntry nre) throws ProtocolViolationException {
+		URIBuilder uri = new URIBuilder();
+		uri.setPath("/service/local/artifact/maven");
+		uri.addParameter("g", nre.getGroupId());
+		uri.addParameter("a", nre.getArtefactId());
+		uri.addParameter("v", nre.getVersion());
+		uri.addParameter("r", repository);
+		
+		String pomStr = "";
+		try {
+			pomStr = getTextFromServer(uri.build());
+		} catch(IOException | URISyntaxException ex) {
+			throw new ProtocolViolationException("serialised pom not acessible", ex);
+		}
+		
+		Document doc = null;
+		try {
+			doc = DocumentBuilderFactory.newInstance().newDocumentBuilder()
+			      .parse(new InputSource(new StringReader(pomStr)));
+		} catch (SAXException | IOException | ParserConfigurationException e) {
+			throw new ProtocolViolationException("server returned a malformed serialised pom", e);
+		}
+		
+		return doc;
+	}
 }
