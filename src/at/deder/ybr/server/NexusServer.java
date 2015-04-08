@@ -20,6 +20,7 @@ import org.xml.sax.SAXException;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import at.deder.ybr.configuration.ServerManifest;
 import at.deder.ybr.repository.NexusRepositoryEntry;
+import at.deder.ybr.repository.PackageHash;
 import at.deder.ybr.repository.PackageIndex;
 import at.deder.ybr.repository.RepositoryEntry;
 
@@ -91,7 +92,6 @@ public class NexusServer extends SimpleHttpServer implements IServerGateway {
 		}
 		
 		Document sPom = getSerialisedPom(nre);
-		
 		String description = "";
 		try {
 			description = XPathFactory.newInstance().newXPath().compile("/project/description").evaluate(sPom);
@@ -102,7 +102,16 @@ public class NexusServer extends SimpleHttpServer implements IServerGateway {
 		nre.setParent(null);
 		nre.setDescription(description);
 		
-		// TODO set sha1 hash
+		// set sha1 hash
+		Document resolvedDoc = resolvePackage(nre);
+		String hash = "";
+		try {
+			hash = XPathFactory.newInstance().newXPath().compile("/artifact-resolution/data/sha1").evaluate(sPom);
+		} catch (XPathExpressionException e) {
+			throw new ProtocolViolationException("malformed pom or xpath", e);
+		}
+		
+		nre.setPackageHash(new PackageHash(hash));
 		
 		return nre;
 	}
