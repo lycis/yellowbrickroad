@@ -106,7 +106,7 @@ public class NexusServer extends SimpleHttpServer implements IServerGateway {
 		Document resolvedDoc = resolvePackage(nre);
 		String hash = "";
 		try {
-			hash = XPathFactory.newInstance().newXPath().compile("/artifact-resolution/data/sha1").evaluate(sPom);
+			hash = XPathFactory.newInstance().newXPath().compile("/artifact-resolution/data/sha1").evaluate(resolvedDoc);
 		} catch (XPathExpressionException e) {
 			throw new ProtocolViolationException("malformed pom or xpath", e);
 		}
