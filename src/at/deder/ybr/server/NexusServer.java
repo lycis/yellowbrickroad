@@ -139,24 +139,6 @@ public class NexusServer extends SimpleHttpServer implements IServerGateway {
 	}
 
 	/**
-	 * call to nexus resolve API request.
-	 * 
-	 * @param pkgName
-	 * @return
-	 * @throws ProtocolViolationException
-	 */
-	private Document resolvePackage(String pkgName) throws ProtocolViolationException {
-		NexusRepositoryEntry nre = null;
-		try {
-			nre = new NexusRepositoryEntry(pkgName);
-		} catch (IllegalArgumentException ex) {
-			throw new ProtocolViolationException("package index not accessible", ex);
-		}
-		
-		return resolvePackage(nre);
-	}
-
-	/**
 	 * Call to Nexus resolve API request
 	 * 
 	 * @param pkgName
@@ -188,17 +170,6 @@ public class NexusServer extends SimpleHttpServer implements IServerGateway {
 		}
 		
 		return doc;
-	}
-	
-	private Document getSerialisedPom(String pkgName) throws ProtocolViolationException {
-		NexusRepositoryEntry nre = null;
-		try {
-			nre = new NexusRepositoryEntry(pkgName);
-		} catch (IllegalArgumentException ex) {
-			throw new ProtocolViolationException("package index not accessible", ex);
-		}
-		
-		return getSerialisedPom(nre);
 	}
 
 	private Document getSerialisedPom(NexusRepositoryEntry nre) throws ProtocolViolationException {
